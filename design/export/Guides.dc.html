@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&amp;family=Space+Grotesk:wght@400;500;600;700&amp;family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&amp;family=Noto+Sans+Armenian:wght@400;500;600;700;800;900&amp;display=swap">
+<link rel="icon" href="assets/favicon.png">
+<script src="site.js"></script>
+<script src="guides.js"></script>
+<style>
+html{background:#EEF2E9}
+body{margin:0;background:#EEF2E9;-webkit-font-smoothing:antialiased}
+a{color:#0A7C39}a:hover{color:#12180F}
+*:focus-visible{outline:3px solid #0A7C39;outline-offset:3px;border-radius:6px}
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:bbOut .22s cubic-bezier(.4,0,1,1) both}
+::view-transition-new(root){animation:bbIn .32s cubic-bezier(0,0,.2,1) both}
+@keyframes bbOut{to{opacity:0;transform:translateY(-12px)}}
+@keyframes bbIn{from{opacity:0;transform:translateY(16px)}}
+@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;transform:none}}
+</style>
+</helmet>
+<div lang="{{ lang }}" style="--fd: {{ f.fd }}; --fds: {{ f.fds }}; --fu: {{ f.fu }}; --k: {{ f.k }}; background:#EEF2E9; color:#12180F; font-family:var(--fu); min-height:100vh">
+  <dc-import name="SiteHeader" g="{{ g }}" lang="{{ lang }}" page="guides" theme="chalk" wide="{{ wide }}" links="{{ links }}" lang-links="{{ langLinks }}" store="{{ store }}" hint-size="100%,84px"></dc-import>
+  <main id="main" style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.pad }}">
+    <div style="display:grid; grid-template-columns:{{ L.heroCols }}; gap:20px 64px; align-items:end; padding-bottom:{{ L.heroGap }}; border-bottom:3px solid #12180F">
+      <h1 style="margin:0; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(64px, 11vw, 176px) * var(--k)); line-height:.84; letter-spacing:-.03em; text-transform:uppercase">{{ t.h1 }}</h1>
+      <p style="margin:0; font:500 clamp(17px, 1.4vw, 20px)/1.5 var(--fu); color:#2E372B; max-width:30ch">{{ t.lead }}</p>
+    </div>
+    <ul style="list-style:none; margin:0; padding:0; display:grid; grid-template-columns:{{ L.cols }}; border-left:{{ L.bl }}">
+      <sc-for list="{{ items }}" as="it" hint-placeholder-count="3">
+        <li style="grid-column:{{ it.span }}; border-right:{{ L.br }}; border-bottom:1px solid rgba(18,24,15,.22)">
+          <a href="{{ it.href }}" style="display:flex; flex-direction:column; gap:14px; height:100%; box-sizing:border-box; padding:{{ L.cardPad }}; text-decoration:none; color:#12180F; transition:background-color .2s" style-hover="background:#E3EADB">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; font:700 11px/1 var(--fu); letter-spacing:.14em; text-transform:uppercase"><span style="color:#0A7C39">{{ it.kicker }}</span><span style="color:#4F5A4C; font-variant-numeric:tabular-nums">{{ it.n }}</span></div>
+            <h2 style="margin:0; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc({{ it.size }} * var(--k)); line-height:1.02; letter-spacing:-.015em; text-wrap:balance">{{ it.title }}</h2>
+            <p style="margin:0; font:400 16px/1.55 var(--fu); color:#2E372B; max-width:52ch; text-wrap:pretty">{{ it.text }}</p>
+            <div style="margin-top:auto; padding-top:10px; display:flex; align-items:center; justify-content:space-between; font:600 13px/1 var(--fu); color:#4F5A4C"><span>{{ it.min }}</span><span aria-hidden="true" style="width:44px; height:44px; border-radius:50%; border:1.5px solid #12180F; display:flex; align-items:center; justify-content:center; font-size:18px; color:#12180F">→</span></div>
+          </a>
+        </li>
+      </sc-for>
+    </ul>
+  </main>
+  <dc-import name="SiteFooter" g="{{ g }}" lang="{{ lang }}" page="guides" theme="chalk" wide="{{ wide }}" links="{{ links }}" lang-links="{{ langLinks }}" store="{{ store }}" hint-size="100%,480px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { c: null, wide: true };
+  componentDidMount() {
+    const S = window.BBSite;
+    if (!S || !window.BB_GUIDES) { this.retry = setTimeout(() => this.componentDidMount(), 50); return; }
+    S.copy().then((c) => { this.setState({ c }); document.title = c.pages.guides.meta.title; });
+    document.documentElement.lang = S.lang;
+    this.mq = matchMedia('(min-width: 1000px)');
+    this.onMq = () => this.setState({ wide: this.mq.matches });
+    this.onMq(); this.mq.addEventListener('change', this.onMq);
+  }
+  componentWillUnmount() { clearTimeout(this.retry); if (this.mq) this.mq.removeEventListener('change', this.onMq); }
+  renderVals() {
+    const S = window.BBSite || { FONTS: { en: {} }, lang: 'en', links: () => ({}), langLinks: () => [], SITE: {} };
+    const lang = S.lang;
+    const c = this.state.c || { nav: {}, cta: {}, brand: {}, footer: {}, languageNames: {}, pages: { guides: {} } };
+    const wide = this.state.wide;
+    const minL = { en: (m) => m + ' min read', ru: (m) => m + ' минут', hy: (m) => m + ' րոպե' }[lang];
+    const links = S.links();
+    const list = ((window.BB_GUIDES || {}).hub || {})[lang] || [];
+    const items = list.map((g, i) => ({
+      ...g, n: '0' + (i + 1), href: links.guide, min: minL(g.min),
+      span: wide && i === 0 && list.length > 1 ? '1 / -1' : 'auto',
+      size: i === 0 ? 'clamp(32px, 4vw, 60px)' : 'clamp(26px, 2.4vw, 36px)'
+    }));
+    const L = wide
+      ? { pad: '56px 64px 120px', heroCols: 'minmax(0,1fr) 380px', heroGap: '40px', cols: 'repeat(2, minmax(0,1fr))', cardPad: '40px 40px 36px', bl: '1px solid rgba(18,24,15,.22)', br: '1px solid rgba(18,24,15,.22)' }
+      : { pad: '32px 20px 72px', heroCols: '1fr', heroGap: '28px', cols: '1fr', cardPad: '28px 0', bl: '0', br: '0' };
+    return { lang, f: S.FONTS[lang], g: c, t: c.pages.guides, wide, items, L, links, langLinks: S.langLinks('guides'), store: S.SITE.store };
+  }
+}
+</script>
+</body>
+</html>

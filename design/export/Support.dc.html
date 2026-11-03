@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&amp;family=Space+Grotesk:wght@400;500;600;700&amp;family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&amp;family=Noto+Sans+Armenian:wght@400;500;600;700;800;900&amp;display=swap">
+<link rel="icon" href="assets/favicon.png">
+<script src="site.js"></script>
+<style>
+html{background:#101418}
+body{margin:0;background:#101418;-webkit-font-smoothing:antialiased}
+a{color:#BFF747}a:hover{color:#EDF3E6}
+*:focus-visible{outline:3px solid #BFF747;outline-offset:3px;border-radius:6px}
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:bbOut .22s cubic-bezier(.4,0,1,1) both}
+::view-transition-new(root){animation:bbIn .32s cubic-bezier(0,0,.2,1) both}
+@keyframes bbOut{to{opacity:0;transform:translateY(-12px)}}
+@keyframes bbIn{from{opacity:0;transform:translateY(16px)}}
+@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;transform:none}}
+</style>
+</helmet>
+<div lang="{{ lang }}" style="--fd: {{ f.fd }}; --fds: {{ f.fds }}; --fu: {{ f.fu }}; --k: {{ f.k }}; background:#101418; color:#EDF3E6; font-family:var(--fu); min-height:100vh">
+  <dc-import name="SiteHeader" g="{{ g }}" lang="{{ lang }}" page="support" theme="night" wide="{{ wide }}" links="{{ links }}" lang-links="{{ langLinks }}" store="{{ store }}" hint-size="100%,84px"></dc-import>
+  <main id="main" style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.pad }}">
+    <div style="display:grid; grid-template-columns:{{ L.cols }}; gap:48px 96px; align-items:start">
+      <div style="position:{{ L.stick }}; top:120px">
+        <h1 style="margin:0; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(56px, 7.4vw, 112px) * var(--k)); line-height:.88; letter-spacing:-.025em; text-transform:uppercase">{{ t.h1 }}</h1>
+        <p style="margin:20px 0 0; font:500 clamp(17px, 1.4vw, 20px)/1.5 var(--fu); color:#C5CEC0; max-width:30ch">{{ t.lead }}</p>
+        <section aria-labelledby="contact-title" style="margin-top:36px; padding:26px; border-radius:22px; background:#BFF747; color:#0A0F0A">
+          <h2 id="contact-title" style="margin:0; font:700 12px/1 var(--fu); letter-spacing:.14em; text-transform:uppercase">{{ t.contact.title }}</h2>
+          <a href="mailto:bombardiro.dev@gmail.com" style="margin-top:12px; display:flex; align-items:center; min-height:44px; font-family:'Archivo',sans-serif; font-weight:900; font-style:italic; font-size:clamp(20px, 2vw, 28px); line-height:1.1; letter-spacing:-.01em; color:#0A0F0A; text-decoration:underline; text-underline-offset:5px; text-decoration-thickness:2px; overflow-wrap:anywhere" style-hover="text-decoration-thickness:4px">bombardiro.dev@gmail.com</a>
+          <button type="button" onClick="{{ copyEmail }}" style="margin-top:10px; height:44px; padding:0 18px; border-radius:999px; border:1.5px solid #0A0F0A; background:transparent; font:700 13px/1 var(--fu); color:#0A0F0A; cursor:pointer" style-hover="background:#0A0F0A; color:#BFF747">{{ copyLabel }}</button>
+          <p style="margin:16px 0 0; font:500 14px/1.5 var(--fu)">{{ t.contact.response }}</p>
+          <p style="margin:12px 0 0; padding-top:12px; border-top:1.5px solid #0A0F0A; font:400 14px/1.5 var(--fu); color:#22300F; text-wrap:pretty">{{ t.contact.inApp }}</p>
+        </section>
+      </div>
+      <div>
+        <section aria-labelledby="faq-title">
+          <h2 id="faq-title" style="margin:0 0 20px; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(30px, 3.2vw, 48px) * var(--k)); line-height:.95; text-transform:uppercase">{{ t.faq.title }}</h2>
+          <div style="border-top:1px solid rgba(237,243,230,.14)">
+            <sc-for list="{{ faq }}" as="q" hint-placeholder-count="9">
+              <div style="border-bottom:1px solid rgba(237,243,230,.14)">
+                <h3 style="margin:0"><button type="button" onClick="{{ q.toggle }}" aria-expanded="{{ q.expanded }}" style="width:100%; min-height:64px; padding:16px 0; display:flex; align-items:center; justify-content:space-between; gap:20px; background:transparent; border:0; cursor:pointer; text-align:left; font:600 clamp(17px, 1.3vw, 19px)/1.35 var(--fu); color:{{ q.color }}" style-hover="color:#BFF747">{{ q.q }}<span aria-hidden="true" style="flex:none; width:32px; height:32px; border-radius:50%; border:1px solid rgba(237,243,230,.22); display:flex; align-items:center; justify-content:center; font:400 20px/1 var(--fu); color:#BFF747; transform:{{ q.rot }}; transition:transform .24s cubic-bezier(.2,.8,.2,1)">+</span></button></h3>
+                <div style="display:grid; grid-template-rows:{{ q.rows }}; transition:grid-template-rows .28s cubic-bezier(.2,.8,.2,1)">
+                  <div style="overflow:hidden"><p style="margin:0; padding:0 48px 22px 0; font:400 16px/1.65 var(--fu); color:#C5CEC0; text-wrap:pretty">{{ q.a }}</p></div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+        <section aria-labelledby="report-title" style="margin-top:64px; padding:28px; border-radius:22px; border:1px dashed rgba(237,243,230,.3)">
+          <h2 id="report-title" style="margin:0; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(24px, 2.2vw, 32px) * var(--k)); line-height:1; text-transform:uppercase">{{ t.report.title }}</h2>
+          <p style="margin:12px 0 18px; font:400 16px/1.5 var(--fu); color:#C5CEC0">{{ t.report.lead }}</p>
+          <ul style="list-style:none; margin:0; padding:0; display:grid; grid-template-columns:{{ L.repCols }}; gap:10px">
+            <sc-for list="{{ t.report.items }}" as="it" hint-placeholder-count="4">
+              <li style="display:flex; align-items:center; gap:12px; min-height:52px; padding:0 16px; border-radius:12px; background:#192025; font:500 15px/1.35 var(--fu)"><span aria-hidden="true" style="width:16px; height:16px; flex:none; border-radius:4px; border:1.5px solid #BFF747; box-sizing:border-box"></span>{{ it }}</li>
+            </sc-for>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </main>
+  <dc-import name="SiteFooter" g="{{ g }}" lang="{{ lang }}" page="support" theme="night" wide="{{ wide }}" links="{{ links }}" lang-links="{{ langLinks }}" store="{{ store }}" hint-size="100%,480px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { c: null, wide: true, faq: -1, copied: false };
+  componentDidMount() {
+    const S = window.BBSite;
+    if (!S) { this.retry = setTimeout(() => this.componentDidMount(), 50); return; }
+    S.copy().then((c) => { this.setState({ c }); document.title = c.pages.support.meta.title; });
+    document.documentElement.lang = S.lang;
+    this.mq = matchMedia('(min-width: 1000px)');
+    this.onMq = () => this.setState({ wide: this.mq.matches });
+    this.onMq(); this.mq.addEventListener('change', this.onMq);
+  }
+  componentWillUnmount() { clearTimeout(this.retry); clearTimeout(this.ct); if (this.mq) this.mq.removeEventListener('change', this.onMq); }
+  renderVals() {
+    const S = window.BBSite || { FONTS: { en: {} }, lang: 'en', links: () => ({}), langLinks: () => [], SITE: {} };
+    const lang = S.lang;
+    const c = this.state.c || { nav: {}, cta: {}, brand: {}, footer: {}, languageNames: {}, pages: { support: { contact: {}, faq: { items: [] }, report: { items: [] } } } };
+    const t = c.pages.support;
+    const wide = this.state.wide;
+    const faq = (t.faq.items || []).map((it, i) => {
+      const on = this.state.faq === i;
+      return { q: it.q, a: it.a, expanded: on ? 'true' : 'false', rows: on ? '1fr' : '0fr', rot: on ? 'rotate(45deg)' : 'rotate(0)', color: on ? '#BFF747' : '#EDF3E6', toggle: () => this.setState((p) => ({ faq: p.faq === i ? -1 : i })) };
+    });
+    const cl = { en: ['Copy address', 'Copied'], ru: ['Скопировать адрес', 'Скопировано'], hy: ['Պատճենել հասցեն', 'Պատճենված է'] }[lang];
+    const L = wide ? { pad: '64px 64px 120px', cols: '440px minmax(0,1fr)', stick: 'sticky', repCols: '1fr 1fr' } : { pad: '36px 20px 80px', cols: '1fr', stick: 'static', repCols: '1fr' };
+    return {
+      lang, f: S.FONTS[lang], g: c, t, wide, faq, L, links: S.links(), langLinks: S.langLinks('support'), store: S.SITE.store,
+      copyLabel: this.state.copied ? cl[1] : cl[0],
+      copyEmail: () => { try { navigator.clipboard.writeText('bombardiro.dev@gmail.com'); } catch (e) {} this.setState({ copied: true }); clearTimeout(this.ct); this.ct = setTimeout(() => this.setState({ copied: false }), 1800); }
+    };
+  }
+}
+</script>
+</body>
+</html>

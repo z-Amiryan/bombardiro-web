@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&amp;family=Space+Grotesk:wght@400;500;600;700&amp;family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&amp;family=Noto+Sans+Armenian:wght@400;500;600;700;800;900&amp;display=swap">
+<link rel="icon" href="assets/favicon.png">
+<script src="site.js"></script>
+<style>
+html{background:#BFF747;scroll-behavior:smooth}
+body{margin:0;background:#BFF747;-webkit-font-smoothing:antialiased}
+a{color:#0A0F0A}a:hover{color:#33441A}
+*:focus-visible{outline:3px solid #0A0F0A;outline-offset:3px;border-radius:6px}
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:bbOut .22s cubic-bezier(.4,0,1,1) both}
+::view-transition-new(root){animation:bbIn .32s cubic-bezier(0,0,.2,1) both}
+@keyframes bbOut{to{opacity:0;transform:translateY(-12px)}}
+@keyframes bbIn{from{opacity:0;transform:translateY(16px)}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;transform:none}}
+@page{size:A4;margin:12mm}
+@media print{html,body{background:#fff!important}[data-screen-only]{display:none!important}[data-print-only]{display:block!important}[data-sheet]{box-shadow:none!important;margin:0!important;width:auto!important;min-height:0!important;padding:0!important}[data-desk]{background:#fff!important;padding:0!important}[data-sheet-break]{break-after:page}}
+</style>
+</helmet>
+<div lang="{{ lang }}" style="--fd: {{ f.fd }}; --fds: {{ f.fds }}; --fu: {{ f.fu }}; --k: {{ f.k }}; color:#0A0F0A; font-family:var(--fu); min-height:100vh; overflow-x:clip">
+  <sc-if value="{{ screen }}" hint-placeholder-val="{{ true }}">
+    <div data-screen-only="" style="background:linear-gradient(175deg, #D4FA78 0%, #BFF747 28%, #B6EF3E 100%)">
+      <dc-import name="SiteHeader" g="{{ g }}" lang="{{ lang }}" page="words" theme="lime" wide="{{ wide }}" links="{{ links }}" lang-links="{{ langLinks }}" store="{{ store }}" hint-size="100%,84px"></dc-import>
+      <main id="main">
+        <section style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.heroPad }}; display:grid; grid-template-columns:{{ L.heroCols }}; gap:28px 80px; align-items:end">
+          <h1 style="margin:0; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(44px, 7vw, 112px) * var(--k)); line-height:.9; letter-spacing:-.02em; text-transform:uppercase; text-wrap:balance">{{ t.h1 }}</h1>
+          <div>
+            <p style="margin:0; font:500 clamp(16px, 1.3vw, 18px)/1.55 var(--fu); text-wrap:pretty">{{ t.lead }}</p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:22px">
+              <button type="button" onClick="{{ openPrint }}" style="display:inline-flex; align-items:center; gap:10px; height:52px; padding:0 24px; border-radius:999px; border:0; background:#0A0F0A; color:#BFF747; font:700 16px/1 var(--fu); cursor:pointer; transition:transform .16s cubic-bezier(.2,.8,.2,1)" style-hover="transform:translateY(-2px)" style-active="transform:scale(.97)"><span aria-hidden="true" style="display:inline-block; width:14px; height:16px; border:2px solid #BFF747; border-radius:2px; box-sizing:border-box"></span>{{ t.print }}</button>
+            </div>
+          </div>
+        </section>
+
+        <nav aria-label="{{ g.nav.words }}" style="position:sticky; top:{{ L.chipTop }}; z-index:20; border-top:1.5px solid #0A0F0A; border-bottom:1.5px solid #0A0F0A; background:rgba(191,247,71,.92); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px)">
+          <div style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.chipPad }}; display:flex; gap:8px; overflow-x:auto; scrollbar-width:none">
+            <sc-for list="{{ cats }}" as="c" hint-placeholder-count="6">
+              <a href="{{ c.href }}" style="flex:none; display:flex; align-items:center; gap:8px; height:44px; padding:0 16px; border-radius:999px; border:1.5px solid #0A0F0A; font:700 14px/1 var(--fu); white-space:nowrap; text-decoration:none; color:#0A0F0A" style-hover="background:#0A0F0A; color:#BFF747">{{ c.name }}<span style="font:600 11px/1 var(--fu); opacity:.7; font-variant-numeric:tabular-nums">{{ c.count }}</span></a>
+            </sc-for>
+          </div>
+        </nav>
+
+        <sc-for list="{{ cats }}" as="c" hint-placeholder-count="2">
+          <section id="{{ c.id }}" aria-labelledby="{{ c.hid }}" style="border-bottom:1.5px solid #0A0F0A; scroll-margin-top:140px">
+            <div style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.catPad }}; display:grid; grid-template-columns:{{ L.catCols }}; gap:28px 64px; align-items:start">
+              <div style="position:{{ L.headPos }}; top:170px">
+                <div style="font:700 12px/1 var(--fu); letter-spacing:.14em; font-variant-numeric:tabular-nums">{{ c.n }} / 06</div>
+                <h2 id="{{ c.hid }}" style="margin:12px 0 12px; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(34px, 3.6vw, 52px) * var(--k)); line-height:.95; text-transform:uppercase; letter-spacing:-.012em; text-wrap:balance">{{ c.name }}</h2>
+                <p style="margin:0; font:500 16px/1.5 var(--fu); color:#22300F; max-width:34ch">{{ c.intro }}</p>
+                <div style="margin-top:20px; padding:14px 16px; border-radius:14px; background:#0A0F0A; color:#EDF3E6; max-width:34ch">
+                  <div style="font:700 11px/1 var(--fu); letter-spacing:.14em; text-transform:uppercase; color:#BFF747">{{ t.tipLabel }}</div>
+                  <p style="margin:8px 0 0; font:400 15px/1.5 var(--fu)">{{ c.tip }}</p>
+                </div>
+              </div>
+              <div style="display:grid; grid-template-columns:{{ L.levelCols }}; gap:28px 40px">
+                <sc-for list="{{ c.levels }}" as="lv" hint-placeholder-count="2">
+                  <div>
+                    <h3 style="margin:0 0 14px; display:flex; align-items:center; gap:10px; font:800 13px/1 var(--fu); letter-spacing:.14em; text-transform:uppercase"><span aria-hidden="true" style="width:10px; height:10px; border-radius:50%; background:{{ lv.dot }}; border:1.5px solid #0A0F0A"></span>{{ lv.label }}</h3>
+                    <ul style="list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:8px">
+                      <sc-for list="{{ lv.words }}" as="w" hint-placeholder-count="12">
+                        <li><button type="button" onClick="{{ w.tap }}" aria-pressed="{{ w.pressed }}" style="min-height:44px; padding:0 14px; border-radius:10px; border:1.5px solid #0A0F0A; background:{{ w.bg }}; color:{{ w.fg }}; font-family:var(--fd); font-style:var(--fds); font-weight:800; font-size:calc(17px * var(--k)); line-height:1.1; text-transform:uppercase; letter-spacing:-.005em; cursor:pointer; transition:background-color .18s cubic-bezier(.2,.8,.2,1), color .18s" style-hover="background:{{ w.hover }}">{{ w.w }}</button></li>
+                      </sc-for>
+                    </ul>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </section>
+        </sc-for>
+
+        <section aria-labelledby="use-title" style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.usePad }}; display:grid; grid-template-columns:{{ L.useCols }}; gap:48px 80px">
+          <div>
+            <h2 id="use-title" style="margin:0 0 24px; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(32px, 3.6vw, 52px) * var(--k)); line-height:.95; text-transform:uppercase; letter-spacing:-.012em">{{ t.howToUse.title }}</h2>
+            <ol style="list-style:none; margin:0; padding:0">
+              <sc-for list="{{ useSteps }}" as="u" hint-placeholder-count="3">
+                <li style="display:grid; grid-template-columns:56px minmax(0,1fr); gap:12px; padding:18px 0; border-top:1.5px solid #0A0F0A; font:500 17px/1.5 var(--fu)"><span aria-hidden="true" style="font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:30px; line-height:1">{{ u.n }}</span><span style="text-wrap:pretty">{{ u.text }}</span></li>
+              </sc-for>
+            </ol>
+          </div>
+          <div style="background:#0A0F0A; color:#EDF3E6; border-radius:24px; padding:{{ L.notePad }}; display:flex; flex-direction:column; gap:16px; align-self:start">
+            <h2 style="margin:0; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(30px, 3vw, 44px) * var(--k)); line-height:.95; text-transform:uppercase; color:#BFF747">{{ t.appNote.title }}</h2>
+            <p style="margin:0; font:400 17px/1.55 var(--fu); color:#C5CEC0; text-wrap:pretty">{{ t.appNote.text }}</p>
+            <div style="display:flex; align-items:center; gap:16px; padding-top:12px">
+              <a href="{{ store }}" style="display:block; line-height:0; border-radius:8px"><img src="{{ badge }}" alt="{{ g.cta.badgeAlt }}" height="48" style="height:48px; width:auto; display:block"></a>
+              <span style="font:500 13px/1.35 var(--fu); color:#9AA59A; max-width:16ch">{{ g.cta.availability }}</span>
+            </div>
+          </div>
+        </section>
+      </main>
+      <div aria-live="polite" style="position:fixed; left:50%; bottom:18px; transform:{{ pill.y }}; opacity:{{ pill.o }}; transition:opacity .2s, transform .3s cubic-bezier(.2,.8,.2,1); z-index:30; display:flex; align-items:center; gap:14px; padding:6px 6px 6px 18px; border-radius:999px; background:#0A0F0A; color:#EDF3E6; box-shadow:0 12px 30px rgba(10,15,10,.35); pointer-events:{{ pill.pe }}">
+        <span style="font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:22px; color:#BFF747; font-variant-numeric:tabular-nums">{{ pill.n }}</span>
+        <span style="font:700 11px/1 var(--fu); letter-spacing:.14em; text-transform:uppercase">{{ pill.label }}</span>
+        <button type="button" onClick="{{ resetGoals }}" style="height:40px; padding:0 14px; border-radius:999px; border:1px solid rgba(237,243,230,.3); background:transparent; color:#EDF3E6; font:600 12px/1 var(--fu); cursor:pointer">↺</button>
+      </div>
+      <dc-import name="SiteFooter" g="{{ g }}" lang="{{ lang }}" page="words" theme="lime" wide="{{ wide }}" links="{{ links }}" lang-links="{{ langLinks }}" store="{{ store }}" hint-size="100%,480px"></dc-import>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ printMode }}" hint-placeholder-val="{{ false }}">
+    <div data-desk="" style="background:#D9DCD4; min-height:100vh; padding:24px 16px 64px; box-sizing:border-box">
+      <div data-screen-only="" style="max-width:794px; margin:0 auto 18px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap">
+        <button type="button" onClick="{{ closePrint }}" style="height:44px; padding:0 18px; border-radius:999px; border:1.5px solid #0A0F0A; background:transparent; font:700 14px/1 var(--fu); cursor:pointer; color:#0A0F0A">← {{ g.nav.words }}</button>
+        <button type="button" onClick="{{ doPrint }}" style="height:44px; padding:0 20px; border-radius:999px; border:0; background:#0A0F0A; color:#BFF747; font:700 14px/1 var(--fu); cursor:pointer">{{ t.print }}</button>
+      </div>
+      <sc-for list="{{ sheets }}" as="sh" hint-placeholder-count="1">
+        <article data-sheet="" data-sheet-break="" style="width:794px; max-width:100%; min-height:1123px; margin:0 auto 24px; box-sizing:border-box; padding:48px 52px; background:#FFFFFF; color:#000; box-shadow:0 2px 0 rgba(0,0,0,.04), 0 18px 40px rgba(0,0,0,.14)">
+          <header style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; padding-bottom:12px; border-bottom:3px solid #000">
+            <div>
+              <div style="font:700 10px/1 var(--fu); letter-spacing:.16em; text-transform:uppercase">{{ g.brand.descriptor }} · {{ sh.n }} / 06</div>
+              <h2 style="margin:8px 0 0; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(34px * var(--k)); line-height:1; text-transform:uppercase; letter-spacing:-.01em">{{ sh.name }}</h2>
+            </div>
+            <div style="font:italic 900 20px/1 'Archivo',sans-serif; letter-spacing:-.015em; white-space:nowrap">BOMBARDIRO</div>
+          </header>
+          <p style="margin:10px 0 0; font:400 11pt/1.45 var(--fu)"><b>{{ t.tipLabel }}:</b> {{ sh.tip }}</p>
+          <sc-for list="{{ sh.levels }}" as="lv" hint-placeholder-count="2">
+            <div style="margin-top:18px">
+              <div style="display:flex; align-items:center; gap:8px; font:800 10px/1 var(--fu); letter-spacing:.16em; text-transform:uppercase; margin-bottom:8px"><span style="width:9px; height:9px; border-radius:50%; border:1.5px solid #000; background:{{ lv.pdot }}"></span>{{ lv.label }}</div>
+              <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); border-top:1px dashed #000; border-left:1px dashed #000">
+                <sc-for list="{{ lv.words }}" as="w" hint-placeholder-count="12">
+                  <div style="min-height:46px; padding:6px 8px; box-sizing:border-box; display:flex; align-items:center; justify-content:center; text-align:center; border-right:1px dashed #000; border-bottom:1px dashed #000; font-family:var(--fd); font-style:var(--fds); font-weight:800; font-size:calc(12pt * var(--k)); line-height:1.1; text-transform:uppercase">{{ w.w }}</div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+          <footer style="margin-top:18px; padding-top:8px; border-top:1px solid #000; display:flex; justify-content:space-between; gap:16px; font:400 8.5pt/1.4 var(--fu)"><span>bombardiro.app</span><span>{{ g.footer.independent }}</span></footer>
+        </article>
+      </sc-for>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { c: null, words: null, wide: true, goals: {}, print: /[?&]print=1/.test(location.search) };
+  componentDidMount() {
+    const S = window.BBSite;
+    if (!S) { this.retry = setTimeout(() => this.componentDidMount(), 50); return; }
+    Promise.all([S.copy(), S.words()]).then(([c, words]) => { this.setState({ c, words }); document.title = c.pages.words.meta.title; });
+    document.documentElement.lang = S.lang;
+    this.mq = matchMedia('(min-width: 1100px)');
+    this.onMq = () => this.setState({ wide: this.mq.matches });
+    this.onMq(); this.mq.addEventListener('change', this.onMq);
+  }
+  componentWillUnmount() { clearTimeout(this.retry); if (this.mq) this.mq.removeEventListener('change', this.onMq); }
+  renderVals() {
+    const S = window.BBSite || { FONTS: { en: {} }, lang: 'en', links: () => ({}), langLinks: () => [], badge: () => '', SITE: {} };
+    const lang = S.lang;
+    const st = this.state;
+    const c = st.c || { nav: {}, cta: {}, brand: {}, footer: {}, languageNames: {}, pages: { words: { categories: {}, howToUse: { steps: [] }, appNote: {} } } };
+    const t = c.pages.words;
+    const wide = st.wide;
+    const PER = 32;
+    const order = ['players', 'clubs', 'tactics', 'stadiums', 'legends', 'worldcup'];
+    const W = (st.words && st.words.categories) || {};
+    const total = (k) => ((W[k] || {}).easy || []).length + ((W[k] || {}).hard || []).length;
+    const cats = order.filter((k) => t.categories[k]).map((k, i) => {
+      const meta = t.categories[k];
+      const levels = [['easy', t.easyLabel, '#BFF747', '#FFFFFF'], ['hard', t.hardLabel, '#0A0F0A', '#000000']].map(([lv, label, dot, pdot]) => ({
+        label, dot, pdot,
+        words: ((W[k] || {})[lv] || []).slice(0, PER).map((w, j) => {
+          const key = k + lv + j;
+          const on = !!st.goals[key];
+          return {
+            w, pressed: on ? 'true' : 'false',
+            bg: on ? '#0A0F0A' : 'rgba(255,255,255,.28)', fg: on ? '#BFF747' : '#0A0F0A', hover: on ? '#0A0F0A' : 'rgba(255,255,255,.6)',
+            tap: () => this.setState((s) => ({ goals: { ...s.goals, [key]: !s.goals[key] } }))
+          };
+        })
+      }));
+      return { id: k, hid: 'h-' + k, href: '#' + k, n: '0' + (i + 1), name: meta.name, intro: meta.intro, tip: meta.tip, count: total(k) || '', levels };
+    });
+    const n = Object.values(st.goals).filter(Boolean).length;
+    const gl = { en: n === 1 ? 'goal' : 'goals', ru: (() => { const a = n % 10, b = n % 100; return a === 1 && b !== 11 ? 'гол' : a >= 2 && a <= 4 && (b < 12 || b > 14) ? 'гола' : 'голов'; })(), hy: 'գոլ' }[lang];
+    const L = wide
+      ? { heroPad: '64px 64px 56px', heroCols: 'minmax(0,1.3fr) minmax(0,1fr)', chipTop: '84px', chipPad: '12px 64px', catPad: '72px 64px', catCols: '360px minmax(0,1fr)', headPos: 'sticky', levelCols: '1fr 1fr', usePad: '112px 64px 120px', useCols: 'minmax(0,1fr) 520px', notePad: '36px' }
+      : { heroPad: '32px 20px 36px', heroCols: '1fr', chipTop: '64px', chipPad: '10px 20px', catPad: '44px 20px 52px', catCols: '1fr', headPos: 'static', levelCols: '1fr', usePad: '64px 20px 80px', useCols: '1fr', notePad: '26px 22px' };
+    return {
+      lang, f: S.FONTS[lang], g: c, t, wide, cats, L,
+      screen: !st.print, printMode: st.print, sheets: cats,
+      useSteps: (t.howToUse.steps || []).map((x, i) => ({ n: '0' + (i + 1), text: x })),
+      pill: { n: String(n).padStart(2, '0'), label: gl, o: n ? 1 : 0, y: n ? 'translate(-50%,0)' : 'translate(-50%,16px)', pe: n ? 'auto' : 'none' },
+      resetGoals: () => this.setState({ goals: {} }),
+      openPrint: () => { this.setState({ print: true }); scrollTo(0, 0); },
+      closePrint: () => this.setState({ print: false }),
+      doPrint: () => window.print(),
+      links: S.links(), langLinks: S.langLinks('words'), store: S.SITE.store, badge: S.badge()
+    };
+  }
+}
+</script>
+</body>
+</html>

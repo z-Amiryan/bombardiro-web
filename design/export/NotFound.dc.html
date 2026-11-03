@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&amp;family=Space+Grotesk:wght@400;500;600;700&amp;family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&amp;family=Noto+Sans+Armenian:wght@400;500;600;700;800;900&amp;display=swap">
+<link rel="icon" href="assets/favicon.png">
+<meta name="robots" content="noindex">
+<script src="site.js"></script>
+<style>
+html{background:#101418}
+body{margin:0;background:#101418;-webkit-font-smoothing:antialiased}
+a{color:#BFF747}a:hover{color:#EDF3E6}
+*:focus-visible{outline:3px solid #BFF747;outline-offset:3px;border-radius:6px}
+</style>
+</helmet>
+<div style="--fd:'Archivo',sans-serif; --fds:italic; --fu:'Space Grotesk',sans-serif; --k:1; background:#101418; color:#EDF3E6; font-family:var(--fu); min-height:100vh; display:flex; flex-direction:column; overflow-x:clip">
+  <dc-import name="SiteHeader" g="{{ g }}" lang="{{ lang }}" page="notFound" theme="night" wide="{{ wide }}" links="{{ links }}" lang-links="{{ langLinks }}" store="{{ store }}" hint-size="100%,84px"></dc-import>
+  <main id="main" style="flex:1; position:relative; overflow:hidden">
+    <div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none">
+      <div style="position:absolute; inset:0; background:radial-gradient(80% 70% at 50% 0%, #1B2329 0%, #101418 60%)"></div>
+      <div style="position:absolute; top:0; bottom:0; left:{{ L.lineX }}; width:0; border-left:3px dashed rgba(255,122,110,.75)"></div>
+      <div style="position:absolute; top:{{ L.ballY }}; left:{{ L.ballX }}; width:28px; height:28px; border-radius:50%; background:#EDF3E6; box-shadow:0 0 0 8px rgba(237,243,230,.08)"></div>
+    </div>
+    <div style="position:relative; max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.pad }}">
+      <div aria-hidden="true" style="font-family:'Archivo',sans-serif; font-style:italic; font-weight:900; font-size:clamp(88px, 16vw, 240px); line-height:.8; letter-spacing:-.04em; color:transparent; -webkit-text-stroke:1.5px rgba(237,243,230,.5)">404</div>
+      <div style="margin-top:{{ L.gap }}; display:grid; grid-template-columns:{{ L.cols }}; gap:0 48px">
+        <sc-for list="{{ blocks }}" as="b" hint-placeholder-count="3">
+          <section lang="{{ b.code }}" style="padding:24px 0 28px; border-top:1px solid rgba(237,243,230,.16); font-family:{{ b.fu }}">
+            <div style="font:700 11px/1 {{ b.fu }}; letter-spacing:.14em; text-transform:uppercase; color:#9AA59A">{{ b.name }}</div>
+            <h1 style="margin:12px 0 10px; font-family:{{ b.fd }}; font-style:{{ b.fds }}; font-weight:900; font-size:{{ b.size }}; line-height:.95; letter-spacing:-.015em; text-transform:uppercase; color:{{ b.color }}">{{ b.title }}</h1>
+            <p style="margin:0; font:400 16px/1.55 {{ b.fu }}; color:#C5CEC0; max-width:32ch; text-wrap:pretty">{{ b.text }}</p>
+            <a href="{{ b.href }}" hreflang="{{ b.code }}" style="margin-top:16px; display:inline-flex; align-items:center; gap:8px; min-height:44px; font:700 15px/1.2 {{ b.fu }}; color:#BFF747; text-decoration:none" style-hover="text-decoration:underline; text-underline-offset:5px">{{ b.home }} <span aria-hidden="true">→</span></a>
+          </section>
+        </sc-for>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { all: null, wide: true };
+  componentDidMount() {
+    const S = window.BBSite;
+    if (!S) { this.retry = setTimeout(() => this.componentDidMount(), 50); return; }
+    Promise.all(['en', 'ru', 'hy'].map((l) => S.copy(l))).then(([en, ru, hy]) => { this.setState({ all: { en, ru, hy } }); document.title = '404 · Offside · Офсайд · Օֆսայդ'; });
+    this.mq = matchMedia('(min-width: 1000px)');
+    this.onMq = () => this.setState({ wide: this.mq.matches });
+    this.onMq(); this.mq.addEventListener('change', this.onMq);
+  }
+  componentWillUnmount() { clearTimeout(this.retry); if (this.mq) this.mq.removeEventListener('change', this.onMq); }
+  renderVals() {
+    const S = window.BBSite || { FONTS: { en: {}, ru: {}, hy: {} }, lang: 'en', href: () => '', links: () => ({}), langLinks: () => [], SITE: {} };
+    const lang = S.lang;
+    const all = this.state.all;
+    const wide = this.state.wide;
+    const order = [lang].concat(['en', 'ru', 'hy'].filter((l) => l !== lang));
+    const blocks = all ? order.map((code, i) => {
+      const F = S.FONTS[code];
+      return {
+        code, name: all[code].languageNames[code], title: all[code].notFound.title, text: all[code].notFound.text, home: all[code].notFound.home,
+        href: S.href('home', code), fd: F.fd, fds: F.fds, fu: F.fu,
+        size: 'calc(' + (wide ? 56 : 44) + 'px * ' + F.k + ')', color: i === 0 ? '#EDF3E6' : '#C9D1C3'
+      };
+    }) : [];
+    const L = wide ? { pad: '72px 64px 96px', cols: 'repeat(3, minmax(0,1fr))', gap: '56px', lineX: '72%', ballX: 'calc(72% + 48px)', ballY: '140px' } : { pad: '40px 20px 64px', cols: '1fr', gap: '36px', lineX: '78%', ballX: 'calc(78% + 22px)', ballY: '96px' };
+    return { lang, g: all ? all[lang] : { nav: {}, cta: {}, languageNames: {} }, wide, blocks, L, links: S.links(), langLinks: S.langLinks('home'), store: S.SITE.store };
+  }
+}
+</script>
+</body>
+</html>

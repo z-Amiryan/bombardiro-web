@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<footer style="background:{{ f.bg }}; color:{{ f.fg }}; font-family:var(--fu); border-top:1px solid {{ f.rule }}">
+  <div style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ f.pad }}">
+    <div style="display:grid; grid-template-columns:{{ f.cols }}; gap:{{ f.gap }}; align-items:start">
+      <div style="display:flex; flex-direction:column; gap:14px">
+        <a href="{{ links.home }}" aria-label="Bombardiro" style="text-decoration:none; font-family:'Archivo',sans-serif; font-style:italic; font-weight:900; font-size:{{ f.wm }}; line-height:.86; letter-spacing:-.03em; color:{{ f.wmA }}">BOMBAR<span style="color:{{ f.wmB }}">DIRO</span></a>
+        <p style="margin:0; font:500 15px/1.4 var(--fu); color:{{ f.muted }}">{{ g.brand.tagline }}</p>
+        <a href="{{ store }}" style="display:inline-flex; align-items:center; gap:8px; min-height:44px; font:700 15px/1.2 var(--fu); color:{{ f.cta }}; text-decoration:none; width:fit-content" style-hover="text-decoration:underline; text-underline-offset:5px; text-decoration-thickness:2px">{{ g.cta.textLink }} <span aria-hidden="true">→</span></a>
+      </div>
+      <nav aria-label="{{ g.nav.primaryLabel }}" style="display:flex; flex-direction:column">
+        <sc-for list="{{ nav }}" as="n" hint-placeholder-count="7">
+          <a href="{{ n.href }}" aria-current="{{ n.current }}" style="display:flex; align-items:center; min-height:40px; font:500 15px/1.2 var(--fu); color:{{ n.color }}; text-decoration:none" style-hover="color:{{ f.hover }}">{{ n.label }}</a>
+        </sc-for>
+      </nav>
+      <div style="display:flex; flex-direction:column; gap:22px">
+        <div style="display:flex; flex-direction:column; gap:6px">
+          <span style="font:700 11px/1 var(--fu); letter-spacing:.14em; text-transform:uppercase; color:{{ f.label }}">{{ g.footer.contact }}</span>
+          <a href="mailto:bombardiro.dev@gmail.com" style="display:flex; align-items:center; min-height:40px; font:500 15px/1.2 var(--fu); color:{{ f.fg }}; text-decoration:underline; text-underline-offset:4px; text-decoration-color:{{ f.rule2 }}" style-hover="text-decoration-color:{{ f.cta }}">bombardiro.dev@gmail.com</a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px">
+          <span style="font:700 11px/1 var(--fu); letter-spacing:.14em; text-transform:uppercase; color:{{ f.label }}">{{ g.footer.follow }}</span>
+          <div style="display:flex; gap:8px; flex-wrap:wrap">
+            <sc-for list="{{ socials }}" as="s" hint-placeholder-count="2">
+              <a href="{{ s.href }}" rel="me noopener" style="display:flex; align-items:center; height:44px; padding:0 16px; border-radius:999px; border:1px solid {{ f.rule2 }}; font:600 14px/1 var(--fu); color:{{ f.fg }}; text-decoration:none" style-hover="border-color:{{ f.fg }}">{{ s.label }}</a>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:6px">
+        <span style="font:700 11px/1 var(--fu); letter-spacing:.14em; text-transform:uppercase; color:{{ f.label }}">{{ g.nav.language }}</span>
+        <sc-for list="{{ langs }}" as="l" hint-placeholder-count="3">
+          <a href="{{ l.href }}" hreflang="{{ l.code }}" lang="{{ l.code }}" aria-current="{{ l.current }}" style="display:flex; align-items:center; gap:10px; min-height:40px; font:500 15px/1.2 var(--fu); color:{{ l.color }}; text-decoration:none" style-hover="color:{{ f.hover }}"><span style="width:6px; height:6px; border-radius:50%; background:{{ l.dot }}"></span>{{ l.name }}</a>
+        </sc-for>
+      </div>
+    </div>
+    <div style="margin-top:{{ f.gap }}; padding-top:22px; border-top:1px solid {{ f.rule }}; display:grid; grid-template-columns:{{ f.fine }}; gap:14px 48px; font:400 12.5px/1.55 var(--fu); color:{{ f.muted }}">
+      <p style="margin:0; text-wrap:pretty">{{ g.footer.independent }}</p>
+      <p lang="en" style="margin:0; text-wrap:pretty">{{ g.footer.apple }}</p>
+      <p style="margin:0">{{ g.footer.copyright }}</p>
+    </div>
+  </div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;520px&quot;},&quot;g&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;ru&quot;,&quot;hy&quot;],&quot;default&quot;:&quot;en&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;page&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;night&quot;,&quot;lime&quot;,&quot;chalk&quot;],&quot;default&quot;:&quot;night&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;wide&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;links&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;},&quot;langLinks&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;array&quot;},&quot;store&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://apps.apple.com/app/id6813968416&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const g = p.g || { nav: {}, cta: {}, footer: {}, brand: {}, languageNames: {} };
+    const theme = p.theme || 'night';
+    const wide = !!p.wide;
+    const lang = p.lang || 'en';
+    const links = p.links || {};
+    const T = {
+      night: { bg: '#0A0D10', fg: '#EDF3E6', muted: '#9AA59A', label: '#9AA59A', hover: '#BFF747', cta: '#BFF747', rule: 'rgba(237,243,230,.1)', rule2: 'rgba(237,243,230,.22)', wmA: '#EDF3E6', wmB: '#BFF747', on: '#EDF3E6', off: '#C9D1C3', dot: '#BFF747' },
+      lime: { bg: '#0A0F0A', fg: '#EDF3E6', muted: '#9AA59A', label: '#9AA59A', hover: '#BFF747', cta: '#BFF747', rule: 'rgba(237,243,230,.12)', rule2: 'rgba(237,243,230,.24)', wmA: '#EDF3E6', wmB: '#BFF747', on: '#EDF3E6', off: '#C9D1C3', dot: '#BFF747' },
+      chalk: { bg: '#DEE5D5', fg: '#12180F', muted: '#3E4A3B', label: '#3E4A3B', hover: '#0A7C39', cta: '#0A7C39', rule: 'rgba(18,24,15,.16)', rule2: 'rgba(18,24,15,.3)', wmA: '#12180F', wmB: '#0A7C39', on: '#12180F', off: '#2E372B', dot: '#0A7C39' }
+    }[theme];
+    const f = {
+      ...T,
+      pad: wide ? '72px 64px 40px' : '48px 20px 32px',
+      cols: wide ? '1.4fr 1fr 1.2fr 1fr' : '1fr',
+      gap: wide ? '56px' : '36px',
+      wm: wide ? '64px' : '44px',
+      fine: wide ? '1.4fr 1.6fr .6fr' : '1fr'
+    };
+    const keys = ['home', 'howToPlay', 'words', 'guides', 'support', 'about', 'privacy'];
+    const nav = keys.map((k) => ({
+      label: g.nav[k], href: links[k],
+      current: p.page === k || (k === 'guides' && p.page === 'guide') ? 'page' : undefined,
+      color: p.page === k ? T.on : T.off
+    }));
+    const socials = [];
+    if (lang !== 'ru') socials.push({ label: 'Instagram', href: 'https://www.instagram.com/playbombardiro/' });
+    socials.push({ label: 'TikTok', href: 'https://www.tiktok.com/@playbombardiro' });
+    const langs = (p.langLinks || []).map((l) => ({
+      code: l.code, href: l.href, name: (g.languageNames || {})[l.code],
+      current: l.code === lang ? 'true' : undefined,
+      color: l.code === lang ? T.on : T.off,
+      dot: l.code === lang ? T.dot : 'transparent'
+    }));
+    return { g, f, nav, socials, langs, links, store: p.store || 'https://apps.apple.com/app/id6813968416' };
+  }
+}
+</script>
+</body>
+</html>

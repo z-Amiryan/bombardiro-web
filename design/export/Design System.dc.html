@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,700;0,900;1,900&amp;family=Space+Grotesk:wght@400;500;600;700&amp;family=Noto+Sans:ital,wght@0,400;0,700;1,900&amp;family=Noto+Sans+Armenian:wght@400;700;900&amp;display=swap">
+<style>
+body{margin:0;background:#F2F1EC;color:#1a1a1a;font-family:'Space Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#0A7C39}a:hover{color:#1a1a1a}
+</style>
+</helmet>
+<div style="max-width:1280px; margin:0 auto; padding:56px 40px 120px; box-sizing:border-box">
+  <div style="font:700 11px/1 'Space Grotesk',sans-serif; letter-spacing:.16em; text-transform:uppercase; color:#0A7C39">Bombardiro web · v1</div>
+  <h1 style="margin:12px 0 10px; font:italic 900 clamp(44px, 6vw, 84px)/.9 'Archivo',sans-serif; letter-spacing:-.025em; text-transform:uppercase">Design system</h1>
+  <p style="margin:0; max-width:70ch; font:400 17px/1.55 'Space Grotesk',sans-serif; color:#333">Tokens, components, states and motion for the Astro build. Every page uses one of three surfaces. Values here are the source of truth; the prototype pages use the same literals.</p>
+
+  <h2 style="margin:64px 0 18px; font:italic 900 32px/1 'Archivo',sans-serif; text-transform:uppercase">1 · Surfaces and colour</h2>
+  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:20px">
+    <sc-for list="{{ themes }}" as="th" hint-placeholder-count="3">
+      <div style="border-radius:18px; overflow:hidden; border:1px solid rgba(0,0,0,.1); background:#fff">
+        <div style="padding:22px; background:{{ th.bg }}; color:{{ th.fg }}">
+          <div style="font:700 11px/1 'Space Grotesk',sans-serif; letter-spacing:.14em; text-transform:uppercase; opacity:.8">{{ th.pages }}</div>
+          <div style="margin-top:10px; font:italic 900 34px/1 'Archivo',sans-serif; text-transform:uppercase">{{ th.name }}</div>
+        </div>
+        <sc-for list="{{ th.sw }}" as="s" hint-placeholder-count="6">
+          <div style="display:grid; grid-template-columns:40px minmax(0,1fr) auto; gap:12px; align-items:center; padding:10px 16px; border-top:1px solid rgba(0,0,0,.06)">
+            <span style="width:40px; height:28px; border-radius:6px; background:{{ s.hex }}; box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)"></span>
+            <span style="font:500 13px/1.3 'Space Grotesk',sans-serif">{{ s.name }}<br><span style="color:#666; font-size:12px">{{ s.use }}</span></span>
+            <code style="font:500 12px ui-monospace,Menlo,monospace; color:#333">{{ s.hex }}</code>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+  </div>
+  <p style="margin:14px 0 0; font:400 13px/1.5 'Space Grotesk',sans-serif; color:#555">Contrast: body text on Night (#C5CEC0 on #101418) 11.6:1; muted #9AA59A 7.0:1; lime on Night 15:1. Ink on Lime 15:1. #0A7C39 on Chalk 5.2:1, so it's used for text and links, while #0E9C49 is used only for display type at 24 px and above, or for decoration. Alarm #FF7A6E on Night 7.1:1.</p>
+
+  <h2 style="margin:64px 0 18px; font:italic 900 32px/1 'Archivo',sans-serif; text-transform:uppercase">2 · Type, per script</h2>
+  <div style="display:flex; flex-direction:column; gap:14px">
+    <sc-for list="{{ scripts }}" as="sc" hint-placeholder-count="3">
+      <div lang="{{ sc.code }}" style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:24px; padding:24px; border-radius:18px; background:#101418; color:#EDF3E6">
+        <div>
+          <div style="font:700 11px/1 'Space Grotesk',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#BFF747">{{ sc.label }}</div>
+          <div style="margin-top:12px; font-family:{{ sc.fd }}; font-style:{{ sc.fds }}; font-weight:900; font-size:{{ sc.size }}; line-height:.95; text-transform:uppercase; letter-spacing:-.015em">{{ sc.h }}</div>
+          <p style="margin:12px 0 0; font-family:{{ sc.fu }}; font-size:16px; line-height:1.55; color:#C5CEC0">{{ sc.body }}</p>
+        </div>
+        <div style="font:400 13px/1.6 ui-monospace,Menlo,monospace; color:#C9D1C3; white-space:pre-line">{{ sc.spec }}</div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="margin-top:16px; overflow-x:auto">
+    <table style="width:100%; border-collapse:collapse; font:400 14px/1.4 'Space Grotesk',sans-serif; background:#fff; border-radius:14px; overflow:hidden">
+      <thead><tr style="background:#1a1a1a; color:#fff"><th style="text-align:left; padding:10px 14px">Token</th><th style="text-align:left; padding:10px 14px">Phone (390)</th><th style="text-align:left; padding:10px 14px">Desktop (1440)</th><th style="text-align:left; padding:10px 14px">Style</th></tr></thead>
+      <tbody>
+        <sc-for list="{{ scale }}" as="r" hint-placeholder-count="8">
+          <tr><td style="padding:9px 14px; border-top:1px solid #eee"><code>{{ r.t }}</code></td><td style="padding:9px 14px; border-top:1px solid #eee">{{ r.p }}</td><td style="padding:9px 14px; border-top:1px solid #eee">{{ r.d }}</td><td style="padding:9px 14px; border-top:1px solid #eee; color:#555">{{ r.s }}</td></tr>
+        </sc-for>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 style="margin:64px 0 18px; font:italic 900 32px/1 'Archivo',sans-serif; text-transform:uppercase">3 · Space, radius, layout</h2>
+  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:20px">
+    <div style="background:#fff; border-radius:18px; padding:20px; border:1px solid rgba(0,0,0,.08)">
+      <div style="font:700 12px/1 'Space Grotesk',sans-serif; letter-spacing:.1em; text-transform:uppercase; margin-bottom:12px">Spacing (px)</div>
+      <sc-for list="{{ space }}" as="s" hint-placeholder-count="8">
+        <div style="display:flex; align-items:center; gap:12px; height:24px"><code style="width:48px; font:500 12px ui-monospace,monospace">{{ s.n }}</code><span style="height:10px; width:{{ s.w }}; background:#BFF747; border:1px solid #0A0F0A; border-radius:2px"></span></div>
+      </sc-for>
+    </div>
+    <div style="background:#fff; border-radius:18px; padding:20px; border:1px solid rgba(0,0,0,.08); font:400 14px/1.7 'Space Grotesk',sans-serif">
+      <div style="font:700 12px/1 'Space Grotesk',sans-serif; letter-spacing:.1em; text-transform:uppercase; margin-bottom:12px">Radius</div>
+      <code>r-sm 6–10</code> chips, word buttons, table cells<br><code>r-md 12–18</code> notes, cards, tip box<br><code>r-lg 22–28</code> contact and press panels<br><code>r-shot 36–40</code> app screenshots (matches the iPhone screen corner)<br><code>pill 999</code> buttons, language pills<br><code>skew -8°</code> primary CTA only, the app's button shape
+    </div>
+    <div style="background:#fff; border-radius:18px; padding:20px; border:1px solid rgba(0,0,0,.08); font:400 14px/1.7 'Space Grotesk',sans-serif">
+      <div style="font:700 12px/1 'Space Grotesk',sans-serif; letter-spacing:.1em; text-transform:uppercase; margin-bottom:12px">Layout</div>
+      Max width 1440; gutters 20 (phone) / 64 (desktop).<br>Breakpoint <code>wide ≥ 1100</code> for Home, How to play, Words and Guide; <code>≥ 1000</code> for the simpler pages. The whistle toggle shows at <code>≥ 1320</code>.<br>Header 64 / 84, sticky, with a 14 px backdrop blur.<br>Reading measure 66ch; article column 720.
+    </div>
+  </div>
+
+  <h2 style="margin:64px 0 18px; font:italic 900 32px/1 'Archivo',sans-serif; text-transform:uppercase">4 · Components and states</h2>
+  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(360px,1fr)); gap:20px">
+    <sc-for list="{{ comps }}" as="c" hint-placeholder-count="6">
+      <div style="background:{{ c.bg }}; color:{{ c.fg }}; border-radius:18px; padding:22px; border:1px solid rgba(0,0,0,.08)">
+        <div style="font:700 12px/1 'Space Grotesk',sans-serif; letter-spacing:.1em; text-transform:uppercase">{{ c.name }}</div>
+        <div style="margin-top:6px; font:400 12.5px/1.5 'Space Grotesk',sans-serif; opacity:.8">{{ c.where }}</div>
+        <div style="margin-top:16px; display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end">
+          <sc-for list="{{ c.states }}" as="s" hint-placeholder-count="4">
+            <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-start">
+              <span style="display:inline-flex; align-items:center; gap:8px; height:{{ s.h }}; padding:0 {{ s.px }}; border-radius:{{ s.r }}; background:{{ s.bg }}; color:{{ s.fg }}; border:{{ s.b }}; outline:{{ s.o }}; outline-offset:3px; transform:{{ s.tf }}; font:700 14px/1 'Space Grotesk',sans-serif; text-decoration:{{ s.td }}; text-underline-offset:5px; box-shadow:{{ s.sh }}">{{ s.label }}</span>
+              <span style="font:500 10.5px ui-monospace,monospace; opacity:.75">{{ s.state }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="margin-top:20px; background:#fff; border-radius:18px; padding:22px; border:1px solid rgba(0,0,0,.08)">
+    <div style="font:700 12px/1 'Space Grotesk',sans-serif; letter-spacing:.1em; text-transform:uppercase; margin-bottom:10px">Component list (Astro)</div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:6px 24px; font:400 14px/1.55 'Space Grotesk',sans-serif">
+      <sc-for list="{{ complist }}" as="x" hint-placeholder-count="12"><div><code style="font-weight:600">{{ x.n }}</code> <span style="color:#555">{{ x.d }}</span></div></sc-for>
+    </div>
+  </div>
+
+  <h2 style="margin:64px 0 18px; font:italic 900 32px/1 'Archivo',sans-serif; text-transform:uppercase">5 · Motion</h2>
+  <p style="margin:0 0 14px; max-width:80ch; font:400 15px/1.55 'Space Grotesk',sans-serif; color:#333">Easing tokens: <code>--ease-out: cubic-bezier(.2,.8,.2,1)</code> for most UI · <code>--ease-in: cubic-bezier(.4,0,1,1)</code> for exits · <code>--ease-spring: cubic-bezier(.3,1.3,.5,1)</code> for flips only. Nothing is animated before first paint, and every H1 is static text.</p>
+  <div style="overflow-x:auto">
+    <table style="width:100%; min-width:980px; border-collapse:collapse; font:400 13.5px/1.45 'Space Grotesk',sans-serif; background:#fff; border-radius:14px; overflow:hidden">
+      <thead><tr style="background:#1a1a1a; color:#fff"><th style="text-align:left; padding:10px 12px">Motion</th><th style="text-align:left; padding:10px 12px">Trigger</th><th style="text-align:left; padding:10px 12px">Duration · easing</th><th style="text-align:left; padding:10px 12px">Build</th><th style="text-align:left; padding:10px 12px; background:#0A7C39">Reduced motion</th></tr></thead>
+      <tbody>
+        <sc-for list="{{ motion }}" as="m" hint-placeholder-count="12">
+          <tr><td style="padding:10px 12px; border-top:1px solid #eee; font-weight:700; vertical-align:top">{{ m.n }}</td><td style="padding:10px 12px; border-top:1px solid #eee; vertical-align:top">{{ m.t }}</td><td style="padding:10px 12px; border-top:1px solid #eee; vertical-align:top"><code>{{ m.d }}</code></td><td style="padding:10px 12px; border-top:1px solid #eee; color:#444; vertical-align:top">{{ m.b }}</td><td style="padding:10px 12px; border-top:1px solid #eee; vertical-align:top; background:#F3FBE2">{{ m.r }}</td></tr>
+        </sc-for>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 style="margin:64px 0 18px; font:italic 900 32px/1 'Archivo',sans-serif; text-transform:uppercase">6 · Icons</h2>
+  <div style="display:flex; gap:24px; align-items:center; flex-wrap:wrap; background:#fff; border-radius:18px; padding:22px; border:1px solid rgba(0,0,0,.08)">
+    <img src="assets/icon.png" alt="App icon" width="96" height="96" style="width:96px; height:96px; border-radius:22%">
+    <img src="assets/icon.png" alt="" width="48" height="48" style="width:48px; height:48px; border-radius:22%">
+    <img src="assets/favicon.png" alt="Favicon" width="32" height="32" style="width:32px; height:32px">
+    <p style="margin:0; flex:1; min-width:280px; font:400 14px/1.6 'Space Grotesk',sans-serif; color:#333">There's no new mark: the app icon is used unchanged. <code>apple-touch-icon</code> 180×180 is cut from <code>brand/icon.png</code> with no transparency. <code>favicon.svg</code> is unchanged, with <code>favicon.ico</code> 32 as a fallback. <code>theme-color</code> is <code>#101418</code> for Night pages, <code>#BFF747</code> for Words and <code>#EEF2E9</code> for Chalk pages.</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const themes = [
+      { name: 'Night', pages: 'Home · How to play · Support · About · 404', bg: '#101418', fg: '#EDF3E6', sw: [
+        { name: 'night-bg', use: 'page', hex: '#101418' }, { name: 'night-deep', use: 'bands, footer', hex: '#0C1013' }, { name: 'night-raise', use: 'pill, list rows', hex: '#192025' },
+        { name: 'ink-hi', use: 'headings', hex: '#EDF3E6' }, { name: 'ink-body', use: 'body text', hex: '#C5CEC0' }, { name: 'ink-muted', use: 'meta, inactive', hex: '#9AA59A' },
+        { name: 'lime', use: 'accent, focus ring, CTA', hex: '#BFF747' }, { name: 'alarm', use: 'last 10 s, offside line', hex: '#FF7A6E' }] },
+      { name: 'Lime', pages: 'Words · Home words band', bg: '#BFF747', fg: '#0A0F0A', sw: [
+        { name: 'lime-hi', use: 'gradient top', hex: '#D4FA78' }, { name: 'lime', use: 'surface', hex: '#BFF747' }, { name: 'lime-low', use: 'gradient end', hex: '#ACE638' }, { name: 'lime-bar', use: 'counter bar', hex: '#B9F23F' },
+        { name: 'ink', use: 'all text, rules', hex: '#0A0F0A' }, { name: 'ink-soft', use: 'secondary text', hex: '#33441A' }] },
+      { name: 'Chalk', pages: 'Guides · Guide · Privacy', bg: '#EEF2E9', fg: '#12180F', sw: [
+        { name: 'chalk', use: 'page', hex: '#EEF2E9' }, { name: 'chalk-deep', use: 'notes, footer', hex: '#DEE5D5' }, { name: 'paper', use: 'cards, tables', hex: '#FFFFFF' },
+        { name: 'ink', use: 'headings', hex: '#12180F' }, { name: 'ink-body', use: 'body', hex: '#1E261B' }, { name: 'ink-muted', use: 'meta', hex: '#4F5A4C' },
+        { name: 'grass', use: 'links, labels', hex: '#0A7C39' }, { name: 'grass-bright', use: 'display ≥24 px, progress', hex: '#0E9C49' }] }
+    ];
+    const scripts = [
+      { code: 'en', label: 'Latin · EN', fd: "'Archivo',sans-serif", fds: 'italic', fu: "'Space Grotesk',sans-serif", size: '56px', h: 'Describe it. Score.', body: 'Bombardiro is a party word game for football fans.', spec: 'display  Archivo 900 italic, UPPERCASE\nbody     Space Grotesk 400/500/700\nscale k  1.00\nsubset   latin + latin-ext (≈ 38 KB woff2 total)' },
+      { code: 'ru', label: 'Cyrillic · RU', fd: "'Noto Sans',sans-serif", fds: 'italic', fu: "'Noto Sans',sans-serif", size: '54px', h: 'Объясняй. Забивай.', body: 'Bombardiro — игра в слова для тех, кто любит футбол.', spec: 'display  Noto Sans 900 italic, UPPERCASE\nbody     Noto Sans 400/500/700\nscale k  0.95 (copy runs 20–30% longer)\nsubset   cyrillic only' },
+      { code: 'hy', label: 'Armenian · HY', fd: "'Noto Sans Armenian',sans-serif", fds: 'normal', fu: "'Noto Sans Armenian',sans-serif", size: '44px', h: 'Գոլ խփիր։', body: 'Bombardiro-ն բառախաղ է ֆուտբոլասերների համար։', spec: 'display  Noto Sans Armenian 900 UPRIGHT\n         (no italic cut; never synthesise one)\nbody     Noto Sans Armenian 400/500/700\nscale k  0.80, text-wrap: balance, no hyphens\nsubset   armenian only' }
+    ];
+    const scale = [
+      { t: 'display-xxl', p: '96–140 (clock)', d: '296 (clock)', s: 'display 900 · lh .8 · tabular' },
+      { t: 'display-xl', p: '38–56 × k', d: '86–92 × k', s: 'H1 · lh .92 · ls -.015em' },
+      { t: 'display-l', p: '36–44 × k', d: '64–108 × k', s: 'H2 sections · lh .95' },
+      { t: 'display-m', p: '30 × k', d: '48–52 × k', s: 'H3 beats, card words' },
+      { t: 'display-s', p: '22–24 × k', d: '24–26 × k', s: 'list titles, values' },
+      { t: 'lead', p: '16–18', d: '18–22', s: 'body 500 · lh 1.5' },
+      { t: 'body', p: '16–17', d: '16–19', s: 'body 400 · lh 1.55–1.7' },
+      { t: 'label', p: '11–12', d: '12', s: 'body 600–700 · UPPER · ls .14–.16em' }
+    ];
+    const space = [4, 8, 12, 16, 20, 24, 32, 40, 56, 64, 96, 120].map((n) => ({ n, w: n * 2 + 'px' }));
+    const ring = '3px solid #BFF747';
+    const comps = [
+      { name: 'Text CTA link', where: 'Header "Get the app", section links. The only other App Store route besides the badge.', bg: '#101418', fg: '#EDF3E6', states: [
+        { state: 'default', label: 'Full rules →', h: '44px', px: '0', r: '0', bg: 'transparent', fg: '#BFF747', b: '0', o: 'none', tf: 'none', td: 'none', sh: 'none' },
+        { state: 'hover', label: 'Full rules →', h: '44px', px: '0', r: '0', bg: 'transparent', fg: '#BFF747', b: '0', o: 'none', tf: 'none', td: 'underline', sh: 'none' },
+        { state: 'focus', label: 'Full rules →', h: '44px', px: '6px', r: '6px', bg: 'transparent', fg: '#BFF747', b: '0', o: ring, tf: 'none', td: 'none', sh: 'none' }] },
+      { name: 'Primary skew CTA', where: 'Home finale only. The app\u2019s PLAY button shape.', bg: '#101418', fg: '#EDF3E6', states: [
+        { state: 'default', label: 'GET THE APP →', h: '56px', px: '26px', r: '14px', bg: 'linear-gradient(100deg,#C8FA55,#8CC81E)', fg: '#0A0F0A', b: '0', o: 'none', tf: 'skewX(-8deg)', td: 'none', sh: '0 12px 32px rgba(191,247,71,.22)' },
+        { state: 'hover −2px', label: 'GET THE APP →', h: '56px', px: '26px', r: '14px', bg: 'linear-gradient(100deg,#D4FF66,#99D42A)', fg: '#0A0F0A', b: '0', o: 'none', tf: 'skewX(-8deg) translateY(-2px)', td: 'none', sh: '0 16px 36px rgba(191,247,71,.3)' },
+        { state: 'active .97', label: 'GET THE APP →', h: '56px', px: '26px', r: '14px', bg: 'linear-gradient(100deg,#B5E84A,#7DB81A)', fg: '#0A0F0A', b: '0', o: 'none', tf: 'skewX(-8deg) scale(.97)', td: 'none', sh: 'none' }] },
+      { name: 'Pill button', where: 'Words "Print", "See the words", copy buttons.', bg: '#BFF747', fg: '#0A0F0A', states: [
+        { state: 'default', label: 'Print this list', h: '48px', px: '22px', r: '999px', bg: '#0A0F0A', fg: '#BFF747', b: '0', o: 'none', tf: 'none', td: 'none', sh: 'none' },
+        { state: 'hover', label: 'Print this list', h: '48px', px: '22px', r: '999px', bg: '#0A0F0A', fg: '#BFF747', b: '0', o: 'none', tf: 'translateY(-2px)', td: 'none', sh: '0 8px 18px rgba(10,15,10,.25)' },
+        { state: 'focus', label: 'Print this list', h: '48px', px: '22px', r: '999px', bg: '#0A0F0A', fg: '#BFF747', b: '0', o: '3px solid #0A0F0A', tf: 'none', td: 'none', sh: 'none' }] },
+      { name: 'Word button (tap to score)', where: 'Words page, Home band. aria-pressed toggles.', bg: '#BFF747', fg: '#0A0F0A', states: [
+        { state: 'default', label: 'OFFSIDE', h: '44px', px: '14px', r: '10px', bg: 'rgba(255,255,255,.28)', fg: '#0A0F0A', b: '1.5px solid #0A0F0A', o: 'none', tf: 'none', td: 'none', sh: 'none' },
+        { state: 'hover', label: 'OFFSIDE', h: '44px', px: '14px', r: '10px', bg: 'rgba(255,255,255,.6)', fg: '#0A0F0A', b: '1.5px solid #0A0F0A', o: 'none', tf: 'none', td: 'none', sh: 'none' },
+        { state: 'pressed = goal', label: 'OFFSIDE', h: '44px', px: '14px', r: '10px', bg: '#0A0F0A', fg: '#BFF747', b: '1.5px solid #0A0F0A', o: 'none', tf: 'none', td: 'none', sh: 'none' }] },
+      { name: 'Nav link', where: 'Header (desktop). Current page gets an underline, which scales in from the left.', bg: '#101418', fg: '#EDF3E6', states: [
+        { state: 'default', label: 'Words', h: '44px', px: '12px', r: '0', bg: 'transparent', fg: '#C9D1C3', b: '0', o: 'none', tf: 'none', td: 'none', sh: 'none' },
+        { state: 'hover', label: 'Words', h: '44px', px: '12px', r: '0', bg: 'transparent', fg: '#EDF3E6', b: '0', o: 'none', tf: 'none', td: 'none', sh: 'none' },
+        { state: 'current', label: 'Words', h: '44px', px: '12px', r: '0', bg: 'transparent', fg: '#EDF3E6', b: '0', o: 'none', tf: 'none', td: 'underline', sh: 'none' }] },
+      { name: 'Chalk link / card', where: 'Guides hub cards, related links, inline links.', bg: '#EEF2E9', fg: '#12180F', states: [
+        { state: 'default', label: 'Read the guide →', h: '44px', px: '14px', r: '0', bg: 'transparent', fg: '#0A7C39', b: '0', o: 'none', tf: 'none', td: 'underline', sh: 'none' },
+        { state: 'card hover', label: 'Read the guide →', h: '44px', px: '14px', r: '0', bg: '#E3EADB', fg: '#12180F', b: '0', o: 'none', tf: 'none', td: 'none', sh: 'none' },
+        { state: 'focus', label: 'Read the guide →', h: '44px', px: '14px', r: '6px', bg: 'transparent', fg: '#0A7C39', b: '0', o: '3px solid #0A7C39', tf: 'none', td: 'underline', sh: 'none' }] }
+    ];
+    const complist = [
+      ['SiteHeader', 'theme night|lime|chalk, sticky, skip link, language links, mobile sheet'], ['SiteFooter', 'nav, contact, socials (no Instagram on RU), disclaimers'],
+      ['AppStoreBadge', 'Apple artwork, h 48, 12 px clear space, once per page'], ['QrToStore', 'desktop only, beside the badge; static SVG from the build'],
+      ['MatchClock', 'Home hero clock + bar, CSS scroll timeline'], ['ClockPill', 'fixed mini clock while the turn section is in view'],
+      ['TurnBeat', 'time stamp, title, text, real screen'], ['PinnedScreen', 'desktop sticky screenshot, crossfades between beats'],
+      ['WordWall', 'marquee rows of word buttons, pause control'], ['WordButton', 'tap to score, aria-pressed'],
+      ['GoalCounter', 'live region, plural rules per language'], ['FeatureRow', 'text + screen, alternating'],
+      ['Accordion', 'button[aria-expanded] + grid-rows transition'], ['SettingsList', 'dl: label, value, explanation'],
+      ['CategoryChips', 'sticky anchor chips with counts'], ['PrintSheet', 'A4 cut sheet per category'],
+      ['GuideCard', 'kicker, title, text, read time'], ['ShortAnswer', 'answer-first box, hard shadow'],
+      ['Toc', 'sticky, tracks the current section; <details> on phone'], ['CompareTable', 'classic vs Bombardiro'],
+      ['AppCard', 'in-article Night card with the badge'], ['ReadingProgress', '3 px bar, scroll timeline'],
+      ['VideoFrame', '25 s recording, poster, muted, no autoplay'], ['WhistleToggle', 'sound off by default, aria-pressed']
+    ].map(([n, d]) => ({ n, d }));
+    const motion = [
+      { n: 'Match clock', t: 'Scroll through Home: hero → beat 4', d: 'scroll-linked · linear', b: 'animation-timeline: view() on #turn with keyframes 60→0 through a custom property; ≈1 KB JS fallback (rAF + IntersectionObserver)', r: 'Static 01:00. Each beat shows its own time stamp; nothing counts.' },
+      { n: 'Clock goes red', t: 'Clock ≤ 10 s', d: '300ms · ease-out', b: 'color transition', r: 'Beats 3–4 show red stamps statically.' },
+      { n: 'Pinned screen swap', t: 'Beat crosses 50% of the viewport (desktop)', d: '350ms opacity + 500ms translateY 14px · ease-out', b: 'IntersectionObserver toggles a data-active attribute', r: 'Opacity crossfade only, 150ms.' },
+      { n: 'Clock pill', t: 'Turn section in view', d: '250ms opacity, 300ms translateY 16→0 · ease-out', b: 'IntersectionObserver', r: 'Hidden.' },
+      { n: 'Whistle', t: 'Clock reaches 00:00, only if the toggle is on', d: '0.8s audio', b: 'Lazy-loads whistle.m4a (≈12 KB) on first toggle', r: 'Same: sound is user-initiated.' },
+      { n: 'Word wall drift', t: 'Always while visible', d: '46–70s per loop · linear', b: 'CSS keyframes translate3d; paused when off-screen (IO) or with the Pause button (WCAG 2.2.2)', r: 'animation: none. The rows are still and scroll sideways by hand.' },
+      { n: 'Score a word', t: 'Tap / Enter / Space', d: '180ms bg + colour · ease-out', b: 'aria-pressed toggles', r: 'Instant swap.' },
+      { n: 'Floodlight shader (optional)', t: 'Idle after load, if deviceMemory ≥ 4 and no Save-Data', d: 'continuous, 30 fps cap', b: '≤ 5 KB WebGL fragment shader behind the CSS cones; the CSS cones are the fallback', r: 'Not loaded.' },
+      { n: 'Accordion', t: 'Click on a question', d: '280ms grid-template-rows 0fr→1fr · ease-out; icon rotates 45° in 240ms', b: 'CSS transition', r: 'Instant open.' },
+      { n: 'Card hover lift', t: 'Pointer hover', d: '160ms translateY(-2px) · ease-out', b: '@media (hover:hover) only', r: 'Colour change only.' },
+      { n: 'Page transition', t: 'Same-origin navigation', d: 'old 220ms fade + up 12px (ease-in) · new 320ms fade + up 16px (ease-out)', b: 'Cross-document View Transitions (@view-transition)', r: '150ms crossfade, no movement.' },
+      { n: 'Mobile menu', t: 'Menu button', d: '220ms opacity, 320ms translateY -12→0 · ease-out', b: 'Focus moves into the sheet; Esc closes it', r: 'Opacity only.' },
+      { n: 'Reading progress', t: 'Scroll on Guide', d: 'scroll-linked', b: 'animation-timeline: scroll(root)', r: 'Hidden.' },
+      { n: 'Nav underline', t: 'Current page / hover', d: '240ms scaleX · ease-out', b: 'CSS', r: 'Shown statically.' }
+    ];
+    return { themes, scripts, scale, space, comps, complist, motion };
+  }
+}
+</script>
+</body>
+</html>

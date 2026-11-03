@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&amp;family=Space+Grotesk:wght@400;500;600;700&amp;family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&amp;family=Noto+Sans+Armenian:wght@400;500;600;700;800;900&amp;display=swap">
+<link rel="icon" href="assets/favicon.png">
+<meta name="description" content="Describe footballers, clubs and stadiums without saying the word while your team races the clock. One phone, 2–4 teams, offline. Free on iPhone and iPad.">
+<script src="site.js"></script>
+<script src="bb-copy.js"></script>
+<style>
+html{background:#101418;scroll-behavior:smooth}
+body{margin:0;background:#101418;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:#BFF747}a:hover{color:#EDF3E6}
+*:focus-visible{outline:3px solid #BFF747;outline-offset:3px;border-radius:6px}
+*:focus:not(:focus-visible){outline:none}
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:bbOut .22s cubic-bezier(.4,0,1,1) both}
+::view-transition-new(root){animation:bbIn .32s cubic-bezier(0,0,.2,1) both}
+@keyframes bbOut{to{opacity:0;transform:translateY(-12px)}}
+@keyframes bbIn{from{opacity:0;transform:translateY(16px)}}
+@keyframes bbMarqL{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+@keyframes bbMarqR{from{transform:translate3d(-50%,0,0)}to{transform:translate3d(0,0,0)}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;transform:none}}
+</style>
+</helmet>
+<div lang="{{ lang }}" style="--fd: {{ f.fd }}; --fds: {{ f.fds }}; --fu: {{ f.fu }}; --k: {{ f.k }}; background:#101418; color:#EDF3E6; font-family:var(--fu); min-height:100vh; overflow-x:clip">
+  <dc-import name="SiteHeader" g="{{ g }}" lang="{{ lang }}" page="home" theme="night" wide="{{ wide }}" links="{{ links }}" lang-links="{{ langLinks }}" store="{{ store }}" on-whistle="{{ toggleWhistle }}" whistle-on="{{ whistle }}" whistle-label="{{ whistleLabel }}" hint-size="100%,84px"></dc-import>
+
+  <div aria-hidden="true" style="position:fixed; left:0; right:0; top:0; height:3px; z-index:55; pointer-events:none; opacity:{{ k.barTop }}; transition:opacity .3s">
+    <div style="height:3px; background:{{ k.barColor }}; transform:{{ k.barScale }}; transform-origin:0 50%"></div>
+  </div>
+  <div aria-hidden="true" style="position:fixed; left:50%; bottom:20px; z-index:40; pointer-events:none; transform:{{ k.pillShift }}; opacity:{{ k.pill }}; transition:opacity .25s, transform .3s cubic-bezier(.2,.8,.2,1); display:flex; align-items:center; gap:12px; padding:11px 18px; border-radius:999px; background:#192025; border:1px solid rgba(237,243,230,.14); box-shadow:0 12px 32px rgba(0,0,0,.45)">
+    <span style="font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:22px; line-height:1; font-variant-numeric:tabular-nums; color:{{ k.clockColor }}">{{ k.clock }}</span>
+    <span style="width:64px; height:4px; border-radius:2px; background:rgba(237,243,230,.12); overflow:hidden; display:block"><span style="display:block; height:4px; background:{{ k.barColor }}; transform:{{ k.barScale }}; transform-origin:0 50%"></span></span>
+  </div>
+
+  <main id="main">
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+      <section style="position:relative; overflow:hidden; min-height:calc(100svh - 84px); box-sizing:border-box; max-width:1440px; margin:0 auto; padding:36px 64px 64px; display:grid; grid-template-columns:minmax(0,1fr) 388px; grid-template-rows:minmax(0,1fr) auto auto; column-gap:96px">
+        <div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none">
+          <div style="position:absolute; inset:0; background:radial-gradient(80% 75% at 50% 0%, #1B2329 0%, #101418 58%)"></div>
+          <div style="position:absolute; left:-20px; top:-170px; width:560px; height:1300px; transform-origin:50% 0; transform:rotate(-36deg); background:linear-gradient(180deg, rgba(237,243,230,.12) 0%, rgba(237,243,230,.035) 48%, rgba(237,243,230,0) 78%); clip-path:polygon(45% 0, 55% 0, 100% 100%, 0 100%)"></div>
+          <div style="position:absolute; right:-20px; top:-170px; width:560px; height:1300px; transform-origin:50% 0; transform:rotate(36deg); background:linear-gradient(180deg, rgba(237,243,230,.12) 0%, rgba(237,243,230,.035) 48%, rgba(237,243,230,0) 78%); clip-path:polygon(45% 0, 55% 0, 100% 100%, 0 100%)"></div>
+        </div>
+        <div style="grid-column:1; grid-row:3; position:relative">
+          <div style="display:flex; align-items:center; gap:10px; font:600 12px/1 var(--fu); letter-spacing:.16em; text-transform:uppercase; color:#BFF747"><span style="width:18px; height:3px; border-radius:2px; background:#BFF747"></span>{{ t.eyebrow }}</div>
+          <h1 style="margin:20px 0 0; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(64px, 6vw, 92px) * var(--k)); line-height:.92; letter-spacing:-.015em; text-transform:uppercase"><span style="display:block">{{ h1.a }}</span> <span style="display:block">{{ h1.b }}</span> <span style="display:block; color:#BFF747">{{ h1.c }}</span></h1>
+        </div>
+        <div style="grid-column:2; grid-row:3; position:relative; padding-top:34px">
+          <p style="margin:0; font:400 18px/1.55 var(--fu); color:#C5CEC0; text-wrap:pretty">{{ t.lead }}</p>
+          <div style="display:flex; align-items:center; gap:16px; margin-top:28px">
+            <a href="{{ store }}" style="display:block; line-height:0; flex:none; padding:0; border-radius:8px"><img src="{{ badge }}" alt="{{ g.cta.badgeAlt }}" height="48" style="height:48px; width:auto; display:block"></a>
+            <span style="font:500 13px/1.35 var(--fu); color:#9AA59A; max-width:16ch">{{ g.cta.availability }}</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:16px; margin-top:22px; padding-top:22px; border-top:1px dashed rgba(237,243,230,.16)">
+            <div aria-hidden="true" style="width:84px; height:84px; flex:none; border-radius:10px; border:1px solid rgba(237,243,230,.22); background:repeating-linear-gradient(45deg, rgba(237,243,230,.10) 0 4px, transparent 4px 9px); display:flex; align-items:center; justify-content:center; font:600 10px/1 ui-monospace,Menlo,monospace; color:#9AA59A">QR</div>
+            <span style="font:400 13px/1.45 var(--fu); color:#9AA59A; max-width:24ch">{{ g.cta.scan }}</span>
+          </div>
+        </div>
+        <div aria-hidden="true" style="grid-column:1; grid-row:1; align-self:end; position:relative; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:clamp(160px, calc((100vw - 620px) / 2.75), 296px); line-height:.8; letter-spacing:-.045em; font-variant-numeric:tabular-nums; color:{{ k.clockColor }}; transition:color .3s">{{ k.clock }}</div>
+        <nav aria-label="{{ t.turn.title }}" style="grid-column:2; grid-row:1; align-self:end; position:relative">
+          <div style="font:600 12px/1 var(--fu); letter-spacing:.16em; text-transform:uppercase; color:#9AA59A; padding-bottom:16px">{{ t.turn.title }}</div>
+          <sc-for list="{{ beats }}" as="bt" hint-placeholder-count="4">
+            <a href="{{ bt.href }}" style="display:flex; align-items:center; gap:18px; height:54px; text-decoration:none; border-top:1px dashed rgba(237,243,230,.18)" style-hover="background:rgba(237,243,230,.03)">
+              <span style="width:76px; flex:none; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:22px; line-height:1; font-variant-numeric:tabular-nums; color:{{ bt.tc }}; transition:color .3s">{{ bt.time }}</span>
+              <span style="font:500 16px/1.2 var(--fu); color:{{ bt.hc }}; transition:color .3s">{{ bt.title }}</span>
+            </a>
+          </sc-for>
+        </nav>
+        <div aria-hidden="true" style="grid-column:1 / -1; grid-row:2; position:relative; height:6px; margin:30px 0 40px; border-radius:3px; background:rgba(237,243,230,.12)">
+          <div style="position:absolute; left:50%; top:50%; width:600px; height:600px; margin:-300px 0 0 -300px; border-radius:50%; border:1px solid rgba(237,243,230,.08)"></div>
+          <div style="position:absolute; left:50%; top:50%; width:720px; height:720px; margin:-360px 0 0 -360px; background:radial-gradient(circle, rgba(191,247,71,.07) 0%, rgba(191,247,71,0) 60%)"></div>
+          <div style="position:relative; height:6px; border-radius:3px; background:{{ k.barColor }}; transform:{{ k.barScale }}; transform-origin:0 50%"></div>
+          <div style="position:absolute; left:50%; top:50%; width:14px; height:14px; margin:-7px 0 0 -7px; border-radius:50%; background:#101418; border:2px solid rgba(237,243,230,.55); box-sizing:border-box"></div>
+        </div>
+      </section>
+    </sc-if>
+    <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+      <section style="position:relative; overflow:hidden; min-height:calc(100svh - 64px); box-sizing:border-box; padding:14px 20px 22px; display:flex; flex-direction:column">
+        <div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none">
+          <div style="position:absolute; inset:0; background:radial-gradient(120% 70% at 50% -10%, #1C242A 0%, #101418 62%)"></div>
+          <div style="position:absolute; left:50%; top:-60px; width:560px; height:820px; margin-left:-280px; background:linear-gradient(180deg, rgba(237,243,230,.11) 0%, rgba(237,243,230,.035) 55%, rgba(237,243,230,0) 88%); clip-path:polygon(41% 0, 59% 0, 100% 100%, 0 100%)"></div>
+        </div>
+        <div style="position:relative; display:flex; align-items:center; gap:10px; font:600 12px/1 var(--fu); letter-spacing:.16em; text-transform:uppercase; color:#BFF747"><span style="width:18px; height:3px; border-radius:2px; background:#BFF747"></span>{{ t.eyebrow }}</div>
+        <h1 style="position:relative; margin:16px 0 0; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(38px, 11vw, 56px) * var(--k)); line-height:.95; letter-spacing:-.012em; text-transform:uppercase; text-wrap:balance"><span style="display:block">{{ h1.a }}</span> <span style="display:block">{{ h1.b }}</span> <span style="display:block; color:#BFF747">{{ h1.c }}</span></h1>
+        <div aria-hidden="true" style="flex:1; min-height:240px; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0 -20px">
+          <div style="position:absolute; left:50%; top:50%; width:330px; height:330px; margin:-165px 0 0 -165px; border-radius:50%; border:1px solid rgba(237,243,230,.09)"></div>
+          <div style="position:absolute; left:0; right:0; top:50%; height:1px; background:rgba(237,243,230,.09)"></div>
+          <div style="position:relative; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:clamp(96px, 29vw, 140px); line-height:.82; letter-spacing:-.035em; font-variant-numeric:tabular-nums; color:{{ k.clockColor }}; transition:color .3s">{{ k.clock }}</div>
+          <div style="position:relative; width:calc(100% - 40px); height:6px; margin-top:20px; border-radius:3px; background:rgba(237,243,230,.12); overflow:hidden"><div style="height:6px; border-radius:3px; background:{{ k.barColor }}; transform:{{ k.barScale }}; transform-origin:0 50%"></div></div>
+        </div>
+        <p style="position:relative; margin:0; max-width:40ch; font:400 16px/1.5 var(--fu); color:#C5CEC0; text-wrap:pretty">{{ t.lead }}</p>
+        <div style="position:relative; display:flex; align-items:center; gap:16px; margin-top:22px">
+          <a href="{{ store }}" style="display:block; line-height:0; flex:none; border-radius:8px"><img src="{{ badge }}" alt="{{ g.cta.badgeAlt }}" height="48" style="height:48px; width:auto; display:block"></a>
+          <span style="font:500 13px/1.35 var(--fu); color:#9AA59A; max-width:16ch">{{ g.cta.availability }}</span>
+        </div>
+        <a href="#turn" style="position:relative; margin-top:22px; display:flex; align-items:center; gap:8px; min-height:44px; font:600 12px/1 var(--fu); letter-spacing:.14em; text-transform:uppercase; color:#EDF3E6; text-decoration:none">{{ t.turn.title }} <span aria-hidden="true" style="color:#BFF747; font-size:15px">↓</span></a>
+      </section>
+    </sc-if>
+
+    <section id="turn" aria-labelledby="turn-title" style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.turnPad }}; position:relative">
+      <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap">
+        <h2 id="turn-title" style="margin:0; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(36px, 5vw, 72px) * var(--k)); line-height:.95; text-transform:uppercase; letter-spacing:-.012em">{{ t.turn.title }}</h2>
+        <a href="{{ links.howToPlay }}" style="display:inline-flex; align-items:center; gap:8px; min-height:44px; font:700 15px/1 var(--fu); color:#BFF747; text-decoration:none" style-hover="text-decoration:underline; text-underline-offset:5px; text-decoration-thickness:2px">{{ t.turn.cta }} <span aria-hidden="true">→</span></a>
+      </div>
+      <div style="display:grid; grid-template-columns:{{ L.turnCols }}; gap:0 96px; margin-top:{{ L.turnGap }}">
+        <ol style="list-style:none; margin:0; padding:0">
+          <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+            <li id="{{ s.id }}" ref="{{ s.ref }}" style="min-height:{{ L.beatH }}; padding:{{ L.beatPad }}; box-sizing:border-box; display:flex; flex-direction:column; justify-content:{{ L.beatJustify }}">
+              <div style="display:flex; align-items:center; gap:14px"><span style="font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:clamp(24px, 2.4vw, 32px); line-height:1; font-variant-numeric:tabular-nums; color:{{ s.tc }}">{{ s.time }}</span><span style="flex:1; height:1px; background:repeating-linear-gradient(90deg, rgba(237,243,230,.28) 0 5px, transparent 5px 10px)"></span><span style="font:600 11px/1 var(--fu); letter-spacing:.14em; color:#9AA59A">{{ s.n }}</span></div>
+              <h3 style="margin:18px 0 10px; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(30px, 3.6vw, 52px) * var(--k)); line-height:.96; text-transform:uppercase; letter-spacing:-.01em; opacity:{{ s.o }}; transition:opacity .3s">{{ s.title }}</h3>
+              <p style="margin:0; font:400 clamp(16px, 1.3vw, 19px)/1.5 var(--fu); color:#C5CEC0; max-width:34ch; text-wrap:pretty">{{ s.text }}</p>
+              <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+                <img src="{{ s.img }}" alt="{{ s.alt }}" width="660" height="1434" loading="lazy" style="display:block; width:min(268px, 72vw); height:auto; margin:28px auto 8px; border-radius:36px; border:1px solid rgba(237,243,230,.1)">
+              </sc-if>
+            </li>
+          </sc-for>
+        </ol>
+        <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+          <div style="position:relative">
+            <div style="position:sticky; top:calc(50vh - 330px); height:660px; display:flex; justify-content:center">
+              <div aria-hidden="true" style="position:absolute; left:50%; top:-120px; width:520px; height:900px; margin-left:-260px; pointer-events:none; background:linear-gradient(180deg, rgba(237,243,230,.09) 0%, rgba(237,243,230,.02) 60%, rgba(237,243,230,0) 85%); clip-path:polygon(40% 0, 60% 0, 100% 100%, 0 100%)"></div>
+              <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+                <img src="{{ s.img }}" alt="{{ s.alt }}" width="660" height="1434" loading="lazy" style="position:absolute; top:0; width:304px; height:660px; border-radius:40px; border:1px solid rgba(237,243,230,.1); opacity:{{ s.imgO }}; transform:{{ s.shift }}; transition:opacity .35s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1)">
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </section>
+
+    <section aria-labelledby="words-title" style="position:relative; background:linear-gradient(165deg, #D4FA78 0%, #BFF747 42%, #ACE638 100%); color:#0A0F0A; margin-top:{{ L.bandTop }}">
+      <div>{{ rowsTop }}</div>
+      <div style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.bandPad }}; display:grid; grid-template-columns:{{ L.bandCols }}; gap:24px 64px; align-items:end; border-top:1.5px solid #0A0F0A">
+        <h2 id="words-title" style="margin:0; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(40px, 6.4vw, 96px) * var(--k)); line-height:.94; letter-spacing:-.015em; text-transform:uppercase; text-wrap:balance">{{ t.words.title }}</h2>
+        <div>
+          <p style="margin:0; font:500 clamp(16px, 1.3vw, 18px)/1.55 var(--fu); text-wrap:pretty">{{ t.words.text }}</p>
+          <a href="{{ links.words }}" style="margin-top:22px; display:inline-flex; align-items:center; gap:10px; height:52px; padding:0 24px; border-radius:999px; background:#0A0F0A; color:#BFF747; font:700 16px/1 var(--fu); text-decoration:none; transition:transform .16s cubic-bezier(.2,.8,.2,1)" style-hover="transform:translateY(-2px)" style-active="transform:scale(.97)">{{ t.words.cta }} <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+      <div>{{ rowsBot }}</div>
+      <div style="border-top:1.5px solid #0A0F0A; background:#B9F23F">
+        <div style="max-width:1440px; margin:0 auto; box-sizing:border-box; height:68px; padding:{{ L.barPad }}; display:flex; align-items:center; justify-content:space-between; gap:12px">
+          <div aria-live="polite" style="display:flex; align-items:baseline; gap:8px"><span style="font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:30px; line-height:1; font-variant-numeric:tabular-nums">{{ wb.count }}</span><span style="font:700 11px/1 var(--fu); letter-spacing:.14em; text-transform:uppercase">{{ wb.label }}</span></div>
+          <span style="font:500 13px/1.3 var(--fu); color:#33441A; text-align:center">{{ wb.hint }}</span>
+          <button type="button" onClick="{{ togglePause }}" aria-pressed="{{ wb.pressed }}" style="height:44px; min-width:84px; padding:0 16px; border-radius:999px; border:1.5px solid #0A0F0A; background:transparent; font:700 11px/1 var(--fu); letter-spacing:.1em; text-transform:uppercase; cursor:pointer; color:#0A0F0A" style-hover="background:#0A0F0A; color:#BFF747">{{ wb.pause }}</button>
+        </div>
+      </div>
+    </section>
+
+    <div style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.featPad }}; display:flex; flex-direction:column; gap:{{ L.featGap }}">
+      <sc-for list="{{ features }}" as="ft" hint-placeholder-count="3">
+        <section style="display:grid; grid-template-columns:{{ L.featCols }}; gap:32px 96px; align-items:center">
+          <div style="order:{{ ft.textOrder }}">
+            <div style="display:flex; align-items:center; gap:10px; font:600 12px/1 var(--fu); letter-spacing:.16em; text-transform:uppercase; color:#BFF747"><span style="width:18px; height:3px; border-radius:2px; background:#BFF747"></span>{{ ft.n }}</div>
+            <h2 style="margin:16px 0 14px; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(34px, 4.4vw, 64px) * var(--k)); line-height:.95; letter-spacing:-.012em; text-transform:uppercase; text-wrap:balance">{{ ft.title }}</h2>
+            <p style="margin:0; font:400 clamp(16px, 1.3vw, 19px)/1.55 var(--fu); color:#C5CEC0; max-width:40ch; text-wrap:pretty">{{ ft.text }}</p>
+          </div>
+          <div style="order:{{ ft.imgOrder }}; position:relative; display:flex; justify-content:center">
+            <div aria-hidden="true" style="position:absolute; left:50%; top:50%; width:{{ L.circle }}; height:{{ L.circle }}; transform:translate(-50%,-50%); border-radius:50%; border:1px solid rgba(237,243,230,.08); background:radial-gradient(circle, rgba(191,247,71,.06) 0%, rgba(191,247,71,0) 62%)"></div>
+            <img src="{{ ft.img }}" alt="{{ ft.alt }}" width="660" height="1434" loading="lazy" style="position:relative; display:block; width:{{ L.featImg }}; height:auto; border-radius:36px; border:1px solid rgba(237,243,230,.1)">
+          </div>
+        </section>
+      </sc-for>
+    </div>
+
+    <section aria-labelledby="anywhere-title" style="border-top:1px solid rgba(237,243,230,.08); border-bottom:1px solid rgba(237,243,230,.08); background:#0C1013">
+      <div style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.anyPad }}; display:grid; grid-template-columns:{{ L.bandCols }}; gap:20px 64px; align-items:end">
+        <h2 id="anywhere-title" style="margin:0; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(40px, 6.4vw, 96px) * var(--k)); line-height:.94; letter-spacing:-.015em; text-transform:uppercase; color:transparent; -webkit-text-stroke:1.5px #EDF3E6">{{ t.anywhere.title }}</h2>
+        <p style="margin:0; font:400 clamp(16px, 1.3vw, 19px)/1.55 var(--fu); color:#C5CEC0; text-wrap:pretty">{{ t.anywhere.text }}</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="final-title" style="position:relative; overflow:hidden">
+      <div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none">
+        <div style="position:absolute; left:50%; top:-80px; width:900px; height:1100px; margin-left:-450px; background:linear-gradient(180deg, rgba(237,243,230,.10) 0%, rgba(237,243,230,.03) 55%, rgba(237,243,230,0) 85%); clip-path:polygon(42% 0, 58% 0, 100% 100%, 0 100%)"></div>
+      </div>
+      <div style="position:relative; max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.finalPad }}; display:grid; grid-template-columns:{{ L.featCols }}; gap:40px 96px; align-items:center">
+        <div>
+          <div style="font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:clamp(28px, 2.6vw, 36px); line-height:1; font-variant-numeric:tabular-nums; color:#FF7A6E" aria-hidden="true">00:00</div>
+          <h2 id="final-title" style="margin:18px 0 16px; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(44px, 7vw, 108px) * var(--k)); line-height:.9; letter-spacing:-.02em; text-transform:uppercase; text-wrap:balance">{{ t.final.title }}</h2>
+          <p style="margin:0; font:400 clamp(17px, 1.4vw, 20px)/1.5 var(--fu); color:#C5CEC0; max-width:30ch">{{ t.final.text }}</p>
+          <a href="{{ store }}" style="margin-top:32px; position:relative; display:inline-flex; align-items:center; justify-content:center; height:64px; padding:0 34px; text-decoration:none; color:#0A0F0A; transition:transform .16s cubic-bezier(.2,.8,.2,1)" style-hover="transform:translateY(-2px)" style-active="transform:scale(.97)"><span style="position:absolute; inset:0; border-radius:16px; transform:skewX(-8deg); background:linear-gradient(100deg, #C8FA55 0%, #8CC81E 100%); box-shadow:0 12px 32px rgba(191,247,71,.22)"></span><span style="position:relative; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:22px; text-transform:uppercase; letter-spacing:-.01em">{{ g.cta.getApp }} →</span></a>
+          <p style="margin:16px 0 0; font:500 13px/1.4 var(--fu); color:#9AA59A">{{ g.cta.availability }}</p>
+        </div>
+        <div style="display:flex; justify-content:center">
+          <img src="{{ finalShot }}" alt="{{ finalAlt }}" width="660" height="1434" loading="lazy" style="display:block; width:{{ L.featImg }}; height:auto; border-radius:36px; border:1px solid rgba(237,243,230,.1)">
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="faq-title" style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.faqPad }}; display:grid; grid-template-columns:{{ L.faqCols }}; gap:24px 96px; align-items:start">
+      <h2 id="faq-title" style="margin:0; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(34px, 4vw, 56px) * var(--k)); line-height:.95; text-transform:uppercase; letter-spacing:-.012em">{{ t.faq.title }}</h2>
+      <div style="border-top:1px solid rgba(237,243,230,.14)">
+        <sc-for list="{{ faq }}" as="q" hint-placeholder-count="5">
+          <div style="border-bottom:1px solid rgba(237,243,230,.14)">
+            <h3 style="margin:0"><button type="button" onClick="{{ q.toggle }}" aria-expanded="{{ q.expanded }}" style="width:100%; min-height:68px; padding:16px 0; display:flex; align-items:center; justify-content:space-between; gap:20px; background:transparent; border:0; cursor:pointer; text-align:left; font:600 clamp(17px, 1.4vw, 20px)/1.3 var(--fu); color:#EDF3E6" style-hover="color:#BFF747">{{ q.q }}<span aria-hidden="true" style="flex:none; width:32px; height:32px; border-radius:50%; border:1px solid rgba(237,243,230,.22); display:flex; align-items:center; justify-content:center; font:400 20px/1 var(--fu); color:#BFF747; transform:{{ q.rot }}; transition:transform .24s cubic-bezier(.2,.8,.2,1)">+</span></button></h3>
+            <div style="display:grid; grid-template-rows:{{ q.rows }}; transition:grid-template-rows .28s cubic-bezier(.2,.8,.2,1)">
+              <div style="overflow:hidden"><p style="margin:0; padding:0 56px 22px 0; font:400 16px/1.6 var(--fu); color:#C5CEC0; text-wrap:pretty">{{ q.a }}</p></div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </main>
+
+  <dc-import name="SiteFooter" g="{{ g }}" lang="{{ lang }}" page="home" theme="night" wide="{{ wide }}" links="{{ links }}" lang-links="{{ langLinks }}" store="{{ store }}" hint-size="100%,480px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { c: null, wide: true, rm: false, sec: 60, whistle: false, faq: -1, goals: {}, paused: false };
+  refs4 = [React.createRef(), React.createRef(), React.createRef(), React.createRef()];
+
+  componentDidMount() {
+    const S = window.BBSite;
+    if (!S) { this.retry = setTimeout(() => this.componentDidMount(), 50); return; }
+    S.copy().then((c) => { this.setState({ c }); document.title = c.pages.home.meta.title; this.updateClock(); });
+    document.documentElement.lang = S.lang;
+    this.mq = matchMedia('(min-width: 1100px)');
+    this.xq = matchMedia('(min-width: 1320px)');
+    this.rmq = matchMedia('(prefers-reduced-motion: reduce)');
+    this.onMq = () => this.setState({ wide: this.mq.matches, xl: this.xq.matches, rm: this.rmq.matches }, () => this.updateClock());
+    this.xq.addEventListener('change', this.onMq);
+    this.onMq();
+    this.mq.addEventListener('change', this.onMq);
+    this.rmq.addEventListener('change', this.onMq);
+    this.onScroll = () => { if (this.tick) return; this.tick = requestAnimationFrame(() => { this.tick = 0; this.updateClock(); }); };
+    addEventListener('scroll', this.onScroll, { passive: true });
+    addEventListener('resize', this.onScroll);
+  }
+  componentWillUnmount() {
+    clearTimeout(this.retry);
+    removeEventListener('scroll', this.onScroll); removeEventListener('resize', this.onScroll);
+    if (this.mq) { this.mq.removeEventListener('change', this.onMq); this.rmq.removeEventListener('change', this.onMq); }
+  }
+  docY(el) { return el.getBoundingClientRect().top + scrollY; }
+  updateClock() {
+    if (this.state.rm) return;
+    const off = innerHeight * 0.5, y = scrollY;
+    const a = [[0, 60]];
+    [[1, 40], [2, 7], [3, 0]].forEach(([i, s]) => {
+      const el = document.getElementById('beat-' + (i + 1));
+      if (el) a.push([Math.max(a[a.length - 1][0] + 1, this.docY(el) - off), s]);
+    });
+    let sec = a.length < 4 ? 60 : 0;
+    if (a.length === 4) for (let i = 0; i < a.length - 1; i++) {
+      const [y0, s0] = a[i], [y1, s1] = a[i + 1];
+      if (y <= y1) { sec = Math.round(s0 + (s1 - s0) * Math.max(0, Math.min(1, (y - y0) / (y1 - y0)))); break; }
+    }
+    const last = document.getElementById('beat-4');
+    const end = last ? this.docY(last) + last.offsetHeight : 1e9;
+    const inTurn = y > innerHeight * 0.6 && y < end - innerHeight * 0.4;
+    if (sec !== this.state.sec || inTurn !== this.state.inTurn) this.setState({ sec, inTurn });
+  }
+  rows(t, idxs, [size, rowH, stroke], kp) {
+    const h = React.createElement;
+    const { goals, paused, rm } = this.state;
+    const durs = [52, 64, 46, 70, 58];
+    return idxs.map((ri) => {
+      const words = t.rows[ri] || [];
+      const items = [];
+      for (let rep = 0; rep < 2; rep++) {
+        words.forEach((w, i) => {
+          const key = ri + '-' + i;
+          const on = !!goals[key];
+          items.push(h('button', {
+            key: rep + '-' + i, type: 'button', tabIndex: rep ? -1 : 0, 'aria-pressed': on,
+            onClick: () => this.toggleGoal(key),
+            style: {
+              fontFamily: 'var(--fd)', fontStyle: 'var(--fds)', fontWeight: 900, border: 0,
+              fontSize: 'calc(' + size + 'px * var(--k))', lineHeight: 1, textTransform: 'uppercase',
+              letterSpacing: '-0.01em', padding: '0.1em 0.2em 0.06em', margin: '0 0.08em', borderRadius: '0.14em',
+              cursor: 'pointer', userSelect: 'none', minHeight: 44,
+              color: on ? '#BFF747' : 'transparent',
+              WebkitTextStroke: on ? '0px transparent' : stroke + 'px #0A0F0A',
+              background: on ? '#0A0F0A' : 'transparent',
+              transition: 'background-color .18s cubic-bezier(.2,.8,.2,1), color .18s'
+            }
+          }, w));
+          items.push(h('span', { key: rep + '-d' + i, 'aria-hidden': true, style: { width: Math.round(size * 0.16), height: Math.round(size * 0.16), borderRadius: '50%', background: '#0A0F0A', flex: 'none', margin: '0 ' + Math.round(size * 0.22) + 'px' } }));
+        });
+      }
+      return h('div', {
+        key: kp + ri,
+        style: { height: rowH, overflow: 'hidden', display: 'flex', alignItems: 'center', borderTop: '1.5px solid #0A0F0A' }
+      }, h('div', {
+        style: {
+          display: 'flex', alignItems: 'center', flex: 'none', whiteSpace: 'nowrap', willChange: 'transform',
+          animation: rm ? 'none' : 'bbMarq' + (ri % 2 ? 'R' : 'L') + ' ' + durs[ri % 5] + 's linear infinite',
+          animationPlayState: paused ? 'paused' : 'running'
+        }
+      }, items));
+    });
+  }
+  toggleGoal = (k) => this.setState((s) => ({ goals: { ...s.goals, [k]: !s.goals[k] } }));
+
+  renderVals() {
+    const S = window.BBSite || { FONTS: { en: {} }, lang: 'en', links: () => ({}), langLinks: () => [], shot: () => '', badge: () => '' };
+    const s = this.state;
+    const lang = S.lang;
+    const c = s.c || { nav: {}, cta: {}, footer: {}, brand: {}, languageNames: {}, pages: { home: { turn: { steps: [] }, words: {}, room: {}, fair: {}, anywhere: {}, languages: {}, final: {}, faq: { items: [] } } } };
+    const t = c.pages.home;
+    const wide = s.wide;
+    const parts = (t.h1 || '').match(/[^.!?։]+[.!?։]+/g) || [t.h1 || ''];
+    const h1 = { a: (parts[0] || '').trim(), b: (parts[1] || '').trim(), c: parts.slice(2).join(' ').trim() };
+
+    const sec = s.rm ? 60 : s.sec;
+    const late = sec <= 10;
+    const clock = sec >= 60 ? '01:00' : '00:' + String(sec).padStart(2, '0');
+    const beatIdx = sec > 40 ? 0 : sec > 7 ? 1 : sec > 0 ? 2 : 3;
+    const times = ['01:00', '00:40', '00:07', '00:00'];
+    const shots = ['07-settings', '01-live-card', '02-live-late', '05-scoreboard'];
+    const alts = {
+      en: ['Match settings with a 60-second turn selected', 'A live card at 00:40 with three words scored', 'The same card at 00:07: five words scored, the clock in red', 'The scoreboard after a turn, ready to pass the phone'],
+      ru: ['Настройки матча: выбран ход на 60 секунд', 'Карточка на 00:40: отгаданы три слова', 'Та же карточка на 00:07: отгадано пять слов, таймер красный', 'Таблица счёта после хода: телефон передаётся дальше'],
+      hy: ['Խաղի կարգավորումներ՝ ընտրված է 60 վայրկյան', 'Քարտ՝ 00:40, գուշակված է երեք բառ', 'Նույն քարտը՝ 00:07, գուշակված է հինգ բառ', 'Միավորների աղյուսակը հերթից հետո']
+    }[lang];
+    const steps = (t.turn.steps || []).map((st, i) => ({
+      id: 'beat-' + (i + 1), ref: this.refs4[i], time: times[i], n: '0' + (i + 1) + ' / 04',
+      title: st.title, text: st.text, img: S.shot(shots[i]), alt: alts[i],
+      tc: i >= 2 ? '#FF7A6E' : '#BFF747',
+      o: !wide || s.rm || i === beatIdx ? 1 : (wide ? 0.32 : 1),
+      shift: i === beatIdx ? 'translateY(0) scale(1)' : (i < beatIdx ? 'translateY(-14px) scale(.985)' : 'translateY(14px) scale(.985)')
+    }));
+    steps.forEach((st, i) => { if (wide) st.o = (s.rm ? (i === 0 ? 1 : 0) : (i === beatIdx ? 1 : 0)); });
+    const stepText = steps.map((st, i) => ({ ...st, o: wide ? (i === beatIdx || s.rm ? 1 : 0.32) : 1 }));
+    const beats = steps.map((st, i) => ({
+      time: st.time, title: st.title, href: '#beat-' + (i + 1),
+      tc: i === beatIdx ? (late ? '#FF7A6E' : '#BFF747') : '#7E897F',
+      hc: i === beatIdx ? '#EDF3E6' : '#9AA59A'
+    }));
+    const k = {
+      clock, clockColor: late ? '#FF7A6E' : '#EDF3E6', barColor: late ? '#FF7A6E' : '#BFF747',
+      barScale: 'scaleX(' + (sec / 60).toFixed(4) + ')',
+      pill: s.inTurn && !s.rm ? 1 : 0, pillShift: s.inTurn ? 'translate(-50%, 0)' : 'translate(-50%, 16px)',
+      barTop: s.inTurn && !s.rm ? 1 : 0
+    };
+    const L = wide
+      ? { turnPad: '120px 64px 40px', turnCols: 'minmax(0,1fr) 420px', turnGap: '24px', beatH: '86vh', beatPad: '0', beatJustify: 'center' }
+      : { turnPad: '56px 20px 24px', turnCols: '1fr', turnGap: '8px', beatH: '0', beatPad: '40px 0 16px', beatJustify: 'flex-start' };
+    const wl = { en: ['Whistle: off', 'Whistle: on'], ru: ['Свисток: выкл.', 'Свисток: вкл.'], hy: ['Սուլիչ՝ անջատված', 'Սուլիչ՝ միացված'] }[lang];
+
+    const BB = (window.BB_COPY || {})[lang] || { rows: [], goals: () => '' };
+    const nGoals = Object.keys(s.goals).filter((x) => s.goals[x]).length;
+    const wb = {
+      count: String(nGoals).padStart(2, '0'), label: BB.goals ? BB.goals(nGoals) : '',
+      hint: BB.tapHint, pause: s.paused || s.rm ? BB.play : BB.pause, pressed: s.paused ? 'true' : 'false'
+    };
+    const sz = wide ? [64, 84, 1.6] : [36, 50, 1.2];
+    const fAlts = {
+      en: ['Team setup: two teams with names and crests', 'Editing the last turn: each word marked GOAL or MISS', 'The language menu: English, Russian and Armenian'],
+      ru: ['Команды: две команды с названиями и эмблемами', 'Правка последнего хода: каждое слово — ГОЛ или МИМО', 'Меню языка: английский, русский и армянский'],
+      hy: ['Թիմեր՝ երկու թիմ՝ անուններով և զինանշաններով', 'Վերջին հերթի խմբագրում՝ յուրաքանչյուր բառ ԳՈԼ կամ ՎՐԻՊՈՒՄ', 'Լեզվի ընտրացանկ՝ անգլերեն, ռուսերեն և հայերեն']
+    }[lang];
+    const features = [['room', '04-teams'], ['fair', '06-word-editor'], ['languages', '09-languages']].map(([key, shot], i) => ({
+      n: '0' + (i + 1), title: t[key].title, text: t[key].text, img: S.shot(shot), alt: fAlts[i],
+      textOrder: wide && i % 2 ? 2 : 1, imgOrder: wide && i % 2 ? 1 : 2
+    }));
+    const faq = (t.faq.items || []).map((it, i) => ({
+      q: it.q, a: it.a, expanded: s.faq === i ? 'true' : 'false',
+      rows: s.faq === i ? '1fr' : '0fr', rot: s.faq === i ? 'rotate(45deg)' : 'rotate(0deg)',
+      toggle: () => this.setState((p) => ({ faq: p.faq === i ? -1 : i }))
+    }));
+    Object.assign(L, wide
+      ? { bandTop: '80px', bandPad: '44px 64px 48px', bandCols: 'minmax(0,1.2fr) minmax(0,1fr)', barPad: '0 52px 0 64px', featPad: '140px 64px', featGap: '160px', featCols: 'minmax(0,1fr) minmax(0,1fr)', featImg: '304px', circle: '560px', anyPad: '96px 64px', finalPad: '140px 64px', faqPad: '120px 64px 140px', faqCols: '360px minmax(0,1fr)' }
+      : { bandTop: '40px', bandPad: '28px 20px 32px', bandCols: '1fr', barPad: '0 10px 0 20px', featPad: '72px 20px', featGap: '88px', featCols: '1fr', featImg: 'min(268px, 72vw)', circle: '340px', anyPad: '56px 20px', finalPad: '80px 20px', faqPad: '64px 20px 88px', faqCols: '1fr' });
+
+    return {
+      rowsTop: s.c ? this.rows(BB, wide ? [0, 1] : [0, 1], sz, 't') : null,
+      rowsBot: s.c ? this.rows(BB, wide ? [3, 4] : [3, 4], sz, 'b') : null,
+      wb, features, faq, finalShot: S.shot('08-final'),
+      finalAlt: { en: 'The final screen: the winning team lifts the trophy', ru: 'Финальный экран: победитель поднимает кубок', hy: 'Եզրափակիչ էկրան՝ հաղթող թիմը բարձրացնում է գավաթը' }[lang],
+      togglePause: () => this.setState((p) => ({ paused: !p.paused })),
+      lang, f: S.FONTS[lang], c, g: c, t, h1, wide, narrow: !wide,
+      links: S.links(), langLinks: S.langLinks('home'), store: S.SITE ? S.SITE.store : '', badge: S.badge(),
+      k, beats, steps: wide ? stepText.map((st, i) => ({ ...st, shift: steps[i].shift, imgO: steps[i].o })) : stepText, L,
+      whistle: s.whistle, whistleLabel: s.whistle ? wl[1] : wl[0],
+      toggleWhistle: s.xl ? () => this.setState((p) => ({ whistle: !p.whistle })) : null
+    };
+  }
+}
+</script>
+</body>
+</html>

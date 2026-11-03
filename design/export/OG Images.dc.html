@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,900;1,900&amp;family=Space+Grotesk:wght@500;700&amp;family=Noto+Sans:ital,wght@0,500;0,700;1,900&amp;family=Noto+Sans+Armenian:wght@500;700;900&amp;display=swap">
+<style>body{margin:0;background:#E9E7E1;font-family:system-ui,sans-serif}a{color:#1a1a1a}a:hover{color:#2a78d6}</style>
+</helmet>
+<section style="padding:44px 48px 80px">
+  <div style="font:italic 900 30px/1 'Archivo',sans-serif; text-transform:uppercase; margin-bottom:8px">Open Graph · 1200 × 630</div>
+  <p style="margin:0 0 32px; font:400 14px/1.5 system-ui,sans-serif; color:#444; max-width:760px">One card per language for every page that doesn't have its own. Export each card at 1×, and keep the text inside the centre 1080 × 560 so it survives cropping in feeds. There's no App Store badge and no device frame. Export with the "snapshot" tool or the build step (Satori), as 80% JPG, about 90 KB.</p>
+  <div style="display:flex; flex-direction:column; gap:40px">
+    <sc-for list="{{ cards }}" as="c" hint-placeholder-count="3">
+      <div style="display:flex; flex-direction:column; gap:10px">
+        <span style="font:600 11px ui-monospace,monospace; color:#666">og-{{ c.code }}.jpg</span>
+        <div id="og-{{ c.code }}" lang="{{ c.code }}" style="width:1200px; height:630px; position:relative; overflow:hidden; background:#101418; color:#EDF3E6; flex:none">
+          <div style="position:absolute; inset:0; background:radial-gradient(80% 90% at 70% 0%, #1D262C 0%, #101418 60%)"></div>
+          <div style="position:absolute; left:640px; top:-80px; width:620px; height:900px; transform:rotate(14deg); transform-origin:50% 0; background:linear-gradient(180deg, rgba(237,243,230,.14) 0%, rgba(237,243,230,.04) 50%, rgba(237,243,230,0) 82%); clip-path:polygon(44% 0, 56% 0, 100% 100%, 0 100%)"></div>
+          <div style="position:absolute; left:640px; top:100px; width:520px; height:520px; border-radius:50%; border:1.5px solid rgba(237,243,230,.09)"></div>
+          <div style="position:absolute; left:60px; top:56px; display:flex; align-items:center; gap:14px">
+            <img src="assets/icon.png" alt="" width="56" height="56" style="width:56px; height:56px; border-radius:22%">
+            <span style="font:italic 900 34px/1 'Archivo',sans-serif; letter-spacing:-.015em">BOMBAR<span style="color:#BFF747">DIRO</span></span>
+          </div>
+          <div style="position:absolute; right:60px; top:150px; font:italic 900 210px/.8 'Archivo',sans-serif; letter-spacing:-.045em; color:transparent; -webkit-text-stroke:2px rgba(237,243,230,.55)">01:00</div>
+          <div style="position:absolute; left:60px; right:60px; top:350px; height:8px; border-radius:4px; background:rgba(237,243,230,.12)"><div style="width:62%; height:8px; border-radius:4px; background:#BFF747"></div></div>
+          <div style="position:absolute; left:60px; bottom:56px; right:60px; display:flex; align-items:flex-end; justify-content:space-between; gap:40px">
+            <div style="font-family:{{ c.fd }}; font-style:{{ c.fds }}; font-weight:900; font-size:{{ c.size }}; line-height:.95; letter-spacing:-.015em; text-transform:uppercase"><span style="display:block">{{ c.a }}</span><span style="display:block">{{ c.b }}</span><span style="display:block; color:#BFF747">{{ c.c }}</span></div>
+            <div style="flex:none; text-align:right; font-family:{{ c.fu }}; font-weight:700; font-size:20px; line-height:1.35; color:#C5CEC0; max-width:300px">{{ c.eyebrow }}<br><span style="font-weight:500; color:#9AA59A">{{ c.avail }}</span></div>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const cards = [
+      { code: 'en', fd: "'Archivo',sans-serif", fds: 'italic', fu: "'Space Grotesk',sans-serif", size: '64px', a: 'Describe it.', b: "Don't say it.", c: 'Score.', eyebrow: 'The football Alias', avail: 'Free on iPhone and iPad' },
+      { code: 'ru', fd: "'Noto Sans',sans-serif", fds: 'italic', fu: "'Noto Sans',sans-serif", size: '60px', a: 'Объясняй.', b: 'Не называй.', c: 'Забивай.', eyebrow: 'Футбольный Алиас', avail: 'Бесплатно на iPhone и iPad' },
+      { code: 'hy', fd: "'Noto Sans Armenian',sans-serif", fds: 'normal', fu: "'Noto Sans Armenian',sans-serif", size: '48px', a: 'Նկարագրիր բառը։', b: 'Մի անվանիր։', c: 'Գոլ խփիր։', eyebrow: 'Ֆուտբոլային Ալիաս', avail: 'Անվճար iPhone-ի և iPad-ի համար' }
+    ];
+    return { cards };
+  }
+}
+</script>
+</body>
+</html>

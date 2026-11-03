@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&amp;family=Space+Grotesk:wght@400;500;600;700&amp;family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&amp;family=Noto+Sans+Armenian:wght@400;500;600;700;800;900&amp;display=swap">
+<link rel="icon" href="assets/favicon.png">
+<script src="site.js"></script>
+<style>
+html{background:#EEF2E9}
+body{margin:0;background:#EEF2E9;-webkit-font-smoothing:antialiased}
+a{color:#0A7C39}a:hover{color:#12180F}
+*:focus-visible{outline:3px solid #0A7C39;outline-offset:3px;border-radius:6px}
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:bbOut .22s cubic-bezier(.4,0,1,1) both}
+::view-transition-new(root){animation:bbIn .32s cubic-bezier(0,0,.2,1) both}
+@keyframes bbOut{to{opacity:0;transform:translateY(-12px)}}
+@keyframes bbIn{from{opacity:0;transform:translateY(16px)}}
+@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;transform:none}}
+</style>
+</helmet>
+<div lang="{{ lang }}" style="--fd: {{ f.fd }}; --fds: {{ f.fds }}; --fu: {{ f.fu }}; --k: {{ f.k }}; background:#EEF2E9; color:#12180F; font-family:var(--fu); min-height:100vh">
+  <dc-import name="SiteHeader" g="{{ g }}" lang="{{ lang }}" page="privacy" theme="chalk" wide="{{ wide }}" links="{{ links }}" lang-links="{{ langLinks }}" store="{{ store }}" hint-size="100%,84px"></dc-import>
+  <main id="main" style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.pad }}; display:grid; grid-template-columns:{{ L.cols }}; gap:32px 96px; align-items:start">
+    <div style="position:{{ L.stick }}; top:120px">
+      <h1 style="margin:0; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(36px, 4vw, 60px) * var(--k)); line-height:.98; letter-spacing:-.02em; text-wrap:balance">{{ t.h1 }}</h1>
+      <p style="margin:16px 0 0; font:600 13px/1.3 var(--fu); color:#4F5A4C">{{ updated }}</p>
+      <p style="margin:22px 0 0; font:400 16px/1.6 var(--fu); color:#2E372B; max-width:34ch">{{ t.intro }}</p>
+      <a href="https://z-amiryan.github.io/bombardiro/privacy-policy/" rel="noopener" style="margin-top:12px; display:inline-flex; align-items:center; gap:8px; min-height:44px; font:700 15px/1.2 var(--fu); color:#0A7C39; text-decoration:underline; text-underline-offset:4px">{{ t.appPolicyLabel }} <span aria-hidden="true">↗</span></a>
+    </div>
+    <div style="max-width:720px">
+      <sc-for list="{{ secs }}" as="s" hint-placeholder-count="8">
+        <section style="display:grid; grid-template-columns:{{ L.secCols }}; gap:8px 24px; padding:24px 0 26px; border-top:{{ s.rule }}">
+          <span aria-hidden="true" style="font:700 12px/1.8 var(--fu); color:#0A7C39; font-variant-numeric:tabular-nums">{{ s.n }}</span>
+          <div>
+            <h2 style="margin:0 0 8px; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(22px * var(--k)); line-height:1.15">{{ s.title }}</h2>
+            <p style="margin:0; font:400 17px/1.65 var(--fu); color:#1E261B; text-wrap:pretty">{{ s.text }}</p>
+          </div>
+        </section>
+      </sc-for>
+    </div>
+  </main>
+  <dc-import name="SiteFooter" g="{{ g }}" lang="{{ lang }}" page="privacy" theme="chalk" wide="{{ wide }}" links="{{ links }}" lang-links="{{ langLinks }}" store="{{ store }}" hint-size="100%,480px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { c: null, wide: true };
+  componentDidMount() {
+    const S = window.BBSite;
+    if (!S) { this.retry = setTimeout(() => this.componentDidMount(), 50); return; }
+    S.copy().then((c) => { this.setState({ c }); document.title = c.pages.privacy.meta.title; });
+    document.documentElement.lang = S.lang;
+    this.mq = matchMedia('(min-width: 1000px)');
+    this.onMq = () => this.setState({ wide: this.mq.matches });
+    this.onMq(); this.mq.addEventListener('change', this.onMq);
+  }
+  componentWillUnmount() { clearTimeout(this.retry); if (this.mq) this.mq.removeEventListener('change', this.onMq); }
+  renderVals() {
+    const S = window.BBSite || { FONTS: { en: {} }, lang: 'en', links: () => ({}), langLinks: () => [], SITE: {} };
+    const lang = S.lang;
+    const c = this.state.c || { nav: {}, cta: {}, brand: {}, footer: {}, languageNames: {}, pages: { privacy: { sections: [] } } };
+    const t = c.pages.privacy;
+    const wide = this.state.wide;
+    const d = new Date(2026, 10, 2).toLocaleDateString({ en: 'en-GB', ru: 'ru-RU', hy: 'hy-AM' }[lang], { day: 'numeric', month: 'long', year: 'numeric' });
+    const secs = (t.sections || []).map((s, i) => ({ ...s, n: String(i + 1).padStart(2, '0'), rule: i === 0 ? '3px solid #12180F' : '1px solid rgba(18,24,15,.2)' }));
+    const L = wide ? { pad: '64px 64px 120px', cols: '420px minmax(0,1fr)', stick: 'sticky', secCols: '40px minmax(0,1fr)' } : { pad: '36px 20px 72px', cols: '1fr', stick: 'static', secCols: '32px minmax(0,1fr)' };
+    return { lang, f: S.FONTS[lang], g: c, t, wide, secs, L, updated: (t.updated || '').replace('{date}', d), links: S.links(), langLinks: S.langLinks('privacy'), store: S.SITE.store };
+  }
+}
+</script>
+</body>
+</html>

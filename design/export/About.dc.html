@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&amp;family=Space+Grotesk:wght@400;500;600;700&amp;family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&amp;family=Noto+Sans+Armenian:wght@400;500;600;700;800;900&amp;display=swap">
+<link rel="icon" href="assets/favicon.png">
+<script src="site.js"></script>
+<style>
+html{background:#101418}
+body{margin:0;background:#101418;-webkit-font-smoothing:antialiased}
+a{color:#BFF747}a:hover{color:#EDF3E6}
+*:focus-visible{outline:3px solid #BFF747;outline-offset:3px;border-radius:6px}
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:bbOut .22s cubic-bezier(.4,0,1,1) both}
+::view-transition-new(root){animation:bbIn .32s cubic-bezier(0,0,.2,1) both}
+@keyframes bbOut{to{opacity:0;transform:translateY(-12px)}}
+@keyframes bbIn{from{opacity:0;transform:translateY(16px)}}
+@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;transform:none}}
+</style>
+</helmet>
+<div lang="{{ lang }}" style="--fd: {{ f.fd }}; --fds: {{ f.fds }}; --fu: {{ f.fu }}; --k: {{ f.k }}; background:#101418; color:#EDF3E6; font-family:var(--fu); min-height:100vh; overflow-x:clip">
+  <dc-import name="SiteHeader" g="{{ g }}" lang="{{ lang }}" page="about" theme="night" wide="{{ wide }}" links="{{ links }}" lang-links="{{ langLinks }}" store="{{ store }}" hint-size="100%,84px"></dc-import>
+  <main id="main">
+    <section style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.heroPad }}; display:grid; grid-template-columns:{{ L.heroCols }}; gap:28px 96px; align-items:end">
+      <h1 style="margin:0; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(48px, 6.6vw, 100px) * var(--k)); line-height:.9; letter-spacing:-.022em; text-transform:uppercase; text-wrap:balance">{{ t.h1 }}</h1>
+      <p style="margin:0; font:500 clamp(18px, 1.5vw, 22px)/1.45 var(--fu); color:#C5CEC0; text-wrap:pretty">{{ t.lead }}</p>
+    </section>
+
+    <section aria-labelledby="name-title" style="position:relative; overflow:hidden; border-top:1px solid rgba(237,243,230,.08); border-bottom:1px solid rgba(237,243,230,.08); background:#0C1013">
+      <div aria-hidden="true" style="position:absolute; left:50%; top:50%; width:720px; height:720px; transform:translate(-50%,-50%); border-radius:50%; border:1px solid rgba(237,243,230,.07)"></div>
+      <div style="position:relative; max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.namePad }}; text-align:center; display:flex; flex-direction:column; align-items:center; gap:24px">
+        <h2 id="name-title" style="margin:0; font:700 12px/1 var(--fu); letter-spacing:.16em; text-transform:uppercase; color:#BFF747">{{ t.name.title }}</h2>
+        <p lang="ru" aria-hidden="true" style="margin:0; font-family:'Noto Sans',sans-serif; font-style:italic; font-weight:900; font-size:clamp(56px, 11vw, 168px); line-height:.9; letter-spacing:-.03em; text-transform:uppercase; color:transparent; -webkit-text-stroke:1.5px #EDF3E6">бомбардир</p>
+        <div aria-hidden="true" style="font-family:'Archivo',sans-serif; font-style:italic; font-weight:900; font-size:clamp(28px, 4vw, 56px); line-height:1; letter-spacing:-.02em">→ BOMBAR<span style="color:#BFF747">DIRO</span></div>
+        <p style="margin:8px 0 0; max-width:44ch; font:400 clamp(17px, 1.4vw, 20px)/1.55 var(--fu); color:#C5CEC0; text-wrap:pretty">{{ t.name.text }}</p>
+      </div>
+    </section>
+
+    <section style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.secPad }}; display:grid; grid-template-columns:{{ L.three }}; gap:0 48px">
+      <sc-for list="{{ blocks }}" as="b" hint-placeholder-count="3">
+        <div style="padding:28px 0 36px; border-top:1px solid rgba(237,243,230,.16)">
+          <h2 style="margin:0 0 14px; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(24px, 2.2vw, 32px) * var(--k)); line-height:1; text-transform:uppercase">{{ b.title }}</h2>
+          <p style="margin:0; font:400 16px/1.6 var(--fu); color:#C5CEC0; text-wrap:pretty">{{ b.text }}</p>
+        </div>
+      </sc-for>
+    </section>
+
+    <section id="press" aria-labelledby="press-title" style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.pressPad }}">
+      <div style="border-radius:28px; background:#BFF747; color:#0A0F0A; padding:{{ L.pressIn }}; display:grid; grid-template-columns:{{ L.pressCols }}; gap:32px 64px">
+        <div>
+          <h2 id="press-title" style="margin:0; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(36px, 4.4vw, 64px) * var(--k)); line-height:.92; text-transform:uppercase">{{ t.press.title }}</h2>
+          <div style="margin-top:26px; display:flex; flex-direction:column; gap:10px; align-items:flex-start">
+            <a href="assets/press-kit.zip" download="" style="display:inline-flex; align-items:center; gap:10px; height:52px; padding:0 22px; border-radius:999px; background:#0A0F0A; color:#BFF747; font:700 15px/1 var(--fu); text-decoration:none" style-hover="transform:translateY(-2px)">↓ {{ t.press.kit }}</a>
+            <div style="margin-top:14px; font:700 11px/1 var(--fu); letter-spacing:.14em; text-transform:uppercase">{{ t.press.contact }}</div>
+            <a href="mailto:bombardiro.dev@gmail.com" style="display:flex; align-items:center; min-height:44px; font:700 17px/1.2 var(--fu); color:#0A0F0A; text-decoration:underline; text-underline-offset:4px">bombardiro.dev@gmail.com</a>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:14px">
+          <div style="border-radius:18px; background:#FFFFFF; border:1.5px solid #0A0F0A; padding:22px 24px">
+            <p style="margin:0; font:500 17px/1.6 var(--fu); text-wrap:pretty">{{ t.press.boilerplate }}</p>
+            <button type="button" onClick="{{ copyBp }}" style="margin-top:16px; height:44px; padding:0 18px; border-radius:999px; border:1.5px solid #0A0F0A; background:transparent; font:700 13px/1 var(--fu); color:#0A0F0A; cursor:pointer" style-hover="background:#0A0F0A; color:#BFF747">{{ copyLabel }}</button>
+          </div>
+          <div style="display:flex; align-items:center; gap:16px; padding:6px 0">
+            <a href="{{ store }}" style="display:block; line-height:0; border-radius:8px"><img src="{{ badge }}" alt="{{ g.cta.badgeAlt }}" height="48" style="height:48px; width:auto; display:block"></a>
+            <span style="font:600 13px/1.35 var(--fu); color:#33441A; max-width:16ch">{{ g.cta.availability }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <dc-import name="SiteFooter" g="{{ g }}" lang="{{ lang }}" page="about" theme="night" wide="{{ wide }}" links="{{ links }}" lang-links="{{ langLinks }}" store="{{ store }}" hint-size="100%,480px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { c: null, wide: true, copied: false };
+  componentDidMount() {
+    const S = window.BBSite;
+    if (!S) { this.retry = setTimeout(() => this.componentDidMount(), 50); return; }
+    S.copy().then((c) => { this.setState({ c }); document.title = c.pages.about.meta.title; });
+    document.documentElement.lang = S.lang;
+    this.mq = matchMedia('(min-width: 1000px)');
+    this.onMq = () => this.setState({ wide: this.mq.matches });
+    this.onMq(); this.mq.addEventListener('change', this.onMq);
+  }
+  componentWillUnmount() { clearTimeout(this.retry); clearTimeout(this.ct); if (this.mq) this.mq.removeEventListener('change', this.onMq); }
+  renderVals() {
+    const S = window.BBSite || { FONTS: { en: {} }, lang: 'en', links: () => ({}), langLinks: () => [], badge: () => '', SITE: {} };
+    const lang = S.lang;
+    const c = this.state.c || { nav: {}, cta: {}, brand: {}, footer: {}, languageNames: {}, pages: { about: { what: {}, name: {}, maker: {}, independent: {}, press: {} } } };
+    const t = c.pages.about;
+    const wide = this.state.wide;
+    const cl = { en: ['Copy text', 'Copied'], ru: ['Скопировать текст', 'Скопировано'], hy: ['Պատճենել տեքստը', 'Պատճենված է'] }[lang];
+    const L = wide
+      ? { heroPad: '72px 64px 88px', heroCols: 'minmax(0,1.2fr) minmax(0,1fr)', namePad: '120px 64px', secPad: '96px 64px 40px', three: 'repeat(3, minmax(0,1fr))', pressPad: '40px 64px 120px', pressIn: '48px', pressCols: 'minmax(0,1fr) minmax(0,1.2fr)' }
+      : { heroPad: '36px 20px 48px', heroCols: '1fr', namePad: '72px 20px', secPad: '56px 20px 16px', three: '1fr', pressPad: '24px 20px 72px', pressIn: '28px 22px', pressCols: '1fr' };
+    return {
+      lang, f: S.FONTS[lang], g: c, t, wide, L, blocks: [t.what, t.maker, t.independent],
+      links: S.links(), langLinks: S.langLinks('about'), store: S.SITE.store, badge: S.badge(),
+      copyLabel: this.state.copied ? cl[1] : cl[0],
+      copyBp: () => { try { navigator.clipboard.writeText(t.press.boilerplate); } catch (e) {} this.setState({ copied: true }); clearTimeout(this.ct); this.ct = setTimeout(() => this.setState({ copied: false }), 1800); }
+    };
+  }
+}
+</script>
+</body>
+</html>

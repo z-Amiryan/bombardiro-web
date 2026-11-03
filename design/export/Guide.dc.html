@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&amp;family=Space+Grotesk:wght@400;500;600;700&amp;family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&amp;family=Noto+Sans+Armenian:wght@400;500;600;700;800;900&amp;display=swap">
+<link rel="icon" href="assets/favicon.png">
+<script src="site.js"></script>
+<script src="guides.js"></script>
+<style>
+html{background:#EEF2E9;scroll-behavior:smooth}
+body{margin:0;background:#EEF2E9;-webkit-font-smoothing:antialiased}
+a{color:#0A7C39}a:hover{color:#12180F}
+*:focus-visible{outline:3px solid #0A7C39;outline-offset:3px;border-radius:6px}
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:bbOut .22s cubic-bezier(.4,0,1,1) both}
+::view-transition-new(root){animation:bbIn .32s cubic-bezier(0,0,.2,1) both}
+@keyframes bbOut{to{opacity:0;transform:translateY(-12px)}}
+@keyframes bbIn{from{opacity:0;transform:translateY(16px)}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;transform:none}}
+</style>
+</helmet>
+<div lang="{{ lang }}" style="--fd: {{ f.fd }}; --fds: {{ f.fds }}; --fu: {{ f.fu }}; --k: {{ f.k }}; background:#EEF2E9; color:#12180F; font-family:var(--fu); min-height:100vh">
+  <dc-import name="SiteHeader" g="{{ g }}" lang="{{ lang }}" page="guide" theme="chalk" wide="{{ wide }}" links="{{ links }}" lang-links="{{ langLinks }}" store="{{ store }}" hint-size="100%,84px"></dc-import>
+  <div aria-hidden="true" style="position:fixed; left:0; right:0; top:0; height:3px; z-index:55; pointer-events:none"><div style="height:3px; background:#0E9C49; transform:{{ progress }}; transform-origin:0 50%"></div></div>
+  <main id="main">
+    <article>
+      <header style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.headPad }}">
+        <nav aria-label="Breadcrumb" style="display:flex; align-items:center; gap:10px; font:600 13px/1 var(--fu); color:#4F5A4C"><a href="{{ links.guides }}" style="display:flex; align-items:center; min-height:44px; color:#12180F; text-decoration:underline; text-underline-offset:4px; text-decoration-color:rgba(18,24,15,.35)">{{ a.crumb }}</a><span aria-hidden="true">/</span><span style="color:#0A7C39; letter-spacing:.12em; text-transform:uppercase; font-size:11px; font-weight:700">{{ a.kicker }}</span></nav>
+        <h1 style="margin:14px 0 0; max-width:18ch; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(38px, 5.6vw, 84px) * var(--k)); line-height:.98; letter-spacing:-.022em; text-wrap:balance">{{ a.title }}</h1>
+        <div style="margin-top:24px; display:flex; gap:8px 22px; flex-wrap:wrap; font:500 13px/1.3 var(--fu); color:#4F5A4C"><span>{{ a.updated }}</span><span>{{ a.readLabel }}</span><span>Bombardiro</span></div>
+      </header>
+      <div style="max-width:1440px; margin:0 auto; box-sizing:border-box; padding:{{ L.bodyPad }}; display:grid; grid-template-columns:{{ L.cols }}; gap:40px 72px; align-items:start; border-top:3px solid #12180F">
+        <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+          <nav aria-label="{{ a.tocLabel }}" style="position:sticky; top:108px; padding-top:40px">
+            <div style="font:700 11px/1 var(--fu); letter-spacing:.14em; text-transform:uppercase; color:#4F5A4C; margin-bottom:10px">{{ a.tocLabel }}</div>
+            <ol style="list-style:none; margin:0; padding:0">
+              <sc-for list="{{ toc }}" as="x" hint-placeholder-count="8">
+                <li><a href="{{ x.href }}" aria-current="{{ x.cur }}" style="display:grid; grid-template-columns:28px minmax(0,1fr); align-items:center; min-height:40px; padding:4px 0; font:{{ x.font }}; color:{{ x.color }}; text-decoration:none; border-top:1px solid rgba(18,24,15,.12)" style-hover="color:#0A7C39"><span style="font:700 11px/1 var(--fu); color:{{ x.nc }}; font-variant-numeric:tabular-nums">{{ x.n }}</span>{{ x.h }}</a></li>
+              </sc-for>
+            </ol>
+          </nav>
+        </sc-if>
+        <div style="padding-top:{{ L.bodyTop }}; min-width:0; max-width:760px">
+          <section aria-label="{{ a.shortLabel }}" style="padding:24px 26px; border-radius:18px; background:#FFFFFF; border:1.5px solid #12180F; box-shadow:4px 4px 0 #12180F">
+            <div style="font:700 11px/1 var(--fu); letter-spacing:.14em; text-transform:uppercase; color:#0A7C39">{{ a.shortLabel }}</div>
+            <p style="margin:12px 0 0; font:500 clamp(18px, 1.5vw, 21px)/1.55 var(--fu); text-wrap:pretty">{{ a.short }}</p>
+          </section>
+          <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+            <details style="margin-top:24px; border-top:1px solid rgba(18,24,15,.22); border-bottom:1px solid rgba(18,24,15,.22)">
+              <summary style="min-height:52px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; font:700 12px/1 var(--fu); letter-spacing:.14em; text-transform:uppercase; list-style:none">{{ a.tocLabel }}<span aria-hidden="true">＋</span></summary>
+              <ol style="list-style:none; margin:0; padding:0 0 12px">
+                <sc-for list="{{ toc }}" as="x" hint-placeholder-count="8">
+                  <li><a href="{{ x.href }}" style="display:flex; align-items:center; gap:12px; min-height:44px; font:500 16px/1.3 var(--fu); color:#12180F; text-decoration:none"><span style="font:700 11px/1 var(--fu); color:#0A7C39; width:20px">{{ x.n }}</span>{{ x.h }}</a></li>
+                </sc-for>
+              </ol>
+            </details>
+          </sc-if>
+          <sc-for list="{{ secs }}" as="s" hint-placeholder-count="4">
+            <section id="{{ s.id }}" style="scroll-margin-top:110px; padding-top:{{ L.secTop }}">
+              <div style="display:flex; align-items:baseline; gap:14px; flex-wrap:wrap">
+                <span aria-hidden="true" style="font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:18px; color:#0E9C49; font-variant-numeric:tabular-nums">{{ s.n }}</span>
+                <h2 style="margin:0; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(clamp(26px, 2.4vw, 36px) * var(--k)); line-height:1.08; letter-spacing:-.012em; text-wrap:balance">{{ s.h }}</h2>
+                <sc-if value="{{ s.house }}" hint-placeholder-val="{{ false }}"><span style="padding:6px 10px; border-radius:999px; border:1.5px dashed #12180F; font:700 11px/1 var(--fu); letter-spacing:.1em; text-transform:uppercase">{{ s.house }}</span></sc-if>
+              </div>
+              <sc-if value="{{ s.hasList }}" hint-placeholder-val="{{ false }}">
+                <ol style="list-style:none; margin:20px 0 0; padding:0; counter-reset:x">
+                  <sc-for list="{{ s.list }}" as="li" hint-placeholder-count="4">
+                    <li style="display:grid; grid-template-columns:36px minmax(0,1fr); gap:6px; padding:12px 0; border-top:1px dashed rgba(18,24,15,.28); font:400 clamp(17px, 1.3vw, 19px)/1.6 var(--fu)"><span aria-hidden="true" style="width:22px; height:22px; margin-top:4px; border-radius:50%; background:#0A7C39; color:#FFFFFF; font:700 11px/22px var(--fu); text-align:center">{{ li.n }}</span><span style="text-wrap:pretty">{{ li.t }}</span></li>
+                  </sc-for>
+                </ol>
+              </sc-if>
+              <sc-for list="{{ s.p }}" as="p" hint-placeholder-count="1">
+                <p style="margin:18px 0 0; max-width:66ch; font:400 clamp(17px, 1.3vw, 19px)/1.7 var(--fu); color:#1E261B; text-wrap:pretty">{{ p }}</p>
+              </sc-for>
+              <sc-if value="{{ s.note }}" hint-placeholder-val="{{ false }}">
+                <p style="margin:18px 0 0; padding:14px 16px; border-radius:12px; background:#DEE5D5; font:500 15px/1.5 var(--fu)">{{ s.note }}</p>
+              </sc-if>
+              <sc-if value="{{ s.compare }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:22px; overflow-x:auto; border-radius:16px; border:1.5px solid #12180F; background:#FFFFFF">
+                  <table style="width:100%; min-width:520px; border-collapse:collapse; font:400 15px/1.45 var(--fu)">
+                    <thead><tr><sc-for list="{{ cmp.cols }}" as="c" hint-placeholder-count="3"><th scope="col" style="text-align:left; padding:14px 16px; font:700 12px/1.2 var(--fu); letter-spacing:.1em; text-transform:uppercase; border-bottom:1.5px solid #12180F; background:{{ c.bg }}; color:{{ c.fg }}">{{ c.t }}</th></sc-for></tr></thead>
+                    <tbody>
+                      <sc-for list="{{ cmp.rows }}" as="r" hint-placeholder-count="4">
+                        <tr><th scope="row" style="text-align:left; padding:14px 16px; font:700 14px/1.3 var(--fu); border-top:1px solid rgba(18,24,15,.14); vertical-align:top">{{ r.a }}</th><td style="padding:14px 16px; border-top:1px solid rgba(18,24,15,.14); color:#2E372B; vertical-align:top">{{ r.b }}</td><td style="padding:14px 16px; border-top:1px solid rgba(18,24,15,.14); font-weight:600; vertical-align:top; background:#F3FBE2">{{ r.c }}</td></tr>
+                      </sc-for>
+                    </tbody>
+                  </table>
+                </div>
+                <div style="margin-top:28px; padding:{{ L.appPad }}; border-radius:22px; background:#101418; color:#EDF3E6; display:grid; grid-template-columns:{{ L.appCols }}; gap:22px 28px; align-items:center">
+                  <img src="assets/icon.png" alt="" width="72" height="72" style="width:72px; height:72px; border-radius:22%; display:block">
+                  <div>
+                    <div style="font-family:'Archivo',sans-serif; font-style:italic; font-weight:900; font-size:24px; letter-spacing:-.015em">BOMBAR<span style="color:#BFF747">DIRO</span></div>
+                    <p style="margin:6px 0 0; font:400 15px/1.5 var(--fu); color:#C5CEC0">{{ g.cta.availability }}</p>
+                    <a href="{{ links.howToPlay }}" style="margin-top:6px; display:inline-flex; align-items:center; gap:8px; min-height:44px; font:700 15px/1 var(--fu); color:#BFF747; text-decoration:none" style-hover="text-decoration:underline; text-underline-offset:5px">{{ a.endLink }} <span aria-hidden="true">→</span></a>
+                  </div>
+                  <a href="{{ store }}" style="display:block; line-height:0; justify-self:{{ L.badgeJustify }}; border-radius:8px"><img src="{{ badge }}" alt="{{ g.cta.badgeAlt }}" height="48" style="height:48px; width:auto; display:block"></a>
+                </div>
+              </sc-if>
+            </section>
+          </sc-for>
+          <aside style="margin-top:72px; padding-top:22px; border-top:3px solid #12180F">
+            <h2 style="margin:0 0 6px; font:700 12px/1 var(--fu); letter-spacing:.14em; text-transform:uppercase">{{ a.related }}</h2>
+            <ul style="list-style:none; margin:0; padding:0">
+              <sc-for list="{{ related }}" as="r" hint-placeholder-count="2">
+                <li style="border-bottom:1px solid rgba(18,24,15,.18)"><a href="{{ r.href }}" style="display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:64px; font-family:var(--fd); font-style:var(--fds); font-weight:800; font-size:calc(20px * var(--k)); line-height:1.2; color:#12180F; text-decoration:none" style-hover="color:#0A7C39">{{ r.title }}<span aria-hidden="true">→</span></a></li>
+              </sc-for>
+            </ul>
+          </aside>
+        </div>
+        <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}"><div></div></sc-if>
+      </div>
+    </article>
+  </main>
+  <dc-import name="SiteFooter" g="{{ g }}" lang="{{ lang }}" page="guide" theme="chalk" wide="{{ wide }}" links="{{ links }}" lang-links="{{ langLinks }}" store="{{ store }}" hint-size="100%,480px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { c: null, wide: true, p: 0, cur: 'rules' };
+  componentDidMount() {
+    const S = window.BBSite;
+    if (!S || !window.BB_GUIDES) { this.retry = setTimeout(() => this.componentDidMount(), 50); return; }
+    S.copy().then((c) => this.setState({ c }));
+    document.title = window.BB_GUIDES.article[S.lang].title;
+    document.documentElement.lang = S.lang;
+    this.mq = matchMedia('(min-width: 1100px)');
+    this.onMq = () => this.setState({ wide: this.mq.matches });
+    this.onMq(); this.mq.addEventListener('change', this.onMq);
+    this.onScroll = () => {
+      if (this.tick) return;
+      this.tick = requestAnimationFrame(() => {
+        this.tick = 0;
+        const max = document.documentElement.scrollHeight - innerHeight;
+        const p = max > 0 ? Math.min(1, scrollY / max) : 0;
+        let cur = this.state.cur;
+        document.querySelectorAll('article section[id]').forEach((el) => { if (el.getBoundingClientRect().top < innerHeight * 0.35) cur = el.id; });
+        if (Math.abs(p - this.state.p) > 0.002 || cur !== this.state.cur) this.setState({ p, cur });
+      });
+    };
+    addEventListener('scroll', this.onScroll, { passive: true });
+  }
+  componentWillUnmount() { clearTimeout(this.retry); removeEventListener('scroll', this.onScroll); if (this.mq) this.mq.removeEventListener('change', this.onMq); }
+  renderVals() {
+    const S = window.BBSite || { FONTS: { en: {} }, lang: 'en', links: () => ({}), langLinks: () => [], badge: () => '', SITE: {} };
+    const lang = S.lang;
+    const G = window.BB_GUIDES || { article: {}, hub: {} };
+    const a = G.article[lang] || { sections: [], compare: { cols: [], rows: [] } };
+    const c = this.state.c || { nav: {}, cta: {}, brand: {}, footer: {}, languageNames: {} };
+    const wide = this.state.wide;
+    const links = S.links();
+    const secs = a.sections.map((s, i) => ({
+      ...s, n: String(i + 1).padStart(2, '0'), house: s.house || false, note: s.note || false, compare: !!s.compare,
+      hasList: !!s.list, list: (s.list || []).map((t, j) => ({ t, n: j + 1 })), p: s.p || []
+    }));
+    const toc = secs.map((s) => {
+      const on = s.id === this.state.cur;
+      return { href: '#' + s.id, h: s.h, n: s.n, cur: on ? 'true' : undefined, color: on ? '#12180F' : '#4F5A4C', nc: on ? '#0E9C49' : 'rgba(18,24,15,.4)', font: (on ? '700' : '500') + ' 14px/1.3 var(--fu)' };
+    });
+    const cmp = {
+      cols: a.compare.cols.map((t, i) => ({ t, bg: i === 2 ? '#101418' : 'transparent', fg: i === 2 ? '#BFF747' : '#12180F' })),
+      rows: a.compare.rows.map(([x, y, z]) => ({ a: x, b: y, c: z }))
+    };
+    const related = ((G.hub || {})[lang] || []).filter((g) => !g.built).map((g) => ({ title: g.title, href: links.guides }))
+      .concat([{ title: (c.nav || {}).words, href: links.words }]);
+    const L = wide
+      ? { headPad: '48px 64px 48px 376px', bodyPad: '0 64px 120px', cols: '240px minmax(0,720px) minmax(0,1fr)', bodyTop: '40px', secTop: '56px', appPad: '28px', appCols: '72px minmax(0,1fr) auto', badgeJustify: 'end' }
+      : { headPad: '28px 20px 32px', bodyPad: '0 20px 80px', cols: 'minmax(0,1fr)', bodyTop: '28px', secTop: '44px', appPad: '22px', appCols: '72px minmax(0,1fr)', badgeJustify: 'start' };
+    return {
+      lang, f: S.FONTS[lang], g: c, a, wide, narrow: !wide, secs, toc, cmp, related, L, links,
+      langLinks: S.langLinks('guide'), store: S.SITE.store, badge: S.badge(),
+      progress: 'scaleX(' + this.state.p.toFixed(4) + ')'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<header style="position:sticky; top:0; z-index:50; border-bottom:1px solid {{ h.border }}; font-family:var(--fu)">
+  <div aria-hidden="true" style="position:absolute; inset:0; z-index:-1; background:{{ h.bg }}; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px)"></div>
+  <a href="#main" style="position:absolute; left:12px; top:-80px; z-index:60; padding:12px 16px; border-radius:10px; background:{{ h.accent }}; color:{{ h.onAccent }}; font:700 14px/1 var(--fu); text-decoration:none" style-focus="top:10px">{{ g.nav.skip }}</a>
+  <div style="max-width:1440px; margin:0 auto; box-sizing:border-box; height:{{ h.height }}; padding:{{ h.pad }}; display:flex; align-items:center; justify-content:space-between; gap:16px">
+    <a href="{{ links.home }}" aria-label="Bombardiro" style="display:flex; align-items:center; gap:10px; min-height:44px; text-decoration:none; color:{{ h.fg }}; flex:none">
+      <sc-if value="{{ h.chip }}" hint-placeholder-val="{{ false }}">
+        <span style="position:relative; display:inline-flex; align-items:center; height:{{ h.chipH }}; padding:0 14px"><span style="position:absolute; inset:0; border-radius:10px; background:#0A0F0A; transform:skewX(-8deg)"></span><span style="position:relative; font-family:'Archivo',sans-serif; font-style:italic; font-weight:900; font-size:{{ h.wmSize }}; line-height:1; letter-spacing:-.015em; color:#EDF3E6">BOMBAR<span style="color:#BFF747">DIRO</span></span></span>
+      </sc-if>
+      <sc-if value="{{ h.plain }}" hint-placeholder-val="{{ true }}">
+        <img src="assets/icon.png" alt="" width="32" height="32" style="width:{{ h.iconSize }}; height:{{ h.iconSize }}; border-radius:22%; display:block">
+        <span style="font-family:'Archivo',sans-serif; font-style:italic; font-weight:900; font-size:{{ h.wmSize }}; line-height:1; letter-spacing:-.015em; color:{{ h.wmA }}">BOMBAR<span style="color:{{ h.wmB }}">DIRO</span></span>
+      </sc-if>
+    </a>
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+      <nav aria-label="{{ g.nav.primaryLabel }}" style="display:flex; align-items:center; gap:2px">
+        <sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+          <a href="{{ n.href }}" aria-current="{{ n.current }}" style="position:relative; display:flex; align-items:center; height:44px; padding:0 14px; font:500 15px/1 var(--fu); white-space:nowrap; color:{{ n.color }}; text-decoration:none; transition:color .16s" style-hover="color:{{ h.fg }}">{{ n.label }}<span style="position:absolute; left:14px; right:14px; bottom:6px; height:2px; border-radius:1px; background:{{ h.accentLine }}; transform:{{ n.line }}; transform-origin:0 50%; transition:transform .24s cubic-bezier(.2,.8,.2,1)"></span></a>
+        </sc-for>
+      </nav>
+    </sc-if>
+    <div style="display:flex; align-items:center; gap:{{ h.gap }}; flex:none">
+      <sc-if value="{{ hasWhistle }}" hint-placeholder-val="{{ false }}">
+        <button type="button" onClick="{{ onWhistle }}" aria-pressed="{{ whistlePressed }}" style="height:44px; padding:0 16px; border-radius:999px; border:1px solid {{ h.border2 }}; background:transparent; color:{{ whistleColor }}; font:600 12px/1 var(--fu); letter-spacing:.06em; white-space:nowrap; cursor:pointer; display:flex; align-items:center; gap:9px" style-hover="border-color:{{ h.fg }}"><span style="width:8px; height:8px; border-radius:50%; background:{{ whistleColor }}"></span>{{ whistleLabel }}</button>
+      </sc-if>
+      <div role="group" aria-label="{{ g.nav.language }}" style="display:flex; align-items:center">
+        <sc-for list="{{ langs }}" as="l" hint-placeholder-count="3">
+          <a href="{{ l.href }}" hreflang="{{ l.code }}" lang="{{ l.code }}" aria-label="{{ l.name }}" aria-current="{{ l.current }}" style="width:{{ h.langW }}; height:44px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; font:700 12px/1 var(--fu); letter-spacing:.08em; text-decoration:none; color:{{ l.color }}" style-hover="color:{{ h.fg }}">{{ l.label }}<span style="width:14px; height:2px; border-radius:1px; background:{{ l.line }}"></span></a>
+        </sc-for>
+      </div>
+      <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+        <a href="{{ store }}" style="display:flex; align-items:center; gap:8px; height:44px; padding:0 4px 0 8px; font:700 15px/1 var(--fu); white-space:nowrap; color:{{ h.cta }}; text-decoration:none" style-hover="text-decoration:underline; text-underline-offset:5px; text-decoration-thickness:2px">{{ g.cta.getApp }} <span aria-hidden="true">→</span></a>
+      </sc-if>
+      <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+        <button type="button" onClick="{{ openMenu }}" aria-expanded="{{ menuExpanded }}" aria-controls="site-menu" aria-label="{{ g.nav.primaryLabel }}" style="width:44px; height:44px; margin-left:4px; border-radius:{{ h.menuRadius }}; border:{{ h.menuBorder }}; background:transparent; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; cursor:pointer" style-active="transform:scale(.94)"><span style="width:16px; height:2px; border-radius:1px; background:{{ h.fg }}"></span><span style="width:16px; height:2px; border-radius:1px; background:{{ h.fg }}"></span></button>
+      </sc-if>
+    </div>
+  </div>
+  <div id="site-menu" aria-hidden="{{ menuHidden }}" style="position:fixed; inset:0; z-index:70; background:{{ h.solid }}; color:{{ h.fg }}; display:flex; flex-direction:column; padding:0 20px 28px; box-sizing:border-box; overflow-y:auto; opacity:{{ menu.o }}; visibility:{{ menu.v }}; transform:{{ menu.y }}; transition:opacity .22s cubic-bezier(.2,.8,.2,1), transform .32s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{ menu.vd }}">
+    <div style="height:64px; display:flex; align-items:center; justify-content:space-between; flex:none">
+      <span style="font-family:'Archivo',sans-serif; font-style:italic; font-weight:900; font-size:19px; letter-spacing:-.015em; color:{{ h.wmA }}">BOMBAR<span style="color:{{ h.wmB }}">DIRO</span></span>
+      <button type="button" onClick="{{ closeMenu }}" aria-label="×" style="width:44px; height:44px; border-radius:{{ h.menuRadius }}; border:{{ h.menuBorder }}; background:transparent; color:{{ h.fg }}; font:400 24px/1 system-ui,sans-serif; cursor:pointer">×</button>
+    </div>
+    <nav aria-label="{{ g.nav.primaryLabel }}" style="display:flex; flex-direction:column; margin-top:24px">
+      <sc-for list="{{ menuNav }}" as="n" hint-placeholder-count="6">
+        <a href="{{ n.href }}" aria-current="{{ n.current }}" style="display:flex; align-items:center; justify-content:space-between; min-height:64px; border-bottom:1px solid {{ h.border }}; font-family:var(--fd); font-style:var(--fds); font-weight:900; font-size:calc(34px * var(--k)); line-height:1; text-transform:uppercase; letter-spacing:-.01em; color:{{ n.color }}; text-decoration:none">{{ n.label }}<span aria-hidden="true" style="font-size:22px; color:{{ h.accentLine }}">→</span></a>
+      </sc-for>
+    </nav>
+    <div style="margin-top:auto; padding-top:32px; display:flex; flex-direction:column; gap:18px">
+      <div style="display:flex; gap:8px; flex-wrap:wrap">
+        <sc-for list="{{ langs }}" as="l" hint-placeholder-count="3">
+          <a href="{{ l.href }}" hreflang="{{ l.code }}" lang="{{ l.code }}" style="display:flex; align-items:center; height:44px; padding:0 16px; border-radius:999px; border:1px solid {{ l.pill }}; font:600 15px/1 var(--fu); color:{{ h.fg }}; text-decoration:none">{{ l.name }}</a>
+        </sc-for>
+      </div>
+      <a href="{{ store }}" style="display:flex; align-items:center; gap:8px; min-height:44px; font:700 16px/1 var(--fu); color:{{ h.cta }}; text-decoration:none">{{ g.cta.textLink }} <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</header>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;84px&quot;},&quot;g&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;ru&quot;,&quot;hy&quot;],&quot;default&quot;:&quot;en&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;page&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;night&quot;,&quot;lime&quot;,&quot;chalk&quot;],&quot;default&quot;:&quot;night&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;wide&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;links&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;},&quot;langLinks&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;array&quot;},&quot;store&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://apps.apple.com/app/id6813968416&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;onWhistle&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;function&quot;},&quot;whistleOn&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;whistleLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { open: false };
+  openMenu = () => this.setState({ open: true });
+  closeMenu = () => this.setState({ open: false });
+  onKey = (e) => { if (e.key === 'Escape' && this.state.open) this.setState({ open: false }); };
+  componentDidMount() { window.addEventListener('keydown', this.onKey); }
+  componentWillUnmount() { window.removeEventListener('keydown', this.onKey); }
+
+  renderVals() {
+    const p = this.props;
+    const g = p.g || { nav: {}, cta: {}, languageNames: {} };
+    const theme = p.theme || 'night';
+    const wide = !!p.wide;
+    const lang = p.lang || 'en';
+    const links = p.links || {};
+    const T = {
+      night: { bg: 'rgba(16,20,24,.78)', solid: '#101418', fg: '#EDF3E6', muted: '#C9D1C3', accent: '#BFF747', onAccent: '#0A0F0A', accentLine: '#BFF747', cta: '#BFF747', border: 'rgba(237,243,230,.08)', border2: 'rgba(237,243,230,.18)', wmA: '#EDF3E6', wmB: '#BFF747', langOff: '#9AA59A', menuBorder: '1px solid rgba(237,243,230,.18)', menuRadius: '50%' },
+      lime: { bg: 'rgba(191,247,71,.82)', solid: '#BFF747', fg: '#0A0F0A', muted: '#0A0F0A', accent: '#0A0F0A', onAccent: '#BFF747', accentLine: '#0A0F0A', cta: '#0A0F0A', border: 'rgba(10,15,10,.9)', border2: '#0A0F0A', wmA: '#0A0F0A', wmB: '#0A0F0A', langOff: '#33441A', menuBorder: '1.5px solid #0A0F0A', menuRadius: '50%' },
+      chalk: { bg: 'rgba(238,242,233,.86)', solid: '#EEF2E9', fg: '#12180F', muted: '#2E372B', accent: '#0A7C39', onAccent: '#FFFFFF', accentLine: '#0E9C49', cta: '#0A7C39', border: 'rgba(18,24,15,.14)', border2: 'rgba(18,24,15,.3)', wmA: '#12180F', wmB: '#0E9C49', langOff: '#4F5A4C', menuBorder: '1.5px solid #12180F', menuRadius: '10px' }
+    }[theme];
+    const h = {
+      ...T,
+      chip: theme === 'lime', plain: theme !== 'lime',
+      height: wide ? '84px' : '64px',
+      pad: wide ? '0 52px 0 64px' : '0 8px 0 16px',
+      gap: wide ? '14px' : '0px',
+      langW: wide ? '44px' : '40px',
+      iconSize: wide ? '34px' : '28px',
+      wmSize: wide ? '25px' : '19px',
+      chipH: wide ? '44px' : '36px'
+    };
+    const items = [['howToPlay', 'howToPlay'], ['words', 'words'], ['guides', 'guides'], ['support', 'support']];
+    const curOf = (key) => p.page === key || (key === 'guides' && p.page === 'guide');
+    const nav = items.map(([key, label]) => ({
+      label: g.nav[label], href: links[key],
+      current: curOf(key) ? 'page' : undefined,
+      color: curOf(key) ? T.fg : T.muted,
+      line: curOf(key) ? 'scaleX(1)' : 'scaleX(0)'
+    }));
+    const menuNav = [['home', 'home']].concat(items, [['about', 'about']]).map(([key, label]) => ({
+      label: g.nav[label], href: links[key], current: curOf(key) ? 'page' : undefined,
+      color: curOf(key) ? T.wmB : T.fg
+    }));
+    const langs = (p.langLinks || []).map((l) => ({
+      code: l.code, href: l.href, label: l.code.toUpperCase(), name: (g.languageNames || {})[l.code],
+      current: l.code === lang ? 'true' : undefined,
+      color: l.code === lang ? (theme === 'night' ? '#BFF747' : T.fg) : T.langOff,
+      line: l.code === lang ? T.accentLine : 'transparent',
+      pill: l.code === lang ? T.fg : T.border2
+    }));
+    const open = this.state.open && !wide;
+    return {
+      g, h, nav, menuNav, langs, wide, narrow: !wide, links,
+      store: p.store || 'https://apps.apple.com/app/id6813968416',
+      hasWhistle: !!p.onWhistle && wide,
+      onWhistle: p.onWhistle, whistleLabel: p.whistleLabel, whistlePressed: p.whistleOn ? 'true' : 'false',
+      whistleColor: p.whistleOn ? T.accent : T.langOff,
+      openMenu: this.openMenu, closeMenu: this.closeMenu,
+      menuExpanded: open ? 'true' : 'false', menuHidden: open ? 'false' : 'true',
+      menu: open ? { o: 1, v: 'visible', y: 'translateY(0)', vd: '0s' } : { o: 0, v: 'hidden', y: 'translateY(-12px)', vd: '.32s' }
+    };
+  }
+}
+</script>
+</body>
+</html>

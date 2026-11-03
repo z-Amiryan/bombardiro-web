@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<style>
+body{margin:0;background:#E9E7E1;font-family:system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1a1a1a}a:hover{color:#2a78d6}
+</style>
+</helmet>
+<section style="padding:44px 48px 80px">
+  <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:10px">
+    <span style="font:600 10px ui-monospace,Menlo,monospace; padding:3px 7px; background:#1a1a1a; color:#fff; border-radius:4px">2</span>
+    <span style="font:italic 900 30px/1 'Archivo',system-ui,sans-serif; text-transform:uppercase; letter-spacing:-.01em">Bombardiro · every page, 390 and 1440</span>
+  </div>
+  <p style="margin:0 0 8px; max-width:900px; font:400 15px/1.55 system-ui,sans-serif; color:#333">Direction 1a, with the 1b lime wall on the Words page and on Home's words band, and the Chalk reading theme for Guides and Privacy. Every frame is the live page, so it scrolls and responds to clicks. Open a page on its own with the link under its name. Desktop frames are shown at 50%.</p>
+  <p style="margin:0 0 36px; font:400 13px/1.5 system-ui,sans-serif; color:#666">Also: <a href="Design System.dc.html">Design System</a> · <a href="OG Images.dc.html">OG images</a> · <a href="handoff/DESIGN-NOTES.md">Developer notes</a></p>
+  <div style="display:flex; flex-direction:column; gap:64px">
+    <sc-for list="{{ rows }}" as="r" hint-placeholder-count="4">
+      <div id="{{ r.id }}" style="display:flex; flex-direction:column; gap:14px">
+        <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap">
+          <span style="font:600 10.5px ui-monospace,Menlo,monospace; padding:3px 7px; background:rgba(0,0,0,.08); border-radius:5px">{{ r.id }}</span>
+          <span style="font:700 18px/1.2 system-ui,sans-serif">{{ r.name }}</span>
+          <span style="font:400 13px/1.3 system-ui,sans-serif; color:#555">{{ r.note }}</span>
+          <a href="{{ r.open }}" style="font:600 12px/1 system-ui,sans-serif">Open ↗</a>
+        </div>
+        <div style="display:flex; gap:40px; align-items:flex-start">
+          <div style="display:flex; flex-direction:column; gap:8px; flex:none">
+            <span style="font:500 11px ui-monospace,Menlo,monospace; color:#777">390 × 844</span>
+            <iframe src="{{ r.src }}" title="{{ r.name }} phone" loading="lazy" style="width:390px; height:844px; border:0; border-radius:24px; background:#fff; box-shadow:0 30px 60px -30px rgba(0,0,0,.4), 0 0 0 1px rgba(0,0,0,.1)"></iframe>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px; flex:none">
+            <span style="font:500 11px ui-monospace,Menlo,monospace; color:#777">1440 × 900 · 50%</span>
+            <div style="width:720px; height:450px; overflow:hidden; border-radius:10px; box-shadow:0 30px 60px -30px rgba(0,0,0,.4), 0 0 0 1px rgba(0,0,0,.1)">
+              <iframe src="{{ r.src }}" title="{{ r.name }} desktop" loading="lazy" style="width:1440px; height:900px; border:0; transform:scale(.5); transform-origin:0 0; background:#fff"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const P = [
+      ['home-en', 'Home', 'Home.dc.html?lang=en', 'EN · scroll for the match clock'],
+      ['home-ru', 'Home · RU', 'Home.dc.html?lang=ru', 'Noto Sans, Russian screens'],
+      ['home-hy', 'Home · HY', 'Home.dc.html?lang=hy', 'Noto Sans Armenian, upright display'],
+      ['how', 'How to play', 'HowToPlay.dc.html?lang=en', ''],
+      ['words', 'Words', 'Words.dc.html?lang=en', 'Lime (1b). Tap words to score them'],
+      ['words-print', 'Words · print view', 'Words.dc.html?lang=en&print=1', 'A4 sheets: one category per page, cut lines'],
+      ['guides', 'Guides hub', 'Guides.dc.html?lang=en', 'Chalk reading theme'],
+      ['guide-en', 'Guide article · EN', 'Guide.dc.html?lang=en', 'Draft text, needs an editor'],
+      ['guide-ru', 'Guide article · RU', 'Guide.dc.html?lang=ru', 'Draft text, needs a native speaker'],
+      ['guide-hy', 'Guide article · HY', 'Guide.dc.html?lang=hy', 'Draft text, needs a native speaker'],
+      ['support', 'Support', 'Support.dc.html?lang=en', ''],
+      ['about', 'About', 'About.dc.html?lang=en', 'The name, and material for press'],
+      ['privacy', 'Privacy', 'Privacy.dc.html?lang=en', ''],
+      ['404', '404', 'NotFound.dc.html?lang=en', 'All three languages; the visitor\u2019s language first']
+    ];
+    return { rows: P.map(([id, name, src, note]) => ({ id, name, src, note, open: src })) };
+  }
+}
+</script>
+</body>
+</html>
