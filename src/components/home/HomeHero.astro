@@ -34,8 +34,8 @@ const beats = home.turn.steps.map((step, i) => ({ title: step.title, time: clock
   <div class="hero__copy">
     <p class="eyebrow">{home.eyebrow}</p>
     <h1 id="hero-title" class="hero__h1 display">
-      <span>{a}</span>
-      <span>{b}</span>
+      <span>{a}</span>{' '}
+      <span>{b}</span>{' '}
       <span class="hero__score">{c}</span>
     </h1>
   </div>
@@ -71,7 +71,7 @@ const beats = home.turn.steps.map((step, i) => ({ title: step.title, time: clock
                 <span class="hero__time-on">{beat.time}</span>
                 <span class="hero__time-late">{beat.time}</span>
               </span>
-              <span class="sr-only">{beat.time}</span>
+              <span class="sr-only">{beat.time}</span>{' '}
               <span class="hero__beat-title">{beat.title}</span>
             </a>
           </li>

@@ -18,7 +18,13 @@ const { lang, placement, class: className } = Astro.props;
 ---
 
 <a class:list={['badge', className]} href={storeUrl(placement)}>
-  <img src={lang === 'ru' ? badgeRu : badgeEn} alt={copyFor(lang).cta.badgeAlt} width="144" height="48" />
+  <img
+    src={lang === 'ru' ? badgeRu : badgeEn}
+    alt={copyFor(lang).cta.badgeAlt}
+    lang={lang === 'hy' ? 'en' : undefined}
+    width="144"
+    height="48"
+  />
 </a>
 
 <style>
