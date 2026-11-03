@@ -1,4 +1,15 @@
 /* Reset, base type, focus, skip link, layout helpers and page transitions. */
+
+/* Local Arial sized to Noto Sans (measured: body text 4.7–6.8 % wider), the fallback while Noto Sans loads on
+   Russian pages. local() downloads nothing. */
+@font-face {
+  font-family: 'Noto Sans fallback';
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 105.5%;
+  ascent-override: 101.3%;
+  descent-override: 27.8%;
+  line-gap-override: 0%;
+}
 *,
 *::before,
 *::after {
