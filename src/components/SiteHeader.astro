@@ -565,10 +565,6 @@ const langs = (routeId ? languageSwitch(routeId) : languageSwitch('home')).map((
     text-decoration: none;
   }
 
-  .sheet__nav a :global(.icon) {
-    font-size: 22px;
-    color: var(--hdr-accent-line);
-  }
 
   .sheet__nav a[aria-current='page'] {
     color: var(--wm-b);
@@ -629,6 +625,7 @@ const langs = (routeId ? languageSwitch(routeId) : languageSwitch('home')).map((
   .sheet__nav a :global(.icon) {
     font-size: 18px;
     stroke-width: 1.5;
+    color: var(--hdr-accent-line);
   }
 
   @media (prefers-reduced-motion: reduce) {

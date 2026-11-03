@@ -21,7 +21,7 @@ the design's idea.
 | Grids on phones | `1fr` columns | `minmax(0, 1fr)` | A long unbreakable word (an email address) could widen a `1fr` column past the screen. |
 | Footer and menu links | 40 px rows | 44 px rows | SPEC §10: touch targets at least 44 px. |
 | Arrows after links (header, footer, menu sheet) | "→" in the interface font | A drawn arrow icon (`Icon.astro`), 1em, the text colour | No site font has "→" (U+2192), so the design's arrow was a system-font fallback; same reason as the "›" row under Copy. |
-| Footer wordmark under 1280 px | 64 px from 1000 px | 64 px from 1280 px; from 1000 to 1279 px it scales down to its column | At full size it pushes the footer's columns into each other next to the longest Russian navigation label. |
+| Footer wordmark under 1310 px | 64 px from 1000 px | 64 px from 1310 px; from 1000 to 1309 px it scales down to its column | At full size it pushes the footer's columns into each other next to the longest Russian navigation label. |
 | Mobile menu sheet | A JavaScript-driven overlay | The same sheet as a native popover | Opens, closes on Esc and works with JavaScript off; looks and animates the same. |
 
 ## Colour and contrast

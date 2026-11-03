@@ -297,8 +297,6 @@ const socials = socialLinksFor(lang);
     }
   }
 
-  /* From 1280 px the full 64 px wordmark fits beside the longest Russian navigation label; below that it
-     scales down to its column. */
   /* From 1100 px the contact column is wide enough for the address on one line. */
   @media (min-width: 1100px) {
     .ftr__email {
@@ -306,7 +304,9 @@ const socials = socialLinksFor(lang);
     }
   }
 
-  @media (min-width: 1280px) {
+  /* From 1310 px the full 64 px wordmark fits beside the longest Russian navigation label and still leaves the
+     address its line; below that it scales down to its column. */
+  @media (min-width: 1310px) {
     .ftr__mark :global(.wordmark) {
       max-width: none;
     }

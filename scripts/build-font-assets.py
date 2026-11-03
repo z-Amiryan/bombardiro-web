@@ -122,6 +122,8 @@ def outline(woff2: Path, parts, letter_spacing_em: float, weight: int):
 def site_text(lang: str) -> str:
     """Everything a language's pages say: its copy file and its guides."""
     text = (ROOT / 'content' / 'copy' / f'{lang}.json').read_text(encoding='utf-8')
+    # The Words page sets words straight from the game's pack.
+    text += (ROOT / 'content' / 'words' / f'words.{lang}.json').read_text(encoding='utf-8')
     guides = ROOT / 'src' / 'content' / 'guides' / lang
     if guides.is_dir():
         text += ''.join(p.read_text(encoding='utf-8') for p in sorted(guides.glob('*.yaml')))

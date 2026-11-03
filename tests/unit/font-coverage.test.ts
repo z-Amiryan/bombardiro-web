@@ -60,6 +60,8 @@ function strings(value: unknown, path = ''): Array<[string, string]> {
 function siteText(lang: Lang): Array<[string, string]> {
   const copy = JSON.parse(readFileSync(join(ROOT, 'content/copy', `${lang}.json`), 'utf8'));
   const out = strings(copy);
+  // The Words page sets words straight from the game's pack.
+  out.push([`content/words/words.${lang}.json`, readFileSync(join(ROOT, 'content/words', `words.${lang}.json`), 'utf8')]);
   const guides = join(ROOT, 'src/content/guides', lang);
   if (existsSync(guides)) {
     for (const file of readdirSync(guides).filter((f) => f.endsWith('.yaml'))) {
