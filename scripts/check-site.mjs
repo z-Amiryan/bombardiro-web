@@ -208,6 +208,10 @@ for (const page of htmlTargets) {
       fail(where, `insecure link ${href}`);
       continue;
     }
+    if (!URL.canParse(href, SITE_URL)) {
+      fail(where, `malformed link ${href}`);
+      continue;
+    }
     // Links out, including protocol-relative ones (//host/path), are not checked; a link back to this site must be
     // written as a path.
     if (/^(https?:)?\/\//.test(href)) {
