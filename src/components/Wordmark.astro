@@ -1,0 +1,42 @@
+---
+// The BOMBARDIRO wordmark as outlined SVG (Archivo 900 italic, from scripts/build-font-assets.py), so it
+// looks the same in every language without loading Archivo. Sized in em: set font-size on the parent as
+// the design sets it for the text. "BOMBAR" takes --wm-a and "DIRO" --wm-b.
+import outlines from '../assets/generated/outlines.json' with { type: 'json' };
+
+interface Props {
+  /** The footer sets the large wordmark tighter (-.03em instead of -.015em). */
+  tight?: boolean;
+  class?: string;
+}
+
+const { tight = false, class: className } = Astro.props;
+const mark = tight ? outlines.wordmarkTight : outlines.wordmark;
+const [bombar, diro] = mark.parts;
+---
+
+<svg
+  class:list={['wordmark', className]}
+  viewBox={mark.viewBox}
+  width={`${mark.widthEm}em`}
+  height={`${mark.heightEm}em`}
+  aria-hidden="true"
+  focusable="false"
+>
+  <path class="wordmark__a" d={bombar?.d}></path>
+  <path class="wordmark__b" d={diro?.d}></path>
+</svg>
+
+<style>
+  .wordmark {
+    display: block;
+    flex: none;
+    overflow: visible;
+  }
+  .wordmark__a {
+    fill: var(--wm-a, currentColor);
+  }
+  .wordmark__b {
+    fill: var(--wm-b, currentColor);
+  }
+</style>

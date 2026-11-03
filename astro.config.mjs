@@ -1,6 +1,7 @@
 // @ts-check
 import sitemap from '@astrojs/sitemap';
-import { defineConfig } from 'astro/config';
+import { defineConfig, fontProviders } from 'astro/config';
+import { FONT_FAMILIES } from './src/config/fonts.ts';
 import { SITE_URL } from './src/config/site.ts';
 
 export default defineConfig({
@@ -14,6 +15,20 @@ export default defineConfig({
     // the Content-Security-Policy keeps a short list of hashes.
     inlineStylesheets: 'never',
   },
+  // Self-hosted WOFF2 from the @fontsource-variable packages (src/config/fonts.ts). Each language's pages
+  // load only their own families; see src/components/Fonts.astro.
+  fonts: FONT_FAMILIES.map((family) => ({
+    provider: fontProviders.local(),
+    name: family.name,
+    cssVariable: family.cssVariable,
+    fallbacks: ['sans-serif'],
+    display: 'swap',
+    options: {
+      variants: /** @type {[any, ...any[]]} */ (
+        family.variants.map((v) => ({ src: [v.src], weight: '100 900', style: v.style, unicodeRange: [v.unicodeRange] }))
+      ),
+    },
+  })),
   // The sitemap integration leaves out the 404 page by itself.
   integrations: [sitemap()],
 });

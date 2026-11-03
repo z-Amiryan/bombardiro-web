@@ -1,0 +1,28 @@
+---
+// Loads only the page language's font families (src/config/fonts.ts) and preloads the files the first
+// paint needs most. The 404 page passes all three languages.
+import { Font, fontData } from 'astro:assets';
+import { LANG_FONTS, type FontCssVariable } from '../config/fonts';
+import type { Lang } from '../lib/routes';
+
+interface Props {
+  langs: Lang[];
+  /** Set false on pages that show several languages at once, so nothing is preloaded speculatively. */
+  preload?: boolean;
+}
+
+const { langs, preload = true } = Astro.props;
+const families = [...new Set(langs.flatMap((l) => LANG_FONTS[l].families as readonly FontCssVariable[]))];
+const preloads = preload
+  ? langs.flatMap((l) =>
+      LANG_FONTS[l].preload.map(([family, index]) => {
+        const file = fontData[family]?.[index]?.src[0];
+        if (!file) throw new Error(`No font file ${index} for ${family}`);
+        return file.url;
+      }),
+    )
+  : [];
+---
+
+{preloads.map((href) => <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />)}
+{families.map((cssVariable) => <Font cssVariable={cssVariable} />)}

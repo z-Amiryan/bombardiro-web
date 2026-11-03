@@ -1,0 +1,579 @@
+---
+// Sticky header (design/export/SiteHeader.dc.html): skip link, wordmark, primary navigation, language links,
+// the "Get the app" text link and, on phones, a menu sheet. The sheet is a native popover, so it opens,
+// closes on Esc and works with JavaScript off; a few lines of script move focus into it.
+import { Image } from 'astro:assets';
+import icon from '../../assets/brand/icon.png';
+import { storeUrl } from '../config/site';
+import { copyFor } from '../lib/copy';
+import { CORE_ROUTE_IDS, languageSwitch, routePath, type Lang, type RouteId } from '../lib/routes';
+import type { Surface } from '../lib/surface';
+import Icon from './Icon.astro';
+import Wordmark from './Wordmark.astro';
+
+interface Props {
+  lang: Lang;
+  routeId: RouteId | null;
+  surface: Surface;
+}
+
+const { lang, routeId, surface } = Astro.props;
+const t = copyFor(lang);
+const isGuide = routeId !== null && !(CORE_ROUTE_IDS as readonly string[]).includes(routeId);
+const isCurrent = (id: RouteId) => id === routeId || (id === 'guides' && isGuide);
+
+const primary = (['howToPlay', 'words', 'guides', 'support'] as const).map((id) => ({
+  id,
+  label: t.nav[id],
+  href: routePath(id, lang),
+  current: isCurrent(id),
+}));
+const sheet = (['home', 'howToPlay', 'words', 'guides', 'support', 'about'] as const).map((id) => ({
+  id,
+  label: t.nav[id],
+  href: routePath(id, lang),
+  current: isCurrent(id),
+}));
+const langs = (routeId ? languageSwitch(routeId) : languageSwitch('home')).map((l) => ({
+  ...l,
+  code: l.lang.toUpperCase(),
+  name: t.languageNames[l.lang],
+  current: l.lang === lang,
+}));
+---
+
+<header class="hdr">
+  <a class="skip" href="#main">{t.nav.skip}</a>
+  <div class="hdr__bar">
+    <a class="hdr__brand" href={routePath('home', lang)} aria-label={t.brand.name}>
+      {
+        surface === 'lime' ? (
+          <span class="hdr__chip">
+            <Wordmark />
+          </span>
+        ) : (
+          <>
+            <Image class="hdr__icon" src={icon} alt="" width={34} height={34} densities={[1, 2]} loading="eager" />
+            <Wordmark />
+          </>
+        )
+      }
+    </a>
+
+    <nav class="hdr__nav" aria-label={t.nav.primaryLabel}>
+      <ul role="list">
+        {
+          primary.map((item) => (
+            <li>
+              <a href={item.href} aria-current={item.current ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="hdr__end">
+      <slot name="tools" />
+      <div class="hdr__langs" role="group" aria-label={t.nav.language}>
+        {
+          langs.map((l) => (
+            <a href={l.path} hreflang={l.lang} lang={l.lang} aria-current={l.current ? 'true' : undefined}>
+              <span aria-hidden="true">{l.code}</span>
+              <span class="sr-only">{l.name}</span>
+            </a>
+          ))
+        }
+      </div>
+      <a class="hdr__cta" href={storeUrl('header')}>
+        {t.cta.getApp}
+        <Icon name="arrow-right" />
+      </a>
+      <button class="hdr__menu" type="button" popovertarget="site-menu" aria-label={t.nav.menu}>
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <div id="site-menu" class="sheet" popover>
+    <div class="sheet__top">
+      <Wordmark class="sheet__mark" />
+      <button class="sheet__close" type="button" popovertarget="site-menu" popovertargetaction="hide" aria-label={t.nav.close}>
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <nav class="sheet__nav" aria-label={t.nav.primaryLabel}>
+      <ul role="list">
+        {
+          sheet.map((item) => (
+            <li>
+              <a class="display" href={item.href} aria-current={item.current ? 'page' : undefined}>
+                {item.label}
+                <Icon name="arrow-right" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div class="sheet__foot">
+      <ul class="sheet__langs" role="list" aria-label={t.nav.language}>
+        {
+          langs.map((l) => (
+            <li>
+              <a href={l.path} hreflang={l.lang} lang={l.lang} aria-current={l.current ? 'true' : undefined}>
+                {l.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a class="sheet__cta" href={storeUrl('menu')}>
+        {t.cta.textLink}
+        <Icon name="arrow-right" />
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Moves focus into the menu sheet when it opens, and back to the menu button when it closes.
+  const sheet = document.getElementById('site-menu');
+  const opener = document.querySelector<HTMLButtonElement>('.hdr__menu');
+  sheet?.addEventListener('toggle', (event) => {
+    if ((event as ToggleEvent).newState === 'open') sheet.querySelector<HTMLElement>('a, button')?.focus();
+    else if (sheet.contains(document.activeElement) || document.activeElement === document.body) opener?.focus();
+  });
+</script>
+
+<style>
+  .hdr {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--hdr-line);
+    font-family: var(--fu);
+    isolation: isolate;
+  }
+
+  .hdr::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--hdr-bg);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+  }
+
+  .skip {
+    position: absolute;
+    left: 12px;
+    top: -80px;
+    z-index: 60;
+    padding: 12px 16px;
+    border-radius: var(--r-sm);
+    background: var(--accent);
+    color: var(--on-accent);
+    font: 700 14px/1 var(--fu);
+    text-decoration: none;
+  }
+
+  .skip:focus-visible {
+    top: 10px;
+  }
+
+  .hdr__bar {
+    max-width: var(--max);
+    margin: 0 auto;
+    height: 64px;
+    padding: 0 8px 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .hdr__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    flex: none;
+    font-size: 19px;
+    text-decoration: none;
+    color: var(--fg);
+  }
+
+  .hdr__icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 22%;
+  }
+
+  .hdr__chip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: 36px;
+    padding: 0 14px;
+    --wm-a: var(--c-ink-hi);
+    --wm-b: var(--c-lime);
+  }
+
+  .hdr__chip::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--r-sm);
+    background: var(--c-ink);
+    transform: skewX(-8deg);
+  }
+
+  .hdr__chip :global(.wordmark) {
+    position: relative;
+  }
+
+  .hdr__nav {
+    display: none;
+  }
+
+  .hdr__nav ul {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin: 0;
+  }
+
+  .hdr__nav a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 44px;
+    padding: 0 14px;
+    font: 500 15px/1 var(--fu);
+    white-space: nowrap;
+    color: var(--hdr-muted);
+    text-decoration: none;
+    transition: color 0.16s;
+  }
+
+  .hdr__nav a::after {
+    content: '';
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 6px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--hdr-accent-line);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 0.24s var(--ease-out);
+  }
+
+  .hdr__nav a[aria-current='page'] {
+    color: var(--fg);
+  }
+
+  .hdr__nav a[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+
+  @media (hover: hover) {
+    .hdr__nav a:hover {
+      color: var(--fg);
+    }
+    .hdr__nav a:hover::after {
+      transform: scaleX(1);
+    }
+  }
+
+  .hdr__end {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex: none;
+  }
+
+  .hdr__langs {
+    display: flex;
+    align-items: center;
+  }
+
+  .hdr__langs a {
+    width: 40px;
+    height: 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font: 700 12px/1 var(--fu);
+    letter-spacing: 0.08em;
+    color: var(--hdr-lang-off);
+    text-decoration: none;
+  }
+
+  .hdr__langs a::after {
+    content: '';
+    width: 14px;
+    height: 2px;
+    border-radius: 1px;
+    background: transparent;
+  }
+
+  .hdr__langs a[aria-current='true'] {
+    color: var(--hdr-lang-on);
+  }
+
+  .hdr__langs a[aria-current='true']::after {
+    background: var(--hdr-accent-line);
+  }
+
+  @media (hover: hover) {
+    .hdr__langs a:hover {
+      color: var(--fg);
+    }
+  }
+
+  .hdr__cta {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 4px 0 8px;
+    font: 700 15px/1 var(--fu);
+    white-space: nowrap;
+    color: var(--hdr-cta);
+    text-decoration: none;
+    text-underline-offset: 5px;
+    text-decoration-thickness: 2px;
+  }
+
+  @media (hover: hover) {
+    .hdr__cta:hover {
+      color: var(--hdr-cta);
+      text-decoration-line: underline;
+    }
+  }
+
+  .hdr__menu {
+    width: 44px;
+    height: 44px;
+    margin-left: 4px;
+    border-radius: var(--menu-radius);
+    border: var(--menu-border);
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: transform 0.12s var(--ease-out);
+  }
+
+  .hdr__menu span {
+    width: 16px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--fg);
+  }
+
+  .hdr__menu:active {
+    transform: scale(0.94);
+  }
+
+  @media (min-width: 1000px) {
+    .hdr__bar {
+      height: 84px;
+      padding: 0 52px 0 64px;
+    }
+    .hdr__brand {
+      font-size: 25px;
+    }
+    .hdr__icon {
+      width: 34px;
+      height: 34px;
+    }
+    .hdr__chip {
+      height: 44px;
+    }
+    .hdr__nav {
+      display: block;
+    }
+    .hdr__end {
+      gap: 14px;
+    }
+    .hdr__langs a {
+      width: 44px;
+    }
+    .hdr__cta {
+      display: flex;
+    }
+    .hdr__menu {
+      display: none;
+    }
+  }
+
+  /* Menu sheet (phones and tablets). */
+  .sheet {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    border: 0;
+    padding: 0 20px 28px;
+    background: var(--hdr-solid);
+    color: var(--fg);
+    flex-direction: column;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    opacity: 0;
+    transform: translateY(-12px);
+    transition:
+      opacity 0.22s var(--ease-out),
+      transform 0.32s var(--ease-out),
+      overlay 0.32s allow-discrete,
+      display 0.32s allow-discrete;
+  }
+
+  .sheet:popover-open {
+    display: flex;
+    opacity: 1;
+    transform: none;
+  }
+
+  @starting-style {
+    .sheet:popover-open {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+  }
+
+  .sheet::backdrop {
+    background: transparent;
+  }
+
+  :global(html:has(.sheet:popover-open)) {
+    overflow: hidden;
+  }
+
+  @supports not selector(:popover-open) {
+    .sheet,
+    .hdr__menu {
+      display: none;
+    }
+  }
+
+  .sheet__top {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: none;
+    font-size: 19px;
+  }
+
+  .sheet__close {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--menu-radius);
+    border: var(--menu-border);
+    background: transparent;
+    color: var(--fg);
+    font: 400 24px/1 system-ui, sans-serif;
+    cursor: pointer;
+  }
+
+  .sheet__nav ul {
+    display: flex;
+    flex-direction: column;
+    margin: 24px 0 0;
+  }
+
+  .sheet__nav a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 64px;
+    border-bottom: 1px solid var(--hdr-line);
+    font-size: calc(34px * var(--k));
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: var(--fg);
+    text-decoration: none;
+  }
+
+  .sheet__nav a :global(.icon) {
+    font-size: 22px;
+    color: var(--hdr-accent-line);
+  }
+
+  .sheet__nav a[aria-current='page'] {
+    color: var(--wm-b);
+  }
+
+  .sheet__foot {
+    margin-top: auto;
+    padding-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .sheet__langs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 0;
+  }
+
+  .sheet__langs a {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    padding: 0 16px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--hdr-line-2);
+    font: 600 15px/1 var(--fu);
+    color: var(--fg);
+    text-decoration: none;
+  }
+
+  .sheet__langs a[aria-current='true'] {
+    border-color: var(--fg);
+  }
+
+  .sheet__cta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    font: 700 16px/1 var(--fu);
+    color: var(--hdr-cta);
+    text-decoration: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sheet {
+      transform: none;
+      transition:
+        opacity 0.22s linear,
+        overlay 0.22s allow-discrete,
+        display 0.22s allow-discrete;
+    }
+    @starting-style {
+      .sheet:popover-open {
+        opacity: 0;
+        transform: none;
+      }
+    }
+  }
+</style>

@@ -9,6 +9,9 @@
   "nav": {
     "skip": "Skip to content",
     "primaryLabel": "Main",
+    "menu": "Menu",
+    "close": "Close menu",
+    "footerLabel": "All pages",
     "language": "Language",
     "home": "Home",
     "howToPlay": "How to play",
@@ -191,7 +194,7 @@
       "lead": "If something is broken, confusing or missing, write to us.",
       "contact": {
         "title": "Write to us",
-        "inApp": "You can also reach the same inbox from inside the app: Settings → Report a bug. That opens a mail composer with the app version and your iOS version already filled in, which makes problems much faster to track down.",
+        "inApp": "You can also reach the same inbox from inside the app: Settings › Report a bug. That opens a mail composer with the app version and your iOS version already filled in, which makes problems much faster to track down.",
         "response": "We read everything. Replies usually take a couple of days."
       },
       "faq": {
@@ -204,7 +207,7 @@
           { "q": "The app is showing the wrong language or theme.", "a": "Both are remembered on your device once you change them, so they stop following your system setting. Set them from the home screen: the language menu is at the top left, the theme button at the top right." },
           { "q": "I found a word that is wrong, offensive or misspelled.", "a": "Please tell us, and include the word and the language. Words are updated over the air, so a fix reaches everyone without an app update." },
           { "q": "How do I delete my data?", "a": "There is no account to delete. Scores and team names are never saved. Your settings are saved only on your device, so uninstalling the app removes them, although a device backup may still hold a copy. The app collects no statistics about how you play. The crash reports it sends are filed under random identifiers, not your name or email, and are deleted on a fixed schedule. Because they aren't tied to your name or email, an email from you usually doesn't let us find them, but write to us anyway and we'll explain what we can do. See the app's privacy policy for the full detail." },
-          { "q": "How do I turn off game reminders?", "a": "In the app, open Settings → Game reminders. It takes you to Bombardiro's page in the iOS Settings app, where you can switch notifications off or back on. The row appears once the app has asked you about notifications, after your first finished match." },
+          { "q": "How do I turn off game reminders?", "a": "In the app, open Settings › Game reminders. It takes you to Bombardiro's page in the iOS Settings app, where you can switch notifications off or back on. The row appears once the app has asked you about notifications, after your first finished match." },
           { "q": "Does it cost anything? Are there ads?", "a": "The game is free. It has no purchases and shows no ads." }
         ]
       },
