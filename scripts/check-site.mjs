@@ -8,7 +8,7 @@ import { extname, join, posix, relative } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { ELEMENT_NODE, parse, TEXT_NODE, walkSync } from 'ultrahtml';
 import { querySelector, querySelectorAll } from 'ultrahtml/selector';
-import { EXEMPT_PATHS, findBanned } from './lib/banned.mjs';
+import { ALLOWED, findBanned } from './lib/banned.mjs';
 import { DIST, expectedPages, LANGS, PENDING_ROUTE_IDS, ROOT, routes, SITE_URL } from './lib/site.mjs';
 
 const KB = 1024;
@@ -27,13 +27,18 @@ const BUDGET = {
 
 const copy = Object.fromEntries(LANGS.map((l) => [l, JSON.parse(readFileSync(join(ROOT, 'content/copy', `${l}.json`), 'utf8'))]));
 const getPath = (obj, path) => path.split('.').reduce((o, k) => o?.[k], obj);
-// Copy that may name a banned word because it denies the claim ("isn't … endorsed by"); removed before matching.
-const EXEMPT_TEXT = LANGS.flatMap((l) => EXEMPT_PATHS.map((p) => getPath(copy[l], p)))
-  .filter(Boolean)
-  .map((s) => s.replace(/\s+/g, ' '));
-
 const errors = [];
 const fail = (where, msg) => errors.push(`${where}: ${msg}`);
+// The independence lines may say "endorsed by"; they are removed before matching, once they pass with only
+// their own allowance.
+const EXEMPT_TEXT = LANGS.flatMap((l) =>
+  Object.entries(ALLOWED).map(([path, allowed]) => {
+    const text = getPath(copy[l], path).replace(/\s+/g, ' ');
+    const banned = findBanned(text, allowed);
+    if (banned) fail(`content/copy/${l}.json ${path}`, `banned phrase "${banned}"`);
+    return text;
+  }),
+);
 const gz = (buf) => gzipSync(buf, { level: 9 }).length;
 const fmt = (bytes) => `${(bytes / KB).toFixed(1)} KB`;
 
@@ -63,6 +68,15 @@ function textOf(node) {
     if (n.type === TEXT_NODE) out += n.value;
   });
   return decodeEntities(out).replace(/\s+/g, ' ').trim();
+}
+
+/** Text for the banned-claims scan: text nodes kept apart, as a reader sees them, without script or style. */
+function scanTextOf(node) {
+  const parts = [];
+  walkSync(node, (n, parent) => {
+    if (n.type === TEXT_NODE && !['script', 'style', 'template'].includes(parent?.name)) parts.push(n.value);
+  });
+  return decodeEntities(parts.join(' ')).replace(/\s+/g, ' ');
 }
 
 const attr = (node, name) => (node?.attributes?.[name] === undefined ? undefined : decodeEntities(String(node.attributes[name])));
@@ -182,14 +196,15 @@ for (const page of htmlTargets) {
   }
 
   // Banned claims, in visible text and in the attributes people and machines read.
-  const bodyText = textOf(querySelector(doc, 'body') ?? doc);
+  const bodyText = scanTextOf(querySelector(doc, 'body') ?? doc);
+  const jsonLd = querySelectorAll(doc, 'script[type="application/ld+json"]').map((n) => decodeEntities(n.children?.map((c) => c.value ?? '').join('') ?? '')).join(' ');
   const attributeText = [
     ...querySelectorAll(doc, '[alt], [title], [aria-label]'),
     ...querySelectorAll(doc, 'meta[content]'),
   ]
     .map((n) => ['alt', 'title', 'aria-label', 'content'].map((k) => attr(n, k) ?? '').join(' '))
     .join(' ');
-  let scanned = `${title} ${bodyText} ${attributeText}`.replace(/\s+/g, ' ');
+  let scanned = `${title} ${bodyText} ${attributeText} ${jsonLd}`.replace(/\s+/g, ' ');
   for (const exempt of EXEMPT_TEXT) scanned = scanned.split(exempt).join(' ');
   const banned = findBanned(scanned);
   if (banned) fail(where, `banned phrase "${banned}" (.claude/rules/copy.md)`);
@@ -238,7 +253,7 @@ for (const page of htmlTargets) {
 
   // Assets: every internal image, source, video, poster and icon must exist.
   const assetUrls = [];
-  for (const n of querySelectorAll(doc, 'img, source, video')) {
+  for (const n of querySelectorAll(doc, 'img, source, video, audio, track')) {
     for (const key of ['src', 'poster']) if (attr(n, key)) assetUrls.push(attr(n, key));
     assetUrls.push(...srcsetUrls(attr(n, 'srcset')));
   }
@@ -247,7 +262,7 @@ for (const page of htmlTargets) {
   }
   for (const u of assetUrls) {
     if (!u || u.startsWith('data:')) continue;
-    if (/^https?:\/\//.test(u)) {
+    if (/^(https?:)?\/\//.test(u)) {
       fail(where, `third-party asset ${u}`);
       continue;
     }
@@ -260,6 +275,7 @@ for (const page of htmlTargets) {
   const firstLoadModules = new Set();
   const lazyModules = new Set();
   const addGraph = (url) => {
+    if (!distFileFor(new URL(url, `${SITE_URL}${where}`).pathname)) fail(where, `missing script ${url}`);
     const { seen, lazy } = moduleGraph(new URL(url, `${SITE_URL}${where}`).pathname);
     seen.forEach((m) => firstLoadModules.add(m));
     lazy.forEach((m) => lazyModules.add(m));
@@ -270,7 +286,7 @@ for (const page of htmlTargets) {
     if (type === 'application/ld+json' || type === 'application/json') continue;
     const src = attr(s, 'src');
     if (src) {
-      if (/^https?:\/\//.test(src)) fail(where, `third-party script ${src}`);
+      if (/^(https?:)?\/\//.test(src)) fail(where, `third-party script ${src}`);
       else addGraph(src);
     } else {
       inlineJs += gz(Buffer.from(s.children?.map((c) => c.value ?? '').join('') ?? ''));
@@ -324,15 +340,22 @@ for (const page of htmlTargets) {
   let eagerImageBytes = 0;
   for (const img of querySelectorAll(doc, 'img')) {
     if (!attr(img, 'width') || !attr(img, 'height')) fail(where, `image without width and height: ${attr(img, 'src')}`);
-    if (attr(img, 'loading') === 'lazy') continue;
-    const candidates = [attr(img, 'src'), ...srcsetUrls(attr(img, 'srcset'))];
-    eagerImageBytes += Math.max(0, ...candidates.map(sizeOf));
   }
+  // One download per eager image: in a <picture>, the first <source> (browsers take the first type they
+  // support), otherwise the <img>.
+  const inPicture = new Set();
   for (const picture of querySelectorAll(doc, 'picture')) {
     const img = querySelector(picture, 'img');
-    if (!img || attr(img, 'loading') === 'lazy') continue;
+    if (!img) continue;
+    inPicture.add(img);
+    if (attr(img, 'loading') === 'lazy') continue;
     const source = querySelector(picture, 'source');
-    if (source) eagerImageBytes += Math.max(0, ...srcsetUrls(attr(source, 'srcset')).map(sizeOf));
+    const candidates = source ? srcsetUrls(attr(source, 'srcset')) : [attr(img, 'src'), ...srcsetUrls(attr(img, 'srcset'))];
+    eagerImageBytes += Math.max(0, ...candidates.map(sizeOf));
+  }
+  for (const img of querySelectorAll(doc, 'img')) {
+    if (inPicture.has(img) || attr(img, 'loading') === 'lazy') continue;
+    eagerImageBytes += Math.max(0, ...[attr(img, 'src'), ...srcsetUrls(attr(img, 'srcset'))].map(sizeOf));
   }
   for (const video of querySelectorAll(doc, 'video[poster]')) eagerImageBytes += sizeOf(attr(video, 'poster'));
 

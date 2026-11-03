@@ -22,14 +22,18 @@ export const BANNED = [
 ];
 
 /**
- * Copy that may contain a banned word because it denies the claim, keyed by path in the copy files:
- * the independence lines ("isn't … endorsed by") and Apple's credit line.
+ * Copy that may use one banned word because it denies the claim, keyed by copy path: the English independence
+ * lines say "isn't … endorsed by". Every other pattern, and every other check, still applies to these strings.
  */
-export const EXEMPT_PATHS = ['footer.apple', 'footer.independent', 'pages.about.independent.text'];
+export const ALLOWED = {
+  'footer.independent': [/\bendorsed\b/i],
+  'pages.about.independent.text': [/\bendorsed\b/i],
+};
 
-/** The first banned pattern the text matches, or null. */
-export function findBanned(text) {
+/** The first banned phrase in `text`, skipping the patterns `allowed` lists, or null. */
+export function findBanned(text, allowed = []) {
   for (const re of BANNED) {
+    if (allowed.some((a) => a.source === re.source)) continue;
     const m = re.exec(text);
     if (m) return m[0];
   }

@@ -1,7 +1,9 @@
 // Lighthouse CI on every page of the local production build, mobile settings (Lighthouse's default).
 // Budgets from handoff/SPEC.md §9: Performance ≥ 95; Accessibility, Best Practices and SEO = 100; Home's
-// total first-load weight ≤ 500 KB; JavaScript ≤ 30 KB on Home and ≤ 8 KB elsewhere (transfer size, the
-// runtime check behind check-site's static count). Three runs per page; LHCI asserts on the best one.
+// total first-load weight ≤ 500 KB. JavaScript, as transferred during the run: Home ≤ 30 KB at first load plus
+// ≤ 40 KB of effects that load after it is interactive, other pages ≤ 8 KB (they load no effects). check-site
+// is the exact first-load gate; this is the runtime check behind it. Three runs per page; LHCI asserts on the
+// best one.
 const { expectedPages } = require('./scripts/lib/site.mjs');
 
 const PORT = 4174;
@@ -41,7 +43,7 @@ module.exports = {
           matchingUrlPattern: `^${origin}/((ru|hy)/)?$`,
           assertions: {
             'total-byte-weight': ['error', { maxNumericValue: 500 * 1024 }],
-            'resource-summary:script:size': ['error', { maxNumericValue: 30 * 1024 }],
+            'resource-summary:script:size': ['error', { maxNumericValue: (30 + 40) * 1024 }],
           },
         },
         {

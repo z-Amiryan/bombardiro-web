@@ -9,8 +9,9 @@ export default defineConfig({
   trailingSlash: 'always',
   build: {
     format: 'directory',
-    // Component CSS stays in external files. The only inline styles are the @font-face blocks from Astro's
-    // <Font>, whose hashes are stable, which keeps the Content-Security-Policy in vercel.json short.
+    // Component CSS stays in external files. The only inline styles left are the @font-face blocks from
+    // Astro's <Font> and, on a page with an island, Astro's one-line astro-island style. Both are stable, so
+    // the Content-Security-Policy keeps a short list of hashes.
     inlineStylesheets: 'never',
   },
   // The sitemap integration leaves out the 404 page by itself.
