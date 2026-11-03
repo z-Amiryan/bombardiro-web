@@ -51,7 +51,7 @@ const t = copyFor(lang).pages.home;
     <FinalCta lang={lang} />
 
     <section class="answers" aria-labelledby="faq-title">
-      <h2 id="faq-title" class="answers__title display">{t.faq.title}</h2>
+      <h2 id="faq-title" class="answers__title display fit"><span class="fit__t">{t.faq.title}</span></h2>
       <Faq name="home-faq" items={t.faq.items} />
     </section>
   </div>
@@ -83,7 +83,7 @@ const t = copyFor(lang).pages.home;
     margin: 0 auto;
     padding: 56px 20px;
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 20px 64px;
     align-items: end;
   }
@@ -108,15 +108,25 @@ const t = copyFor(lang).pages.home;
     margin: 0 auto;
     padding: 64px 20px 88px;
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 24px 96px;
     align-items: start;
   }
 
   .answers__title {
-    font-size: calc(clamp(34px, 4vw, 56px) * var(--k));
+    --fs: calc(clamp(34px, 4vw, 56px) * var(--k));
+    --ls: -0.012em;
+    /* The longest word, in em (.fit in base.css). */
+    --fit: 5.6;
     line-height: 0.95;
-    letter-spacing: -0.012em;
+  }
+
+  :global(:root[lang='ru']) .answers__title {
+    --fit: 4.75;
+  }
+
+  :global(:root[lang='hy']) .answers__title {
+    --fit: 8.6;
   }
 
   @media (min-width: 1100px) {

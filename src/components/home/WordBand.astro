@@ -53,7 +53,7 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
   }
 
   <div class="band__mid">
-    <h2 id="words-title" class="band__title display">{band.title}</h2>
+    <h2 id="words-title" class="band__title display fit"><span class="fit__t">{band.title}</span></h2>
     <div class="band__copy">
       <p class="band__text">{band.text}</p>
       <a class="band__cta" href={routePath('words', lang)}>
@@ -231,17 +231,27 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
     margin: 0 auto;
     padding: 28px 20px 32px;
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 24px 64px;
     align-items: end;
     border-top: 1.5px solid var(--c-ink);
   }
 
   .band__title {
-    font-size: calc(clamp(40px, 6.4vw, 96px) * var(--k));
+    --fs: calc(clamp(40px, 6.4vw, 96px) * var(--k));
+    --ls: -0.015em;
+    /* The longest word, in em (.fit in base.css). */
+    --fit: 5.95;
     line-height: 0.94;
-    letter-spacing: -0.015em;
     text-wrap: balance;
+  }
+
+  :global(:root[lang='ru']) .band__title {
+    --fit: 4.25;
+  }
+
+  :global(:root[lang='hy']) .band__title {
+    --fit: 9.1;
   }
 
   .band__text {

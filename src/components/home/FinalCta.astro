@@ -22,7 +22,7 @@ const final = t.pages.home.final;
   <div class="final__in">
     <div>
       <p class="final__stamp display" aria-hidden="true">{clockText(0)}</p>
-      <h2 id="final-title" class="final__title display">{final.title}</h2>
+      <h2 id="final-title" class="final__title display fit"><span class="fit__t">{final.title}</span></h2>
       <p class="final__text">{final.text}</p>
       <a class="skew" href={storeUrl('final')}>
         <span class="skew__bg" aria-hidden="true"></span>
@@ -61,7 +61,7 @@ const final = t.pages.home.final;
     margin: 0 auto;
     padding: 80px 20px;
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 40px 96px;
     align-items: center;
   }
@@ -75,10 +75,20 @@ const final = t.pages.home.final;
 
   .final__title {
     margin: 18px 0 16px;
-    font-size: calc(clamp(44px, 7vw, 108px) * var(--k));
+    --fs: calc(clamp(44px, 7vw, 108px) * var(--k));
+    --ls: -0.02em;
+    /* The longest word, in em (.fit in base.css). */
+    --fit: 6.8;
     line-height: 0.9;
-    letter-spacing: -0.02em;
     text-wrap: balance;
+  }
+
+  :global(:root[lang='ru']) .final__title {
+    --fit: 6.5;
+  }
+
+  :global(:root[lang='hy']) .final__title {
+    --fit: 5.2;
   }
 
   .final__text {
