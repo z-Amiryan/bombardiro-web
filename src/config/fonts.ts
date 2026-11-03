@@ -1,0 +1,141 @@
+// Self-hosted fonts, one set per language (handoff/SPEC.md §8). Read by astro.config.mjs to register the
+// families with Astro's Fonts API, by the layout to load and preload them, and by the font-coverage test.
+//
+// Sources are the @fontsource-variable packages (variable WOFF2, one file per subset), plus tiny subsets in
+// src/assets/fonts/ for the few words each language's copy writes in another script: the language names
+// in the switcher and «бомбардир». scripts/build-font-assets.py makes those.
+
+// Unicode ranges, as published by Fontsource for these files.
+export const RANGES = {
+  latin:
+    'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD',
+  latinExt:
+    'U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF',
+  cyrillic: 'U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116',
+  cyrillicExt: 'U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F',
+  armenian: 'U+0308, U+0530-058F, U+2010, U+2024, U+25CC, U+FB13-FB17',
+} as const;
+
+export type FontStyle = 'normal' | 'italic';
+
+export interface FontVariant {
+  /** A package import or a path relative to the project root. */
+  src: string;
+  style: FontStyle;
+  unicodeRange: string;
+}
+
+export interface FontFamilyConfig {
+  name: string;
+  cssVariable: `--font-${string}`;
+  variants: FontVariant[];
+}
+
+const pkg = (name: string, file: string) => `@fontsource-variable/${name}/files/${file}`;
+
+/** Glyph subsets for the foreign-script words in each language's copy. Generated; see the header comment. */
+export const FOREIGN_SUBSETS = {
+  en: [
+    { src: './src/assets/fonts/foreign-en-cyrillic.woff2', script: 'cyrillic' },
+    { src: './src/assets/fonts/foreign-en-armenian.woff2', script: 'armenian' },
+  ],
+  ru: [{ src: './src/assets/fonts/foreign-ru-armenian.woff2', script: 'armenian' }],
+  hy: [{ src: './src/assets/fonts/foreign-hy-cyrillic.woff2', script: 'cyrillic' }],
+} as const;
+
+const foreign = (lang: keyof typeof FOREIGN_SUBSETS): FontVariant[] =>
+  FOREIGN_SUBSETS[lang].map(({ src, script }) => ({ src, style: 'normal', unicodeRange: RANGES[script] }));
+
+export const FONT_FAMILIES = [
+  {
+    // English display: Archivo 900 italic. Also the wordmark, which is outlined as SVG for other languages.
+    name: 'Archivo',
+    cssVariable: '--font-archivo',
+    variants: [
+      { src: pkg('archivo', 'archivo-latin-wght-italic.woff2'), style: 'italic', unicodeRange: RANGES.latin },
+      { src: pkg('archivo', 'archivo-latin-ext-wght-italic.woff2'), style: 'italic', unicodeRange: RANGES.latinExt },
+    ],
+  },
+  {
+    // English interface and body text.
+    name: 'Space Grotesk',
+    cssVariable: '--font-space-grotesk',
+    variants: [
+      { src: pkg('space-grotesk', 'space-grotesk-latin-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.latin },
+      { src: pkg('space-grotesk', 'space-grotesk-latin-ext-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.latinExt },
+      ...foreign('en'),
+    ],
+  },
+  {
+    // Russian display (900 italic) and body. The Latin subsets carry punctuation, digits and brand names.
+    name: 'Noto Sans',
+    cssVariable: '--font-noto-sans',
+    variants: [
+      { src: pkg('noto-sans', 'noto-sans-cyrillic-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.cyrillic },
+      { src: pkg('noto-sans', 'noto-sans-cyrillic-wght-italic.woff2'), style: 'italic', unicodeRange: RANGES.cyrillic },
+      // Latin trimmed to what Russian pages use (scripts/build-font-assets.py): 18 and 21 KB instead of 35 and 39.
+      { src: './src/assets/fonts/latin-ru-normal.woff2', style: 'normal', unicodeRange: RANGES.latin },
+      { src: './src/assets/fonts/latin-ru-italic.woff2', style: 'italic', unicodeRange: RANGES.latin },
+      { src: pkg('noto-sans', 'noto-sans-cyrillic-ext-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.cyrillicExt },
+      { src: pkg('noto-sans', 'noto-sans-cyrillic-ext-wght-italic.woff2'), style: 'italic', unicodeRange: RANGES.cyrillicExt },
+      { src: pkg('noto-sans', 'noto-sans-latin-ext-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.latinExt },
+      { src: pkg('noto-sans', 'noto-sans-latin-ext-wght-italic.woff2'), style: 'italic', unicodeRange: RANGES.latinExt },
+      ...foreign('ru'),
+    ],
+  },
+  {
+    // Armenian display (900, upright: there is no italic, and none is synthesised) and body.
+    name: 'Noto Sans Armenian',
+    cssVariable: '--font-noto-armenian',
+    variants: [
+      { src: pkg('noto-sans-armenian', 'noto-sans-armenian-armenian-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.armenian },
+      // Latin trimmed to what Armenian pages use: 19 KB instead of 31.
+      { src: './src/assets/fonts/latin-hy-normal.woff2', style: 'normal', unicodeRange: RANGES.latin },
+      { src: pkg('noto-sans-armenian', 'noto-sans-armenian-latin-ext-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.latinExt },
+      ...foreign('hy'),
+    ],
+  },
+] as const satisfies readonly FontFamilyConfig[];
+
+export type FontCssVariable = (typeof FONT_FAMILIES)[number]['cssVariable'];
+
+export interface LanguageFonts {
+  /** Families this language's pages load. */
+  families: FontCssVariable[];
+  display: { family: FontCssVariable; style: FontStyle };
+  body: { family: FontCssVariable; style: FontStyle };
+  /** Files to preload, as [family, variant index]. At most two, ≤ 60 KB together (SPEC §9). */
+  preload: Array<[FontCssVariable, number]>;
+}
+
+export const LANG_FONTS = {
+  // Archivo italic Latin (38 KB) is the display face, so it's the one preload. Adding Space Grotesk would
+  // take the pair 4 bytes past 60 KB.
+  en: {
+    families: ['--font-archivo', '--font-space-grotesk'],
+    display: { family: '--font-archivo', style: 'italic' },
+    body: { family: '--font-space-grotesk', style: 'normal' },
+    preload: [['--font-archivo', 0]],
+  },
+  // Cyrillic italic (display, 24 KB) and upright (body, 20 KB).
+  ru: {
+    families: ['--font-noto-sans'],
+    display: { family: '--font-noto-sans', style: 'italic' },
+    body: { family: '--font-noto-sans', style: 'normal' },
+    preload: [
+      ['--font-noto-sans', 1],
+      ['--font-noto-sans', 0],
+    ],
+  },
+  // One family for display and body: the Armenian subset (26 KB) and its trimmed Latin subset (19 KB) for digits,
+  // punctuation and brand names.
+  hy: {
+    families: ['--font-noto-armenian'],
+    display: { family: '--font-noto-armenian', style: 'normal' },
+    body: { family: '--font-noto-armenian', style: 'normal' },
+    preload: [
+      ['--font-noto-armenian', 0],
+      ['--font-noto-armenian', 1],
+    ],
+  },
+} as const satisfies Record<'en' | 'ru' | 'hy', LanguageFonts>;

@@ -1,27 +1,80 @@
 ---
-import type { Lang } from '../lib/routes';
+// Every page: <head> (fonts, SEO, structured data), the header, the page in <main> and the footer.
+// Global styles first, so component styles come after them in the bundle.
+import '../styles/tokens.css';
+import '../styles/base.css';
+import Fonts from '../components/Fonts.astro';
+import SeoHead from '../components/SeoHead.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import { copyFor } from '../lib/copy';
+import { CORE_ROUTE_IDS, routePath, type Lang, type RouteId } from '../lib/routes';
+import { app, breadcrumbs, organization, website, type Crumb } from '../lib/structured-data';
+import type { Surface } from '../lib/surface';
 
 interface Props {
   lang: Lang;
+  routeId: RouteId;
+  surface: Surface;
+  /** Where the page switches to its wide layout: 1100 px for Home, How to play, Words and Guide, else 1000. */
+  bp?: 1000 | 1100;
   title: string;
   description: string;
+  ogType?: 'website' | 'article';
+  /** Breadcrumb trail for structured data. Core pages get Home › page automatically. */
+  crumbs?: Crumb[];
+  /** Extra JSON-LD nodes, for example a guide's Article. */
+  jsonLd?: Record<string, unknown>[];
 }
 
-const { lang, title, description } = Astro.props;
+const { lang, routeId, surface, bp = 1000, title, description, ogType, crumbs, jsonLd = [] } = Astro.props;
+const t = copyFor(lang);
+const path = routePath(routeId, lang);
+const isCore = (CORE_ROUTE_IDS as readonly string[]).includes(routeId);
+const trail: Crumb[] | null =
+  routeId === 'home'
+    ? null
+    : (crumbs ??
+      (isCore
+        ? [
+            { name: t.nav.home, path: routePath('home', lang) },
+            { name: t.nav[routeId as Exclude<(typeof CORE_ROUTE_IDS)[number], 'home'>], path },
+          ]
+        : null));
+const nodes = [
+  organization(lang),
+  website(lang),
+  ...(routeId === 'home' ? [app(lang)] : []),
+  ...(trail ? [breadcrumbs(trail)] : []),
+  ...jsonLd,
+];
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} data-surface={surface} data-bp={bp}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="icon" href="/favicon.png" type="image/png" />
+    <Fonts langs={[lang]} />
+    <SeoHead
+      lang={lang}
+      routeId={routeId}
+      path={path}
+      title={title}
+      description={description}
+      surface={surface}
+      ogType={ogType}
+      jsonLd={nodes}
+    />
+    <slot name="head" />
   </head>
   <body>
-    <main id="main">
+    <SiteHeader lang={lang} routeId={routeId} surface={surface}>
+      <slot name="header-tools" slot="tools" />
+    </SiteHeader>
+    <main id="main" tabindex="-1">
       <slot />
     </main>
+    <SiteFooter lang={lang} routeId={routeId} />
   </body>
 </html>

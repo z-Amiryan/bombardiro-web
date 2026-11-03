@@ -1,0 +1,319 @@
+---
+// Footer (design/export/SiteFooter.dc.html): wordmark, tagline and store link; every core page; contact and
+// socials (no Instagram on Russian pages); languages; the independence line and Apple's credit line, once.
+import { storeUrl, socialLinksFor, SUPPORT_EMAIL } from '../config/site';
+import { copyFor } from '../lib/copy';
+import { CORE_ROUTE_IDS, languageSwitch, routePath, type Lang, type RouteId } from '../lib/routes';
+import Icon from './Icon.astro';
+import Wordmark from './Wordmark.astro';
+
+interface Props {
+  lang: Lang;
+  routeId: RouteId | null;
+}
+
+const { lang, routeId } = Astro.props;
+const t = copyFor(lang);
+// Where the column is narrow, the address breaks only after the @.
+const [emailUser, emailHost] = SUPPORT_EMAIL.split('@');
+const isGuide = routeId !== null && !(CORE_ROUTE_IDS as readonly string[]).includes(routeId);
+const pages = CORE_ROUTE_IDS.map((id) => ({
+  id,
+  label: t.nav[id],
+  href: routePath(id, lang),
+  current: id === routeId || (id === 'guides' && isGuide),
+}));
+const langs = (routeId ? languageSwitch(routeId) : languageSwitch('home')).map((l) => ({
+  ...l,
+  name: t.languageNames[l.lang],
+  current: l.lang === lang,
+}));
+const socials = socialLinksFor(lang);
+---
+
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__grid">
+      <div class="ftr__brand">
+        <a class="ftr__mark" href={routePath('home', lang)} aria-label={t.brand.name}>
+          <Wordmark tight />
+        </a>
+        <p class="ftr__tagline">{t.brand.tagline}</p>
+        <a class="ftr__cta" href={storeUrl('footer')}>
+          {t.cta.textLink}
+          <Icon name="arrow-right" />
+        </a>
+      </div>
+
+      <nav class="ftr__nav" aria-label={t.nav.footerLabel}>
+        <ul role="list">
+          {
+            pages.map((p) => (
+              <li>
+                <a href={p.href} aria-current={p.current ? 'page' : undefined}>
+                  {p.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="ftr__contact">
+        <div class="ftr__group">
+          <h2 class="ftr__label">{t.footer.contact}</h2>
+          <a class="ftr__email" href={`mailto:${SUPPORT_EMAIL}`}>{emailUser}@<wbr />{emailHost}</a>
+        </div>
+        <div class="ftr__group">
+          <h2 class="ftr__label">{t.footer.follow}</h2>
+          <ul class="ftr__socials" role="list">
+            {
+              socials.map((s) => (
+                <li>
+                  <a href={s.url} rel="me noopener">
+                    {s.name}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+
+      <div class="ftr__group">
+        <h2 class="ftr__label">{t.nav.language}</h2>
+        <ul class="ftr__langs" role="list">
+          {
+            langs.map((l) => (
+              <li>
+                <a href={l.path} hreflang={l.lang} lang={l.lang} aria-current={l.current ? 'true' : undefined}>
+                  {l.name}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="ftr__fine">
+      <p>{t.footer.independent}</p>
+      <p lang={lang === 'en' ? undefined : 'en'}>{t.footer.apple}</p>
+      <p>{t.footer.copyright}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ftr {
+    background: var(--ftr-bg);
+    color: var(--ftr-fg);
+    font-family: var(--fu);
+    border-top: 1px solid var(--ftr-rule);
+    --wm-a: var(--ftr-wm-a);
+    --wm-b: var(--ftr-wm-b);
+    --focus: var(--ftr-hover);
+  }
+
+  .ftr__in {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 48px var(--s-5) var(--s-7);
+  }
+
+  .ftr__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 36px;
+    align-items: start;
+  }
+
+  .ftr__brand {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .ftr__mark {
+    display: block;
+    min-height: 44px;
+    /* The design's live-text box is 0.86em tall; the outlined wordmark is 0.712em. Where 0.86em is under the
+       44 px tap height, negative margins take the difference back, so the tagline sits where the design has it. */
+    padding-block: 0.074em;
+    margin-block: min(0px, calc((0.86em - 44px) / 2));
+    width: fit-content;
+    font-size: 44px;
+    color: var(--ftr-fg);
+  }
+
+  .ftr__tagline {
+    font: 500 15px/1.4 var(--fu);
+    color: var(--ftr-muted);
+  }
+
+  .ftr__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 44px;
+    width: fit-content;
+    font: 700 15px/1.2 var(--fu);
+    color: var(--ftr-cta);
+    text-decoration: none;
+    text-underline-offset: 5px;
+    text-decoration-thickness: 2px;
+  }
+
+  .ftr__nav ul {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+  }
+
+  .ftr__nav a,
+  .ftr__langs a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    font: 500 15px/1.2 var(--fu);
+    color: var(--ftr-off);
+    text-decoration: none;
+  }
+
+  .ftr__nav a[aria-current='page'],
+  .ftr__langs a[aria-current='true'] {
+    color: var(--ftr-fg);
+  }
+
+  .ftr__langs a::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .ftr__langs a[aria-current='true']::before {
+    background: var(--ftr-dot);
+  }
+
+  .ftr__contact {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .ftr__group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ftr__label {
+    font: 700 11px/1 var(--fu);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ftr-muted);
+  }
+
+  .ftr__email {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    font: 500 15px/1.2 var(--fu);
+    color: var(--ftr-fg);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--ftr-rule-2);
+    overflow-wrap: anywhere;
+  }
+
+  .ftr__socials {
+    display: flex;
+    gap: var(--s-2);
+    flex-wrap: wrap;
+    margin: 0;
+  }
+
+  .ftr__socials a {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    padding: 0 var(--s-4);
+    border-radius: var(--r-pill);
+    border: 1px solid var(--ftr-rule-2);
+    font: 600 14px/1 var(--fu);
+    color: var(--ftr-fg);
+    text-decoration: none;
+  }
+
+  @media (hover: hover) {
+    .ftr__cta:hover {
+      color: var(--ftr-cta);
+      text-decoration-line: underline;
+    }
+    .ftr__nav a:hover,
+    .ftr__langs a:hover {
+      color: var(--ftr-hover);
+    }
+    .ftr__email:hover {
+      color: var(--ftr-fg);
+      text-decoration-color: var(--ftr-cta);
+    }
+    .ftr__socials a:hover {
+      color: var(--ftr-fg);
+      border-color: var(--ftr-fg);
+    }
+  }
+
+  .ftr__fine {
+    margin-top: 36px;
+    padding-top: 22px;
+    border-top: 1px solid var(--ftr-rule);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px 48px;
+    font: 400 12.5px/1.55 var(--fu);
+    color: var(--ftr-muted);
+  }
+
+  .ftr__fine p {
+    text-wrap: pretty;
+  }
+
+  @media (min-width: 1000px) {
+    .ftr__in {
+      padding: 72px var(--s-10) var(--s-8);
+    }
+    .ftr__grid {
+      grid-template-columns: 1.4fr 1fr 1.2fr 1fr;
+      gap: var(--s-9);
+    }
+    .ftr__mark {
+      font-size: 64px;
+    }
+    .ftr__fine {
+      margin-top: var(--s-9);
+      grid-template-columns: 1.4fr 1.6fr 0.6fr;
+    }
+  }
+
+  /* From 1100 px the contact column is wide enough for the address on one line. */
+  @media (min-width: 1100px) {
+    .ftr__email {
+      overflow-wrap: normal;
+    }
+    .ftr__email wbr {
+      display: none;
+    }
+  }
+
+  /* From 1310 px the full 64 px wordmark fits beside the longest Russian navigation label and still leaves the
+     address its line; below that it scales down to its column. */
+  @media (min-width: 1310px) {
+    .ftr__mark :global(.wordmark) {
+      max-width: none;
+    }
+  }
+</style>

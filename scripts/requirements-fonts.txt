@@ -1,0 +1,4 @@
+# Pinned so scripts/build-font-assets.py makes the same outlines and subsets every time.
+brotli==1.2.1
+fonttools==4.68.0
+uharfbuzz==0.57.0

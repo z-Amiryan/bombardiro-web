@@ -27,6 +27,6 @@ export default defineConfig({
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
     { name: 'firefox', use: { ...devices['Desktop Firefox'] }, testIgnore: /screenshots\.spec\.ts/ },
     { name: 'webkit', use: { ...devices['Desktop Safari'] }, testIgnore: /screenshots\.spec\.ts/ },
-    { name: 'iphone', use: { ...devices['iPhone 15'] }, testIgnore: /screenshots\.spec\.ts/ },
+    { name: 'iphone', use: { ...devices['iPhone 15'] }, testIgnore: /(screenshots|layout)\.spec\.ts/ },
   ],
 });

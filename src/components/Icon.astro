@@ -1,0 +1,35 @@
+---
+// Small line icons drawn to match the type's weight. Decorative: the link or button carries the words.
+interface Props {
+  name: 'arrow-right' | 'arrow-down' | 'arrow-up-right' | 'arrow-left' | 'close';
+  class?: string;
+}
+
+const { name, class: className } = Astro.props;
+const paths: Record<Props['name'], string> = {
+  'arrow-right': 'M2.5 8h10.5M9 3.75 13.25 8 9 12.25',
+  'arrow-left': 'M13.5 8H3M7 3.75 2.75 8 7 12.25',
+  'arrow-down': 'M8 2.5V13M3.75 9 8 13.25 12.25 9',
+  'arrow-up-right': 'M4 12 12 4M5.5 4H12v6.5',
+  close: 'M3.5 3.5l9 9M12.5 3.5l-9 9',
+};
+---
+
+<svg class:list={['icon', className]} viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+  <path d={paths[name]}></path>
+</svg>
+
+<style>
+  .icon {
+    display: inline-block;
+    flex: none;
+    width: 1em;
+    height: 1em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vertical-align: -0.12em;
+  }
+</style>

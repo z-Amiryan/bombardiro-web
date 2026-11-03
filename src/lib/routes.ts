@@ -1,5 +1,6 @@
 // Every URL on the site comes from handoff/routes.json. Nothing else may invent a path.
 import routesData from '../../handoff/routes.json' with { type: 'json' };
+import { SITE_URL } from '../config/site';
 
 export const LANGS = ['en', 'ru', 'hy'] as const;
 export type Lang = (typeof LANGS)[number];
@@ -32,6 +33,10 @@ export function routePath(id: RouteId, lang: Lang): string {
 /** The languages a page exists in, in the site's language order. */
 export function routeLangs(id: RouteId): Lang[] {
   return LANGS.filter((lang) => hasRoute(id, lang));
+}
+
+export function absoluteUrl(path: string): string {
+  return new URL(path, SITE_URL).href;
 }
 
 /** Every language version of a page, for hreflang links. Only pairs listed in routes.json. */

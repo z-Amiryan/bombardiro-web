@@ -30,6 +30,16 @@ export function storeUrl(placement: StorePlacement, pt: string = APP_STORE_PT): 
   return `${APP_STORE_URL}?pt=${encodeURIComponent(pt)}&ct=site-${placement}&mt=8`;
 }
 
+/** Social profiles, in footer order. Instagram is never mentioned on Russian pages (.claude/rules/copy.md). */
+export const SOCIAL_LINKS = [
+  { name: 'Instagram', url: INSTAGRAM_URL, hiddenOn: ['ru'] },
+  { name: 'TikTok', url: TIKTOK_URL, hiddenOn: [] },
+] as const satisfies ReadonlyArray<{ name: string; url: string; hiddenOn: ReadonlyArray<'en' | 'ru' | 'hy'> }>;
+
+export function socialLinksFor(lang: 'en' | 'ru' | 'hy') {
+  return SOCIAL_LINKS.filter((s) => !(s.hiddenOn as ReadonlyArray<string>).includes(lang));
+}
+
 /**
  * Which language's screenshots each site language shows. Armenian pages use the English captures until
  * Armenian ones exist; change `hy` to 'hy' once `assets/screenshots/hy/` is added.

@@ -9,7 +9,7 @@ import { gzipSync } from 'node:zlib';
 import { ELEMENT_NODE, parse, TEXT_NODE, walkSync } from 'ultrahtml';
 import { querySelector, querySelectorAll } from 'ultrahtml/selector';
 import { findBanned } from './lib/banned.mjs';
-import { DIST, expectedPages, PENDING_ROUTE_IDS, routes, SITE_URL } from './lib/site.mjs';
+import { alternatesOf, DIST, expectedPages, LANGS, PENDING_ROUTE_IDS, ROOT, routes, SITE_URL } from './lib/site.mjs';
 
 const KB = 1024;
 const BUDGET = {
@@ -24,6 +24,16 @@ const BUDGET = {
   fontPreloadBytes: 60 * KB,
   homeFirstLoad: 500 * KB,
 };
+
+const copy = Object.fromEntries(LANGS.map((l) => [l, JSON.parse(readFileSync(join(ROOT, 'content/copy', `${l}.json`), 'utf8'))]));
+const APP_STORE_ID = '6813968416';
+const OG_LOCALE = { en: 'en_US', ru: 'ru_RU', hy: 'hy_AM' };
+const THEME_COLOR = { night: '#101418', lime: '#BFF747', chalk: '#EEF2E9' };
+// Text in another script must carry its own lang (SPEC §10). Latin is shared by all three languages.
+const SCRIPT_LANG = [
+  { re: /[\u0400-\u04FF]/, lang: 'ru' },
+  { re: /[\u0530-\u058F\uFB13-\uFB17]/, lang: 'hy' },
+];
 
 const errors = [];
 const fail = (where, msg) => errors.push(`${where}: ${msg}`);
@@ -129,6 +139,130 @@ const bytesOf = (modules) =>
 /** The URLs a srcset lists, without their descriptors. */
 const srcsetUrls = (srcset) => (srcset ?? '').split(',').map((c) => c.trim().split(/\s+/)[0]).filter(Boolean);
 
+function metaContent(doc, selector) {
+  return attr(querySelector(doc, selector), 'content');
+}
+
+/** Canonical, hreflang, Open Graph, Twitter, theme-color, icons, App Store banner and JSON-LD (SPEC §6). */
+function checkHead(doc, page, where) {
+  const head = querySelector(doc, 'head');
+  const canonical = querySelectorAll(head, 'link[rel="canonical"]');
+  const url = new URL(page.path, SITE_URL).href;
+  if (canonical.length !== 1) fail(where, `${canonical.length} canonical links, expected 1`);
+  else if (attr(canonical[0], 'href') !== url) fail(where, `canonical ${attr(canonical[0], 'href')}, expected ${url}`);
+
+  // hreflang: exactly the language versions in routes.json, plus x-default (English, or the only version).
+  const hreflangs = querySelectorAll(head, 'link[rel="alternate"][hreflang]').map((l) => [attr(l, 'hreflang'), attr(l, 'href')]);
+  const alts = alternatesOf(page.id);
+  const expected = alts.map((a) => [a.lang, new URL(a.path, SITE_URL).href]);
+  const xDefault = (alts.find((a) => a.lang === 'en') ?? alts[0]).path;
+  expected.push(['x-default', new URL(xDefault, SITE_URL).href]);
+  const key = (pairs) => pairs.map((p) => p.join(' ')).sort().join('\n');
+  if (key(hreflangs) !== key(expected)) {
+    fail(where, `hreflang links don't match routes.json:\n      got ${key(hreflangs).replace(/\n/g, ', ')}\n      want ${key(expected).replace(/\n/g, ', ')}`);
+  }
+  if (querySelectorAll(doc, 'body link[rel="alternate"][hreflang]').length) fail(where, 'hreflang links outside <head>');
+
+  const og = (p) => metaContent(head, `meta[property="${p}"]`);
+  for (const p of ['og:type', 'og:site_name', 'og:title', 'og:description', 'og:image', 'og:image:alt']) {
+    if (!og(p)) fail(where, `missing ${p}`);
+  }
+  if (og('og:url') !== url) fail(where, `og:url ${og('og:url')}, expected ${url}`);
+  if (og('og:locale') !== OG_LOCALE[page.lang]) fail(where, `og:locale ${og('og:locale')}, expected ${OG_LOCALE[page.lang]}`);
+  const image = og('og:image') ?? '';
+  if (!image.startsWith(`${SITE_URL}/`)) fail(where, `og:image must be an absolute ${SITE_URL} URL`);
+  else if (!distFileFor(new URL(image).pathname)) fail(where, `og:image ${image} is not built`);
+  if (og('og:image:width') !== '1200' || og('og:image:height') !== '630') fail(where, 'og:image must be 1200 × 630');
+  if (metaContent(head, 'meta[name="twitter:card"]') !== 'summary_large_image') fail(where, 'twitter:card must be summary_large_image');
+
+  const surface = attr(querySelector(doc, 'html'), 'data-surface');
+  const theme = metaContent(head, 'meta[name="theme-color"]');
+  if (!theme) fail(where, 'missing theme-color');
+  else if (THEME_COLOR[surface] && theme.toUpperCase() !== THEME_COLOR[surface]) fail(where, `theme-color ${theme} doesn't match the ${surface} surface`);
+  for (const sel of ['link[rel="icon"]', 'link[rel="apple-touch-icon"]']) {
+    const links = querySelectorAll(head, sel);
+    if (!links.length) fail(where, `missing ${sel}`);
+    for (const l of links) if (!distFileFor(attr(l, 'href'))) fail(where, `${sel} ${attr(l, 'href')} is not built`);
+  }
+  if (metaContent(head, 'meta[name="apple-itunes-app"]') !== `app-id=${APP_STORE_ID}`) fail(where, 'missing or wrong apple-itunes-app meta');
+
+  checkJsonLd(doc, page, where);
+}
+
+function checkJsonLd(doc, page, where) {
+  const blocks = querySelectorAll(doc, 'script[type="application/ld+json"]');
+  if (!blocks.length) return fail(where, 'no JSON-LD');
+  const nodes = [];
+  for (const b of blocks) {
+    const raw = b.children?.map((c) => c.value ?? '').join('') ?? '';
+    let data;
+    try {
+      data = JSON.parse(raw);
+    } catch (e) {
+      fail(where, `JSON-LD doesn't parse: ${e.message}`);
+      continue;
+    }
+    if (/aggregateRating|"review"|FAQPage/.test(raw)) fail(where, 'JSON-LD claims a rating, review or FAQ (SPEC §6 forbids it)');
+    nodes.push(...(data['@graph'] ?? [data]));
+  }
+  const types = (n) => [n['@type']].flat();
+  const find = (t) => nodes.find((n) => types(n).includes(t));
+  const org = find('Organization');
+  if (!org) fail(where, 'JSON-LD has no Organization');
+  else for (const k of ['name', 'url', 'logo', 'email', 'sameAs']) if (!org[k]) fail(where, `Organization has no ${k}`);
+  if (org && page.lang === 'ru' && JSON.stringify(org.sameAs).includes('instagram')) fail(where, 'Instagram on a Russian page');
+  if (!find('WebSite')) fail(where, 'JSON-LD has no WebSite');
+  const appNode = nodes.find((n) => types(n).includes('VideoGame') && types(n).includes('MobileApplication'));
+  if (page.id === 'home') {
+    if (!appNode) fail(where, 'Home has no VideoGame + MobileApplication');
+    else {
+      if (appNode.operatingSystem !== 'iOS') fail(where, 'app operatingSystem must be "iOS"');
+      if (appNode.applicationCategory !== 'GameApplication') fail(where, 'app applicationCategory must be "GameApplication"');
+      if (appNode.offers?.price !== '0' || appNode.offers?.priceCurrency !== 'USD') fail(where, 'app offers must be price "0" in USD');
+      if (JSON.stringify(appNode.inLanguage) !== JSON.stringify(LANGS)) fail(where, 'app inLanguage must be ["en","ru","hy"]');
+    }
+  }
+  const crumbs = find('BreadcrumbList');
+  if (page.id !== 'home' && !crumbs) fail(where, 'no BreadcrumbList');
+  if (page.id === 'home' && crumbs) fail(where, 'Home should not have a BreadcrumbList');
+  if (crumbs) {
+    const items = crumbs.itemListElement ?? [];
+    items.forEach((item, i) => {
+      if (item.position !== i + 1) fail(where, 'breadcrumb positions must count from 1');
+      if (!item.name || !item.item || !URL.canParse(item.item) || !distFileFor(new URL(item.item).pathname)) fail(where, `breadcrumb ${item.name} points at ${item.item}, which isn't built`);
+    });
+    if (items.at(-1)?.item !== new URL(page.path, SITE_URL).href) fail(where, 'the last breadcrumb must be the page itself');
+  }
+}
+
+/** Text in another script carries that language's lang attribute (SPEC §10). */
+function checkForeignText(doc, page, where) {
+  const visit = (node, lang) => {
+    if (node.type === ELEMENT_NODE) {
+      if (node.name === 'script' || node.name === 'style' || node.name === 'head') return;
+      const own = node.attributes?.lang;
+      if (own !== undefined) lang = String(own);
+      for (const c of node.children ?? []) visit(c, lang);
+    } else if (node.type === TEXT_NODE) {
+      for (const { re, lang: expected } of SCRIPT_LANG) {
+        if (re.test(node.value) && lang !== expected) {
+          fail(where, `"${node.value.trim().slice(0, 40)}" is ${expected} text inside lang="${lang}"`);
+        }
+      }
+    }
+  };
+  visit(querySelector(doc, 'html') ?? doc, page.lang);
+}
+
+/** The independence line on every page; Apple's credit line exactly once (.claude/rules/legal.md). */
+function checkFooter(page, where, bodyText) {
+  const t = copy[page.lang].footer;
+  if (!bodyText.includes(t.independent)) fail(where, 'footer.independent is missing');
+  const count = bodyText.split(t.apple).length - 1;
+  if (count !== 1) fail(where, `footer.apple appears ${count} times, expected once`);
+  if (page.lang === 'ru' && /instagram/i.test(readFileSync(page.file, 'utf8'))) fail(where, 'Instagram on a Russian page');
+}
+
 // ---------------------------------------------------------------------------------------------------------
 // 1. Every route is built, and nothing else is.
 
@@ -181,6 +315,11 @@ for (const page of htmlTargets) {
     if (descriptions.has(description)) fail(where, `description also used on ${descriptions.get(description)}`);
     titles.set(title, where);
     descriptions.set(description, where);
+    // The name alone autocompletes to an unrelated meme, so titles and descriptions always pair it with
+    // football (.claude/rules/seo.md). The domain, bombardiro.app, is lowercase and not counted.
+    for (const [kind, text] of [['title', title], ['description', description]]) {
+      if (/\bBombardiro\b/.test(text) && !/football|футбол|ֆուտբոլ/i.test(text)) fail(where, `${kind} names Bombardiro without football (seo.md)`);
+    }
   }
 
   // Banned claims, in visible text and in the attributes people and machines read.
@@ -195,6 +334,10 @@ for (const page of htmlTargets) {
   const scanned = `${title} ${bodyText} ${attributeText} ${jsonLd}`.replace(/\s+/g, ' ');
   const banned = findBanned(scanned);
   if (banned) fail(where, `banned phrase "${banned}" (.claude/rules/copy.md)`);
+
+  if (!isNotFound) checkHead(doc, page, where);
+  checkForeignText(doc, page, where);
+  checkFooter(page, where, textOf(querySelector(doc, 'body') ?? doc));
 
   // Links: internal targets must exist, fragments must point at an id, no plain-http links.
   for (const a of querySelectorAll(doc, 'a[href]')) {

@@ -1,6 +1,13 @@
 ---
+// Not found, in all three languages (handoff/SPEC.md §4). Vercel serves this for any unknown address.
+import '../styles/tokens.css';
+import '../styles/base.css';
+import Fonts from '../components/Fonts.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteHeader from '../components/SiteHeader.astro';
 import { copyFor } from '../lib/copy';
 import { LANGS, routePath } from '../lib/routes';
+import { THEME_COLOR } from '../lib/surface';
 
 const blocks = LANGS.map((lang) => ({ lang, t: copyFor(lang) }));
 // The status code is the same in every language, so it is the page's one h1 and starts its title.
@@ -9,28 +16,87 @@ const title = [code, ...blocks.map((b) => b.t.notFound.title)].join(' · ');
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-surface="night" data-bp="1000">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex" />
-    <link rel="icon" href="/favicon.png" type="image/png" />
+    <Fonts langs={[...LANGS]} preload={false} />
     <title>{title}</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content={THEME_COLOR.night} />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   </head>
   <body>
-    <main id="main">
-      <h1>{code}</h1>
-      {
-        blocks.map(({ lang, t }) => (
-          <section lang={lang}>
-            <h2>{t.notFound.title}</h2>
-            <p>{t.notFound.text}</p>
-            <a href={routePath('home', lang)} hreflang={lang}>
-              {t.notFound.home}
-            </a>
-          </section>
-        ))
-      }
+    <SiteHeader lang="en" routeId={null} surface="night" />
+    <main id="main" tabindex="-1" class="wrap nf">
+      <h1 class="nf__code">{code}</h1>
+      <div class="nf__blocks">
+        {
+          blocks.map(({ lang, t }) => (
+            <section lang={lang} data-type={lang} class="nf__block">
+              <p class="nf__name">{t.languageNames[lang]}</p>
+              <h2 class="nf__title">{t.notFound.title}</h2>
+              <p>{t.notFound.text}</p>
+              <a href={routePath('home', lang)} hreflang={lang}>
+                {t.notFound.home}
+              </a>
+            </section>
+          ))
+        }
+      </div>
     </main>
+    <SiteFooter lang="en" routeId={null} />
   </body>
 </html>
+
+<style>
+  .nf {
+    padding-block: 40px 64px;
+  }
+  .nf__code {
+    font: italic 900 clamp(88px, 16vw, 240px) / 0.8 var(--font-archivo);
+    letter-spacing: -0.04em;
+  }
+  .nf__blocks {
+    display: grid;
+    gap: 0 48px;
+    margin-top: 36px;
+  }
+  .nf__block {
+    padding: 24px 0 28px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--fu);
+  }
+  .nf__name {
+    font: 700 11px/1 var(--fu);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+  .nf__title {
+    margin: 12px 0 10px;
+    font: var(--fds) 900 calc(44px * var(--k)) / 0.95 var(--fd);
+    text-transform: uppercase;
+  }
+  .nf__block a {
+    display: inline-flex;
+    margin-top: 16px;
+    min-height: 44px;
+    align-items: center;
+    font: 700 15px/1.2 var(--fu);
+  }
+  @media (min-width: 1000px) {
+    .nf {
+      padding-block: 72px 96px;
+    }
+    .nf__blocks {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 56px;
+    }
+    .nf__title {
+      font-size: calc(56px * var(--k));
+    }
+  }
+</style>

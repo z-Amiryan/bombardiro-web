@@ -32,3 +32,8 @@ export function expectedPages() {
   }
   return out;
 }
+
+/** A page's language versions, as listed in routes.json. */
+export function alternatesOf(id) {
+  return LANGS.filter((l) => routes.pages[id][l]).map((l) => ({ lang: l, path: routes.pages[id][l] }));
+}

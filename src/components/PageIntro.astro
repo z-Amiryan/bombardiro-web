@@ -1,0 +1,32 @@
+---
+// The opening of a page: its h1 and lead. The page designs replace this as they're built.
+interface Props {
+  h1: string;
+  lead: string;
+}
+
+const { h1, lead } = Astro.props;
+---
+
+<section class="wrap intro">
+  <h1 class="display">{h1}</h1>
+  <p>{lead}</p>
+</section>
+
+<style>
+  .intro {
+    padding-block: 56px 96px;
+  }
+  h1 {
+    font-size: calc(clamp(44px, 7vw, 112px) * var(--k));
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  p {
+    margin-top: 22px;
+    max-width: 40ch;
+    font: 500 clamp(17px, 1.4vw, 20px) / 1.5 var(--fu);
+    color: var(--fg-body);
+  }
+</style>

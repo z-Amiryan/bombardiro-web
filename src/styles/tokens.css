@@ -1,0 +1,251 @@
+/* Design tokens from design/export/Design System.dc.html. Components use the semantic tokens at the bottom,
+   which each surface (Night, Lime, Chalk) sets on <html data-surface>. */
+:root {
+  /* Night (1a): Home, How to play, Support, About, 404 */
+  --c-night: #101418;
+  --c-night-deep: #0c1013;
+  --c-night-raise: #192025;
+  --c-night-glow: #1b2329;
+  --c-night-footer: #0a0d10;
+  --c-ink-hi: #edf3e6;
+  --c-ink-body: #c5cec0;
+  --c-ink-soft: #c9d1c3;
+  --c-ink-muted: #9aa59a;
+  --c-ink-dim: #7e897f;
+  --c-lime: #bff747;
+  --c-alarm: #ff7a6e;
+
+  /* Lime (1b): Words, Home words band */
+  --c-lime-hi: #d4fa78;
+  --c-lime-low: #ace638;
+  --c-lime-end: #b6ef3e;
+  --c-lime-bar: #b9f23f;
+  --c-ink: #0a0f0a;
+  --c-ink-lime-soft: #33441a;
+  --c-ink-lime-body: #22300f;
+
+  /* Chalk (the app's Chalk grass): Guides, Guide, Privacy */
+  --c-chalk: #eef2e9;
+  --c-chalk-deep: #dee5d5;
+  --c-chalk-hover: #e3eadb;
+  --c-paper: #ffffff;
+  --c-chalk-ink: #12180f;
+  --c-chalk-body: #1e261b;
+  --c-chalk-text: #2e372b;
+  --c-chalk-label: #3e4a3b;
+  --c-chalk-muted: #4f5a4c;
+  --c-grass: #0a7c39;
+  --c-grass-bright: #0e9c49;
+  /* Grass text on chalk-deep (#DEE5D5), where #0A7C39 is only 4.1:1. Recorded in DESIGN-DEVIATIONS.md. */
+  --c-grass-deep: #076b33;
+  --c-grass-tint: #f3fbe2;
+
+  /* Space (px) */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-7: 32px;
+  --s-8: 40px;
+  --s-9: 56px;
+  --s-10: 64px;
+  --s-11: 96px;
+  --s-12: 120px;
+
+  /* Radius */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-card: 18px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+  --r-shot: 36px;
+  --r-shot-lg: 40px;
+  --r-pill: 999px;
+
+  /* Layout */
+  --max: 1440px;
+  --gutter: 20px;
+  --header-h: 64px;
+  --measure: 66ch;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-spring: cubic-bezier(0.3, 1.3, 0.5, 1);
+  --ease-enter: cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Type, per script: the page's language, or a block marked data-type (the 404 shows all three).
+   --fd display, --fds display style, --fu interface and body, --k display scale. */
+:root,
+[data-type='en'] {
+  --fd: var(--font-archivo);
+  --fds: italic;
+  --fu: var(--font-space-grotesk);
+  --k: 1;
+}
+
+:root[lang='ru'],
+[data-type='ru'] {
+  --fd: var(--font-noto-sans);
+  --fds: italic;
+  --fu: var(--font-noto-sans);
+  --k: 0.95;
+}
+
+:root[lang='hy'],
+[data-type='hy'] {
+  --fd: var(--font-noto-armenian);
+  --fds: normal;
+  --fu: var(--font-noto-armenian);
+  --k: 0.8;
+}
+
+/* Wide layouts: ≥ 1100 px for Home, How to play, Words and Guide; ≥ 1000 px for the simpler pages. The
+   header's full bar starts at 1000 px in English and Russian and at 1200 px in Armenian, whose navigation
+   labels are longer (SiteHeader.astro). */
+@media (min-width: 1000px) {
+  :root:not([lang='hy']) {
+    --header-h: 84px;
+  }
+  :root[data-bp='1000'] {
+    --gutter: 64px;
+  }
+}
+@media (min-width: 1100px) {
+  :root[data-bp='1100'] {
+    --gutter: 64px;
+  }
+}
+@media (min-width: 1200px) {
+  :root {
+    --header-h: 84px;
+  }
+}
+
+/* Surfaces */
+:root[data-surface='night'] {
+  color-scheme: dark;
+  --bg: var(--c-night);
+  --fg: var(--c-ink-hi);
+  --fg-body: var(--c-ink-body);
+  --fg-muted: var(--c-ink-muted);
+  --accent: var(--c-lime);
+  --on-accent: var(--c-ink);
+  --focus: var(--c-lime);
+  --link: var(--c-lime);
+  --link-hover: var(--c-ink-hi);
+  --rule: rgba(237, 243, 230, 0.14);
+  --rule-dash: rgba(237, 243, 230, 0.18);
+
+  --hdr-bg: rgba(16, 20, 24, 0.78);
+  --hdr-solid: var(--c-night);
+  --hdr-muted: var(--c-ink-soft);
+  --hdr-line: rgba(237, 243, 230, 0.08);
+  --hdr-line-2: rgba(237, 243, 230, 0.18);
+  --hdr-accent-line: var(--c-lime);
+  --hdr-cta: var(--c-lime);
+  --hdr-lang-on: var(--c-lime);
+  --hdr-lang-off: var(--c-ink-muted);
+  --menu-border: 1px solid rgba(237, 243, 230, 0.18);
+  --menu-radius: 50%;
+  --wm-a: var(--c-ink-hi);
+  --wm-b: var(--c-lime);
+
+  --ftr-bg: var(--c-night-footer);
+  --ftr-fg: var(--c-ink-hi);
+  --ftr-muted: var(--c-ink-muted);
+  --ftr-hover: var(--c-lime);
+  --ftr-cta: var(--c-lime);
+  --ftr-rule: rgba(237, 243, 230, 0.1);
+  --ftr-rule-2: rgba(237, 243, 230, 0.22);
+  --ftr-wm-a: var(--c-ink-hi);
+  --ftr-wm-b: var(--c-lime);
+  --ftr-off: var(--c-ink-soft);
+  --ftr-dot: var(--c-lime);
+}
+
+:root[data-surface='lime'] {
+  color-scheme: light;
+  --bg: var(--c-lime);
+  --fg: var(--c-ink);
+  --fg-body: var(--c-ink);
+  --fg-muted: var(--c-ink-lime-soft);
+  --accent: var(--c-ink);
+  --on-accent: var(--c-lime);
+  --focus: var(--c-ink);
+  --link: var(--c-ink);
+  --link-hover: var(--c-ink-lime-soft);
+  --rule: var(--c-ink);
+  --rule-dash: var(--c-ink);
+
+  --hdr-bg: rgba(191, 247, 71, 0.82);
+  --hdr-solid: var(--c-lime);
+  --hdr-muted: var(--c-ink);
+  --hdr-line: rgba(10, 15, 10, 0.9);
+  --hdr-line-2: var(--c-ink);
+  --hdr-accent-line: var(--c-ink);
+  --hdr-cta: var(--c-ink);
+  --hdr-lang-on: var(--c-ink);
+  --hdr-lang-off: var(--c-ink-lime-soft);
+  --menu-border: 1.5px solid var(--c-ink);
+  --menu-radius: 50%;
+  --wm-a: var(--c-ink);
+  --wm-b: var(--c-ink);
+
+  --ftr-bg: var(--c-ink);
+  --ftr-fg: var(--c-ink-hi);
+  --ftr-muted: var(--c-ink-muted);
+  --ftr-hover: var(--c-lime);
+  --ftr-cta: var(--c-lime);
+  --ftr-rule: rgba(237, 243, 230, 0.12);
+  --ftr-rule-2: rgba(237, 243, 230, 0.24);
+  --ftr-wm-a: var(--c-ink-hi);
+  --ftr-wm-b: var(--c-lime);
+  --ftr-off: var(--c-ink-soft);
+  --ftr-dot: var(--c-lime);
+}
+
+:root[data-surface='chalk'] {
+  color-scheme: light;
+  --bg: var(--c-chalk);
+  --fg: var(--c-chalk-ink);
+  --fg-body: var(--c-chalk-body);
+  --fg-muted: var(--c-chalk-muted);
+  --accent: var(--c-grass);
+  --on-accent: var(--c-paper);
+  --focus: var(--c-grass);
+  --link: var(--c-grass);
+  --link-hover: var(--c-chalk-ink);
+  --rule: rgba(18, 24, 15, 0.22);
+  --rule-dash: rgba(18, 24, 15, 0.28);
+
+  --hdr-bg: rgba(238, 242, 233, 0.86);
+  --hdr-solid: var(--c-chalk);
+  --hdr-muted: var(--c-chalk-text);
+  --hdr-line: rgba(18, 24, 15, 0.14);
+  --hdr-line-2: rgba(18, 24, 15, 0.3);
+  --hdr-accent-line: var(--c-grass-bright);
+  --hdr-cta: var(--c-grass);
+  --hdr-lang-on: var(--c-chalk-ink);
+  --hdr-lang-off: var(--c-chalk-muted);
+  --menu-border: 1.5px solid var(--c-chalk-ink);
+  --menu-radius: 10px;
+  --wm-a: var(--c-chalk-ink);
+  --wm-b: var(--c-grass-bright);
+
+  --ftr-bg: var(--c-chalk-deep);
+  --ftr-fg: var(--c-chalk-ink);
+  --ftr-muted: var(--c-chalk-label);
+  --ftr-hover: var(--c-grass-deep);
+  --ftr-cta: var(--c-grass-deep);
+  --ftr-rule: rgba(18, 24, 15, 0.16);
+  --ftr-rule-2: rgba(18, 24, 15, 0.3);
+  --ftr-wm-a: var(--c-chalk-ink);
+  --ftr-wm-b: var(--c-grass);
+  --ftr-off: var(--c-chalk-text);
+  --ftr-dot: var(--c-grass);
+}
