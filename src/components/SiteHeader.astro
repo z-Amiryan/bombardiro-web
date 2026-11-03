@@ -386,7 +386,70 @@ const langs = (routeId ? languageSwitch(routeId) : languageSwitch('home')).map((
     transform: scale(0.94);
   }
 
-  @media (min-width: 1000px) {
+  /* Narrow phones: a smaller wordmark and language links, so the bar fits from 360 px. Below that the
+     languages are in the menu sheet only. */
+  @media (max-width: 389.98px) {
+    .hdr__bar {
+      gap: 8px;
+      padding-left: 12px;
+    }
+    .hdr__brand {
+      gap: 8px;
+      font-size: 16px;
+    }
+    .hdr__langs a {
+      width: 36px;
+    }
+  }
+
+  @media (max-width: 359.98px) {
+    .hdr__langs {
+      display: none;
+    }
+  }
+
+  /* The full bar: from 1000 px in English and Russian, with tighter spacing up to 1200 px; from 1200 px in
+     Armenian, whose longer labels need the room. */
+  @media (min-width: 1000px) and (max-width: 1199.98px) {
+    :global(:root:not([lang='hy'])) .hdr__bar {
+      height: 84px;
+      padding: 0 32px 0 40px;
+    }
+    :global(:root:not([lang='hy'])) .hdr__brand {
+      font-size: 25px;
+    }
+    :global(:root:not([lang='hy'])) .hdr__icon {
+      width: 34px;
+      height: 34px;
+    }
+    :global(:root:not([lang='hy'])) .hdr__chip {
+      height: 44px;
+    }
+    :global(:root:not([lang='hy'])) .hdr__nav {
+      display: block;
+    }
+    :global(:root:not([lang='hy'])) .hdr__nav a {
+      padding: 0 12px;
+    }
+    :global(:root:not([lang='hy'])) .hdr__nav a::after {
+      left: 12px;
+      right: 12px;
+    }
+    :global(:root:not([lang='hy'])) .hdr__end {
+      gap: 14px;
+    }
+    :global(:root:not([lang='hy'])) .hdr__langs a {
+      width: 44px;
+    }
+    :global(:root:not([lang='hy'])) .hdr__cta {
+      display: flex;
+    }
+    :global(:root:not([lang='hy'])) .hdr__menu {
+      display: none;
+    }
+  }
+
+  @media (min-width: 1200px) {
     .hdr__bar {
       height: 84px;
       padding: 0 52px 0 64px;

@@ -121,7 +121,7 @@ const socials = socialLinksFor(lang);
 
   .ftr__grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 36px;
     align-items: start;
   }
@@ -265,7 +265,7 @@ const socials = socialLinksFor(lang);
     padding-top: 22px;
     border-top: 1px solid var(--ftr-rule);
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 14px 48px;
     font: 400 12.5px/1.55 var(--fu);
     color: var(--ftr-muted);

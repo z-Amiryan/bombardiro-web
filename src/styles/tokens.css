@@ -99,9 +99,10 @@
 }
 
 /* Wide layouts: ≥ 1100 px for Home, How to play, Words and Guide; ≥ 1000 px for the simpler pages. The
-   header goes wide at 1000 px everywhere, where its full navigation fits in every language. */
+   header's full bar starts at 1000 px in English and Russian and at 1200 px in Armenian, whose navigation
+   labels are longer (SiteHeader.astro). */
 @media (min-width: 1000px) {
-  :root {
+  :root:not([lang='hy']) {
     --header-h: 84px;
   }
   :root[data-bp='1000'] {
@@ -111,6 +112,11 @@
 @media (min-width: 1100px) {
   :root[data-bp='1100'] {
     --gutter: 64px;
+  }
+}
+@media (min-width: 1200px) {
+  :root {
+    --header-h: 84px;
   }
 }
 

@@ -23,6 +23,8 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* A word longer than its line (an email address on a narrow phone) breaks rather than widening the page. */
+  overflow-wrap: break-word;
   overflow-x: clip;
 }
 
@@ -118,6 +120,22 @@ main:focus {
   font-style: var(--fds);
   font-weight: 900;
   text-transform: uppercase;
+}
+
+/* Big type that keeps its design size but never outgrows its box, in any language: the text sits in a
+   .fit__t span, sized at the smaller of --fs (the design size) and the box width divided by --fit (the width of
+   the longest word in em, set per language beside the element's styles). tests/e2e/layout.spec.ts measures
+   every word as drawn and fails when a --fit is too small. Letter-spacing goes in --ls, so it scales with the
+   fitted size. Browsers without container units keep the design size. */
+.fit {
+  container-type: inline-size;
+  font-size: var(--fs);
+}
+
+.fit__t {
+  display: block;
+  font-size: min(var(--fs), 100cqi / var(--fit));
+  letter-spacing: var(--ls, normal);
 }
 
 /* Small uppercase labels and eyebrows. */

@@ -16,7 +16,9 @@ the design's idea.
 
 | Where | Design | Build | Why |
 | --- | --- | --- | --- |
-| Header breakpoint | Follows the page: 1100 px on Home, How to play, Words, Guide; 1000 px elsewhere | 1000 px on every page | The header's full navigation fits at 1000 px in all three languages, and one breakpoint keeps the header identical across pages. Page content keeps its own breakpoints. |
+| Header breakpoint | Follows the page: 1100 px on Home, How to play, Words, Guide; 1000 px elsewhere | The full bar from 1000 px on every English and Russian page, with tighter side and link padding up to 1200 px; from 1200 px on Armenian pages | The bar is the same on every page. Armenian navigation labels are longer, and the full bar ran off the screen below about 1180 px, so Armenian keeps the menu button until 1200 px. Page content keeps its own breakpoints. |
+| Header on narrow phones | One size: 19 px wordmark and 40 px language links | Under 390 px, a 16 px wordmark and 36 px language links; under 360 px, the languages are in the menu sheet only | The bar was 388 px wide, so on 320–375 px phones the menu button sat off the screen. |
+| Grids on phones | `1fr` columns | `minmax(0, 1fr)` | A long unbreakable word (an email address) could widen a `1fr` column past the screen. |
 | Footer and menu links | 40 px rows | 44 px rows | SPEC §10: touch targets at least 44 px. |
 | Mobile menu sheet | A JavaScript-driven overlay | The same sheet as a native popover | Opens, closes on Esc and works with JavaScript off; looks and animates the same. |
 
