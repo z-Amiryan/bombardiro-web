@@ -1,0 +1,272 @@
+{
+  "lang": "en",
+  "brand": {
+    "name": "Bombardiro",
+    "tagline": "The football word game",
+    "descriptor": "The football Alias"
+  },
+  "languageNames": { "en": "English", "ru": "Русский", "hy": "Հայերեն" },
+  "nav": {
+    "skip": "Skip to content",
+    "primaryLabel": "Main",
+    "language": "Language",
+    "home": "Home",
+    "howToPlay": "How to play",
+    "words": "Words",
+    "guides": "Guides",
+    "support": "Support",
+    "about": "About",
+    "privacy": "Privacy"
+  },
+  "cta": {
+    "badgeAlt": "Download on the App Store",
+    "getApp": "Get the app",
+    "availability": "Free on iPhone and iPad",
+    "textLink": "Available on the App Store",
+    "scan": "Scan with your iPhone camera to get the app"
+  },
+  "footer": {
+    "follow": "Follow us",
+    "contact": "Contact",
+    "independent": "Bombardiro is an independent game. It isn't affiliated with or endorsed by any club, player, league or federation.",
+    "apple": "Apple, the Apple logo, iPhone and iPad are trademarks of Apple Inc., registered in the U.S. and other countries. App Store is a service mark of Apple Inc.",
+    "copyright": "© 2026 Bombardiro"
+  },
+  "notFound": {
+    "title": "Offside",
+    "text": "This page isn't on the pitch. The link may be old or mistyped.",
+    "home": "Back to the home page"
+  },
+  "pages": {
+    "home": {
+      "meta": {
+        "title": "Bombardiro: the football Alias party word game",
+        "description": "Describe footballers, clubs and stadiums without saying the word while your team races the clock. One phone, 2–4 teams, offline. Free on iPhone and iPad."
+      },
+      "eyebrow": "The football Alias",
+      "h1": "Describe it. Don't say it. Score.",
+      "lead": "Bombardiro is a party word game for football fans. One player describes, the team guesses, and every word they get before the whistle is a goal.",
+      "turn": {
+        "title": "How a turn works",
+        "cta": "Full rules",
+        "steps": [
+          { "title": "The clock starts", "text": "30, 60, 90 or 120 seconds. You set it." },
+          { "title": "Describe, don't say", "text": "A card shows 5 to 8 football words. Describe each one without saying it." },
+          { "title": "Every guess is a goal", "text": "Tap each word your team gets. Clear the card and a fresh one drops on the same clock." },
+          { "title": "The whistle ends it", "text": "Only the timer ends a turn. Pass the phone to the next team." }
+        ]
+      },
+      "words": {
+        "title": "Every word is football",
+        "text": "Players, clubs, stadiums, legends, tactics and trophies, World Cup moments: nearly 1,700 words in every language. Easy deals the household names. Hard deals the deep cuts.",
+        "cta": "See the words"
+      },
+      "room": {
+        "title": "One phone. 2–4 teams.",
+        "text": "Name your teams, pick a crest and pass the phone around the room. No account, no sign-up, no second device."
+      },
+      "fair": {
+        "title": "No arguments",
+        "text": "Once a team reaches the target, the round is played out so everyone gets the same number of turns. Level at the top? Extra round. Someone shouted the answer as the whistle blew? Open the last turn, switch the word between GOAL and MISS, and the score fixes itself."
+      },
+      "anywhere": {
+        "title": "Plays anywhere",
+        "text": "Every word is already inside the app, so it works on a plane, in a basement or with no signal at all. New and corrected words arrive on their own, with no app update needed."
+      },
+      "languages": {
+        "title": "Speaks your language",
+        "text": "Play in English, Russian or Armenian. The words are translated by people, not machines."
+      },
+      "final": {
+        "title": "Crown the champions",
+        "text": "Grab your friends, pick your categories and start the match."
+      },
+      "faq": {
+        "title": "Quick answers",
+        "items": [
+          { "q": "Is it free?", "a": "Yes. Bombardiro is free, with no purchases and no ads." },
+          { "q": "How many people can play?", "a": "2 to 4 teams share one phone. Each team needs someone to describe and someone to guess, so four people is a good minimum." },
+          { "q": "Do I need an account or internet?", "a": "No. There's no sign-up, and every word is inside the app, so it plays offline." },
+          { "q": "Can we play online, from different places?", "a": "No. Bombardiro is played in one room, on one device." },
+          { "q": "Is there an Android version?", "a": "Not yet. Bombardiro is available on iPhone and iPad." }
+        ]
+      }
+    },
+    "howToPlay": {
+      "meta": {
+        "title": "How to play Bombardiro: football Alias rules",
+        "description": "The rules in a minute: pick categories, line up 2–4 teams, describe the words without saying them and beat the whistle. Settings and fair-play rules explained."
+      },
+      "h1": "How to play",
+      "lead": "Describe the word. Don't say it. Score the goal.",
+      "stepsTitle": "The rules",
+      "steps": [
+        { "title": "Pick your categories", "text": "Choose the categories you want in the match: players, clubs, World Cup and more." },
+        { "title": "Line up teams", "text": "Add 2–4 teams, name them and pick a crest. Then pass the phone around the table." },
+        { "title": "Describe, don't say it", "text": "The active player describes the words on the card. Saying the word itself is a foul: leave it unmarked and move on to the next." },
+        { "title": "Tap a word, score a goal", "text": "When your team guesses it, tap the word to bank a goal. Tap again to undo a mistake." },
+        { "title": "Beat the clock", "text": "Score as many as you can before the whistle. The clock ends the turn, or tap END to finish it early." },
+        { "title": "First to the target wins", "text": "Hand off and repeat. Once a team reaches the target, the round is played out so everyone gets equal turns, and the top score lifts the trophy." }
+      ],
+      "settings": {
+        "title": "Your match, your rules",
+        "items": [
+          { "label": "Turn time", "value": "30, 60, 90 or 120 seconds", "text": "How many seconds one player gets to describe words. When the time runs out, the turn passes to the next team." },
+          { "label": "Words per card", "value": "5 to 8", "text": "How many words are dealt on one card. Clear them all and a fresh card arrives on the same clock: the timer ends the turn, not the card." },
+          { "label": "Points to win", "value": "51, 101, 151 or 201", "text": "The target score for the match. Once a team reaches it, the round is played out so every team gets the same number of turns, then the highest score wins. A tie at the top plays another round." },
+          { "label": "Number of teams", "value": "2 to 4", "text": "How many teams the match starts with. You can rename them, pick crests, and add or remove teams before kick-off." },
+          { "label": "Difficulty", "value": "Easy or Hard", "text": "Which word pool the cards come from. Easy uses the best-known words in your categories, Hard the more obscure ones." }
+        ]
+      },
+      "fair": {
+        "title": "Fair to the last kick",
+        "items": [
+          "No word repeats in a match until your chosen categories run out.",
+          "Once a team reaches the target, the round is played out so everyone gets the same number of turns.",
+          "Level at the top? An extra round decides it.",
+          "Missed a tap as the whistle blew? Tap the latest score on the scoreboard and switch the word between GOAL and MISS."
+        ]
+      },
+      "tips": {
+        "title": "How to describe well",
+        "items": [
+          "Players: try the club, the position, the country or a famous moment.",
+          "Clubs: try the city, the nickname, the colours or the biggest rival.",
+          "Stadiums: try the city, the home team or a match everyone remembers.",
+          "Stuck? Leave the word unmarked and move on. The clock won't wait."
+        ]
+      },
+      "video": {
+        "title": "Watch a match",
+        "caption": "A 25-second look at the app, from picking categories to full time."
+      }
+    },
+    "words": {
+      "meta": {
+        "title": "Football words for Alias and charades: free list",
+        "description": "Football (soccer) words for Alias, charades and party games: players, clubs, stadiums, legends, tactics and the World Cup. Easy and hard, free to print."
+      },
+      "h1": "Football words for your next game",
+      "lead": "Free football (soccer) words for Alias, charades or any describe-the-word game, in six categories. Print the list, or get nearly 1,700 words in Bombardiro.",
+      "print": "Print this list",
+      "easyLabel": "Easy",
+      "hardLabel": "Hard",
+      "tipLabel": "How to describe",
+      "categories": {
+        "players": { "name": "Players", "intro": "Today's stars, from household names to squad players only real fans can place.", "tip": "Try the club, the position, the country or a famous moment." },
+        "clubs": { "name": "Clubs", "intro": "Giants and cult clubs from Europe and beyond.", "tip": "Try the city, the nickname, the colours or the biggest rival." },
+        "tactics": { "name": "Tactics & Trophies", "intro": "Rules, positions, managers and tournaments in one category.", "tip": "Explain what it means on the pitch, or who's famous for it." },
+        "stadiums": { "name": "Stadiums", "intro": "Famous grounds, by name.", "tip": "Try the city, the home team or a match everyone remembers." },
+        "legends": { "name": "Legends", "intro": "The greats of the game.", "tip": "Try the era, the team, the trophy or the defining moment." },
+        "worldcup": { "name": "World Cup", "intro": "Stars and moments from World Cups.", "tip": "Try the year, the country or the final." }
+      },
+      "howToUse": {
+        "title": "How to play with this list",
+        "steps": [
+          "Print the page and cut the words apart, or read them from a phone.",
+          "Split into two teams and set a timer for 60 seconds.",
+          "One player describes as many words as they can without saying them. Every word the team guesses is a goal."
+        ]
+      },
+      "appNote": {
+        "title": "Want the full squad?",
+        "text": "Bombardiro has nearly 1,700 words. It deals the cards, runs the clock, keeps the score and blows the whistle."
+      }
+    },
+    "guides": {
+      "meta": {
+        "title": "Guides: party games, Alias rules and game nights",
+        "description": "Rules, ideas and lists for game nights with friends, from how to play Alias to party games that only need one phone."
+      },
+      "h1": "Guides",
+      "lead": "Rules, ideas and lists for game nights with friends."
+    },
+    "support": {
+      "meta": {
+        "title": "Bombardiro support: help and questions",
+        "description": "Answers about accounts, offline play, languages and your data, plus how to reach us if something in Bombardiro isn't working."
+      },
+      "h1": "Support",
+      "lead": "If something is broken, confusing or missing, write to us.",
+      "contact": {
+        "title": "Write to us",
+        "inApp": "You can also reach the same inbox from inside the app: Settings → Report a bug. That opens a mail composer with the app version and your iOS version already filled in, which makes problems much faster to track down.",
+        "response": "We read everything. Replies usually take a couple of days."
+      },
+      "faq": {
+        "title": "Common questions",
+        "items": [
+          { "q": "Do I need an account?", "a": "No. There is no sign-up, no login and no profile. The game never asks who you are." },
+          { "q": "Does it work without internet?", "a": "Yes. Every word ships inside the app, so you can play on a plane, in a basement or with the connection off. The app checks for new words when it has a connection and uses them the next time you launch, so a download never interrupts a game in progress." },
+          { "q": "What languages does it support?", "a": "English, Russian and Armenian. The app follows your device language on first launch. After that you can change it any time from the language menu at the top left of the home screen. Words are translated, not machine-generated." },
+          { "q": "Can I add my own words?", "a": "No. The six categories are fixed, and new or corrected words arrive on their own. If a turn was scored wrong, tap the latest score on the scoreboard to switch any of its words between GOAL and MISS." },
+          { "q": "The app is showing the wrong language or theme.", "a": "Both are remembered on your device once you change them, so they stop following your system setting. Set them from the home screen: the language menu is at the top left, the theme button at the top right." },
+          { "q": "I found a word that is wrong, offensive or misspelled.", "a": "Please tell us, and include the word and the language. Words are updated over the air, so a fix reaches everyone without an app update." },
+          { "q": "How do I delete my data?", "a": "There is no account to delete. Scores and team names are never saved. Your settings are saved only on your device, so uninstalling the app removes them, although a device backup may still hold a copy. The app collects no statistics about how you play. The crash reports it sends are filed under random identifiers, not your name or email, and are deleted on a fixed schedule. Because they aren't tied to your name or email, an email from you usually doesn't let us find them, but write to us anyway and we'll explain what we can do. See the app's privacy policy for the full detail." },
+          { "q": "How do I turn off game reminders?", "a": "In the app, open Settings → Game reminders. It takes you to Bombardiro's page in the iOS Settings app, where you can switch notifications off or back on. The row appears once the app has asked you about notifications, after your first finished match." },
+          { "q": "Does it cost anything? Are there ads?", "a": "The game is free. It has no purchases and shows no ads." }
+        ]
+      },
+      "report": {
+        "title": "Reporting a problem",
+        "lead": "The more of this you can include, the faster it gets fixed:",
+        "items": [
+          "What you did, and what happened instead",
+          "Which screen you were on",
+          "Your device and iOS version",
+          "The app version"
+        ]
+      }
+    },
+    "about": {
+      "meta": {
+        "title": "About Bombardiro, the football word game",
+        "description": "Bombardiro is a party word game for football fans, made for one phone and a room full of friends. Who makes it, what the name means, and press details."
+      },
+      "h1": "About Bombardiro",
+      "lead": "Bombardiro is a party word game where what you know about football turns into goals.",
+      "what": {
+        "title": "What it is",
+        "text": "One phone, 2–4 teams and a clock. A player describes football words without saying them, the team shouts, and every correct guess is a goal. Think of Alias, if every word were football."
+      },
+      "name": {
+        "title": "The name",
+        "text": "The name plays on «бомбардир», the Russian football word for a prolific goalscorer. Here, the top scorer is the sharpest describer in the room."
+      },
+      "maker": {
+        "title": "Who makes it",
+        "text": "Bombardiro is created and developed by Gor Ghazaryan."
+      },
+      "independent": {
+        "title": "Independent",
+        "text": "Bombardiro isn't affiliated with, endorsed by or sponsored by any club, player, league or federation. Names appear in the game only as words to describe."
+      },
+      "press": {
+        "title": "For press",
+        "boilerplate": "Bombardiro is a football party word game for iPhone and iPad. 2–4 teams share one phone and describe nearly 1,700 football words against the clock, in English, Russian or Armenian. It is free, needs no account and works offline.",
+        "kit": "Download logos and screenshots",
+        "contact": "Press contact"
+      }
+    },
+    "privacy": {
+      "meta": {
+        "title": "Website privacy notice | Bombardiro",
+        "description": "What bombardiro.app collects and what it doesn't: no sign-up, no ads and no tracking across other websites."
+      },
+      "h1": "Website privacy notice",
+      "updated": "Last updated: {date}",
+      "intro": "This notice covers the website bombardiro.app. The Bombardiro app has its own privacy policy.",
+      "appPolicyLabel": "Read the app's privacy policy",
+      "sections": [
+        { "title": "Who runs this site", "text": "Bombardiro is published by Gor Ghazaryan, Armenia. You can reach us at bombardiro.dev@gmail.com." },
+        { "title": "The short version", "text": "We don't ask for your name or email. This site shows no ads, sets no cookies of its own and doesn't track you across other websites." },
+        { "title": "Visit statistics", "text": "We use Vercel Web Analytics to count visits and Vercel Speed Insights to measure how fast pages load. Neither uses third-party cookies. Web Analytics tells visits apart with a temporary value made from the incoming request, which is discarded after 24 hours. We see totals such as the page, the referring site, the country, the browser, the operating system and the device type, not individual people." },
+        { "title": "Hosting", "text": "Vercel hosts this site. Like any web host, it receives technical details of each request, such as your IP address, so it can deliver pages and keep the service secure. Vercel handles this under its own privacy notice." },
+        { "title": "Links to other services", "text": "Buttons for the App Store, Instagram and TikTok take you to those services. Once you're there, their own privacy policies apply." },
+        { "title": "Emails", "text": "If you write to us, we receive your email address and your message, and use them only to reply. Our mailbox is a Gmail account, so Google stores these emails for us." },
+        { "title": "Your rights", "text": "You can ask us what we hold about you, and ask us to correct or delete it, by writing to bombardiro.dev@gmail.com." },
+        { "title": "Changes", "text": "If this notice changes, we'll update this page and the date above." }
+      ]
+    }
+  }
+}

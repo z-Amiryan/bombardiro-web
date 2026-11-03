@@ -1,0 +1,25 @@
+{
+  "site": "https://bombardiro.app",
+  "defaultLocale": "en",
+  "locales": ["en", "ru", "hy"],
+  "pages": {
+    "home": { "en": "/", "ru": "/ru/", "hy": "/hy/" },
+    "howToPlay": { "en": "/how-to-play/", "ru": "/ru/kak-igrat/", "hy": "/hy/inchpes-khaghal/" },
+    "words": { "en": "/words/", "ru": "/ru/slova/", "hy": "/hy/barer/" },
+    "guides": { "en": "/guides/", "ru": "/ru/guides/", "hy": "/hy/guides/" },
+    "support": { "en": "/support/", "ru": "/ru/podderzhka/", "hy": "/hy/ajakcutyun/" },
+    "about": { "en": "/about/", "ru": "/ru/o-nas/", "hy": "/hy/mer-masin/" },
+    "privacy": { "en": "/privacy/", "ru": "/ru/privacy/", "hy": "/hy/privacy/" },
+    "guideAliasRules": {
+      "en": "/guides/how-to-play-alias/",
+      "ru": "/ru/guides/pravila-alias/",
+      "hy": "/hy/guides/alias-kanonner/"
+    },
+    "guideOnePhone": {
+      "en": "/guides/one-phone-party-games/",
+      "ru": "/ru/guides/igry-dlya-kompanii-na-odnom-telefone/"
+    },
+    "guideFootballParty": { "en": "/guides/football-party-games/" },
+    "guideGlossary": { "ru": "/ru/guides/futbolnye-terminy/" }
+  }
+}
