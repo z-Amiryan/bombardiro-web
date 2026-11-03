@@ -80,8 +80,8 @@ const langs = (routeId ? languageSwitch(routeId) : languageSwitch('home')).map((
         {
           langs.map((l) => (
             <a href={l.path} hreflang={l.lang} lang={l.lang} aria-current={l.current ? 'true' : undefined}>
-              <span aria-hidden="true">{l.code}</span>
-              <span class="sr-only">{l.name}</span>
+              <span>{l.code}</span>
+              <span class="sr-only"> {l.name}</span>
             </a>
           ))
         }
@@ -196,7 +196,7 @@ const langs = (routeId ? languageSwitch(routeId) : languageSwitch('home')).map((
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--s-4);
+    gap: var(--s-2);
   }
 
   .hdr__brand {
@@ -307,7 +307,7 @@ const langs = (routeId ? languageSwitch(routeId) : languageSwitch('home')).map((
   }
 
   .hdr__langs a {
-    width: 40px;
+    width: 44px;
     height: 44px;
     display: flex;
     flex-direction: column;
@@ -366,7 +366,6 @@ const langs = (routeId ? languageSwitch(routeId) : languageSwitch('home')).map((
   .hdr__menu {
     width: 44px;
     height: 44px;
-    margin-left: var(--s-1);
     border-radius: var(--menu-radius);
     border: var(--menu-border);
     background: transparent;
@@ -390,23 +389,9 @@ const langs = (routeId ? languageSwitch(routeId) : languageSwitch('home')).map((
     transform: scale(0.94);
   }
 
-  /* Narrow phones: a smaller wordmark and language links, so the bar fits from 360 px. Below that the
-     languages are in the menu sheet only. */
+  /* Phones under 390 px: the bar can't fit three 44 px language links beside the wordmark, so the languages
+     are in the menu sheet only. */
   @media (max-width: 389.98px) {
-    .hdr__bar {
-      gap: var(--s-2);
-      padding-left: var(--s-3);
-    }
-    .hdr__brand {
-      gap: var(--s-2);
-      font-size: 16px;
-    }
-    .hdr__langs a {
-      width: 36px;
-    }
-  }
-
-  @media (max-width: 359.98px) {
     .hdr__langs {
       display: none;
     }
@@ -415,8 +400,10 @@ const langs = (routeId ? languageSwitch(routeId) : languageSwitch('home')).map((
   /* The full bar: from 1000 px in English and Russian, with tighter spacing up to 1200 px; from 1200 px in
      Armenian, whose longer labels need the room. */
   @media (min-width: 1000px) and (max-width: 1199.98px) {
-    :global(:root:not([lang='hy'])) .hdr__bar {
-      padding: 0 var(--s-7) 0 var(--s-8);
+    /* The wordmark lines up with the page content, in every language. */
+    .hdr__bar {
+      padding-left: var(--gutter);
+      padding-right: max(8px, calc(var(--gutter) - 12px));
     }
     :global(:root:not([lang='hy'])) .hdr__brand {
       font-size: 25px;
@@ -569,7 +556,7 @@ const langs = (routeId ? languageSwitch(routeId) : languageSwitch('home')).map((
     align-items: center;
     justify-content: space-between;
     gap: var(--s-4);
-    min-height: 64px;
+    min-height: 65px;
     border-bottom: 1px solid var(--hdr-line);
     font-size: calc(34px * var(--k));
     line-height: 1;
@@ -628,7 +615,26 @@ const langs = (routeId ? languageSwitch(routeId) : languageSwitch('home')).map((
     text-decoration: none;
   }
 
+  /* Phones under 390 px carry the languages in the sheet only: keep the pills on one row and the store
+     link on a 568 px-tall screen. */
+  @media (max-width: 389.98px) {
+    .sheet__langs a {
+      padding: 0 var(--s-3);
+    }
+    .sheet__nav a {
+      min-height: 56px;
+    }
+  }
+
+  .sheet__nav a :global(.icon) {
+    font-size: 18px;
+    stroke-width: 1.5;
+  }
+
   @media (prefers-reduced-motion: reduce) {
+    .hdr__nav a::after {
+      transition: none;
+    }
     .sheet {
       transform: none;
       transition:

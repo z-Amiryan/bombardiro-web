@@ -73,8 +73,9 @@ export const FONT_FAMILIES = [
     variants: [
       { src: pkg('noto-sans', 'noto-sans-cyrillic-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.cyrillic },
       { src: pkg('noto-sans', 'noto-sans-cyrillic-wght-italic.woff2'), style: 'italic', unicodeRange: RANGES.cyrillic },
-      { src: pkg('noto-sans', 'noto-sans-latin-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.latin },
-      { src: pkg('noto-sans', 'noto-sans-latin-wght-italic.woff2'), style: 'italic', unicodeRange: RANGES.latin },
+      // Latin trimmed to what Russian pages use (scripts/build-font-assets.py): 18 and 21 KB instead of 35 and 39.
+      { src: './src/assets/fonts/latin-ru-normal.woff2', style: 'normal', unicodeRange: RANGES.latin },
+      { src: './src/assets/fonts/latin-ru-italic.woff2', style: 'italic', unicodeRange: RANGES.latin },
       { src: pkg('noto-sans', 'noto-sans-cyrillic-ext-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.cyrillicExt },
       { src: pkg('noto-sans', 'noto-sans-cyrillic-ext-wght-italic.woff2'), style: 'italic', unicodeRange: RANGES.cyrillicExt },
       { src: pkg('noto-sans', 'noto-sans-latin-ext-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.latinExt },
@@ -88,7 +89,8 @@ export const FONT_FAMILIES = [
     cssVariable: '--font-noto-armenian',
     variants: [
       { src: pkg('noto-sans-armenian', 'noto-sans-armenian-armenian-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.armenian },
-      { src: pkg('noto-sans-armenian', 'noto-sans-armenian-latin-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.latin },
+      // Latin trimmed to what Armenian pages use: 19 KB instead of 31.
+      { src: './src/assets/fonts/latin-hy-normal.woff2', style: 'normal', unicodeRange: RANGES.latin },
       { src: pkg('noto-sans-armenian', 'noto-sans-armenian-latin-ext-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.latinExt },
       ...foreign('hy'),
     ],
@@ -125,7 +127,7 @@ export const LANG_FONTS = {
       ['--font-noto-sans', 0],
     ],
   },
-  // One family for display and body: the Armenian subset (26 KB) and its Latin subset (31 KB) for digits,
+  // One family for display and body: the Armenian subset (26 KB) and its trimmed Latin subset (19 KB) for digits,
   // punctuation and brand names.
   hy: {
     families: ['--font-noto-armenian'],

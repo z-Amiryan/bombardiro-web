@@ -62,7 +62,7 @@ function siteText(lang: Lang): Array<[string, string]> {
   const out = strings(copy);
   const guides = join(ROOT, 'src/content/guides', lang);
   if (existsSync(guides)) {
-    for (const file of readdirSync(guides).filter((f) => f.endsWith('.md'))) {
+    for (const file of readdirSync(guides).filter((f) => f.endsWith('.yaml'))) {
       out.push([`guides/${lang}/${file}`, readFileSync(join(guides, file), 'utf8')]);
     }
   }

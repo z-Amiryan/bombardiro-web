@@ -124,8 +124,44 @@ def site_text(lang: str) -> str:
     text = (ROOT / 'content' / 'copy' / f'{lang}.json').read_text(encoding='utf-8')
     guides = ROOT / 'src' / 'content' / 'guides' / lang
     if guides.is_dir():
-        text += ''.join(p.read_text(encoding='utf-8') for p in sorted(guides.glob('*.md')))
+        text += ''.join(p.read_text(encoding='utf-8') for p in sorted(guides.glob('*.yaml')))
     return text
+
+
+def cut(source: Path, target: Path, chars: str):
+    options = subset.Options()
+    options.flavor = 'woff2'
+    options.layout_features = ['kern', 'mark', 'mkmk', 'ccmp', 'locl', 'liga', 'calt']
+    options.hinting = False
+    options.name_IDs = [1, 2, 3, 4, 5, 6]
+    options.notdef_outline = False
+    font = subset.load_font(str(source), options)
+    subsetter = subset.Subsetter(options)
+    subsetter.populate(text=chars)
+    subsetter.subset(font)
+    subset.save_font(font, str(target), options)
+
+
+# Latin in Russian and Armenian pages: printable ASCII (digits, punctuation, brand names, the email address)
+# plus every other Latin-range character the copy and guides use. Replaces Fontsource's full Latin files
+# (31–39 KB each) with a few KB; the variable axes are kept.
+LATIN_RANGE = re.compile(r'[\u0000-\u00FF\u0131\u0152\u0153\u02BB\u02BC\u02C6\u02DA\u02DC\u2000-\u206F\u20AC\u2122\u2191\u2193\u2212\u2215]')
+LATIN = {
+    'ru': [('noto-sans', 'noto-sans-latin-wght-normal.woff2', 'latin-ru-normal.woff2'),
+           ('noto-sans', 'noto-sans-latin-wght-italic.woff2', 'latin-ru-italic.woff2')],
+    'hy': [('noto-sans-armenian', 'noto-sans-armenian-latin-wght-normal.woff2', 'latin-hy-normal.woff2')],
+}
+
+
+def build_latin():
+    ascii_printable = ''.join(chr(c) for c in range(0x20, 0x7F))
+    for lang, files in LATIN.items():
+        used = set(LATIN_RANGE.findall(site_text(lang))) - {'\n', '\r', '\t'}
+        chars = ''.join(sorted(set(ascii_printable) | used | {'\u00A0'}))
+        for pkg, name, out in files:
+            target = SUBSETS / out
+            cut(FONTS / pkg / 'files' / name, target, chars)
+            print(f'{target.relative_to(ROOT)}: {len(chars)} characters ({target.stat().st_size} bytes)')
 
 
 def build_subsets():
@@ -142,17 +178,7 @@ def build_subsets():
                 continue
             # Both cases, in case a word is set in capitals.
             chars = sorted(set(chars) | {c.upper() for c in chars} | {c.lower() for c in chars})
-            options = subset.Options()
-            options.flavor = 'woff2'
-            options.layout_features = ['kern', 'mark', 'mkmk', 'ccmp', 'locl']
-            options.hinting = False
-            options.name_IDs = [1, 2, 3, 4, 5, 6]
-            options.notdef_outline = False
-            font = subset.load_font(str(source), options)
-            subsetter = subset.Subsetter(options)
-            subsetter.populate(text=''.join(chars))
-            subsetter.subset(font)
-            subset.save_font(font, str(target), options)
+            cut(source, target, ''.join(chars))
             print(f'{target.relative_to(ROOT)}: {"".join(chars)} ({target.stat().st_size} bytes)')
 
 
@@ -173,6 +199,7 @@ def main():
         size = sum(len(p['d']) for p in value['parts'])
         print(f'{key}: viewBox {value["viewBox"]}, {size} bytes of path data')
     build_subsets()
+    build_latin()
 
 
 if __name__ == '__main__':

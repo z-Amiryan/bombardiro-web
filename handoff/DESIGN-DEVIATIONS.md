@@ -16,10 +16,12 @@ the design's idea.
 
 | Where | Design | Build | Why |
 | --- | --- | --- | --- |
-| Header breakpoint | Follows the page: 1100 px on Home, How to play, Words, Guide; 1000 px elsewhere | The full bar from 1000 px on every English and Russian page, with tighter side and link padding up to 1200 px; from 1200 px on Armenian pages | The bar is the same on every page. Armenian navigation labels are longer, and the full bar ran off the screen below about 1180 px, so Armenian keeps the menu button until 1200 px. Page content keeps its own breakpoints. |
-| Header on narrow phones | One size: 19 px wordmark and 40 px language links | Under 390 px, a 16 px wordmark and 36 px language links; under 360 px, the languages are in the menu sheet only | The bar was 388 px wide, so on 320–375 px phones the menu button sat off the screen. |
+| Header breakpoint | Follows the page: 1100 px on Home, How to play, Words, Guide; 1000 px elsewhere | The full bar from 1000 px on every English and Russian page, with tighter link padding up to 1200 px; from 1200 px on Armenian pages. From 1000 to 1199 px the bar's side padding follows the page gutter, so the wordmark lines up with the content | The bar is the same on every page. Armenian navigation labels are longer, and the full bar ran off the screen below about 1180 px, so Armenian keeps the menu button until 1200 px. Page content keeps its own breakpoints. |
+| Header on narrow phones | 40 px language links beside the wordmark at every phone width | 44 px language links; under 390 px the languages are in the menu sheet only | SPEC §10: touch targets at least 44 px. Three 44 px links and the menu button don't fit beside the wordmark under 390 px. |
 | Grids on phones | `1fr` columns | `minmax(0, 1fr)` | A long unbreakable word (an email address) could widen a `1fr` column past the screen. |
 | Footer and menu links | 40 px rows | 44 px rows | SPEC §10: touch targets at least 44 px. |
+| Arrows after links (header, footer, menu sheet) | "→" in the interface font | A drawn arrow icon (`Icon.astro`), 1em, the text colour | No site font has "→" (U+2192), so the design's arrow was a system-font fallback; same reason as the "›" row under Copy. |
+| Footer wordmark under 1280 px | 64 px from 1000 px | 64 px from 1280 px; from 1000 to 1279 px it scales down to its column | At full size it pushes the footer's columns into each other next to the longest Russian navigation label. |
 | Mobile menu sheet | A JavaScript-driven overlay | The same sheet as a native popover | Opens, closes on Esc and works with JavaScript off; looks and animates the same. |
 
 ## Colour and contrast

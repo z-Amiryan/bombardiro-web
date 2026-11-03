@@ -14,6 +14,8 @@ interface Props {
 
 const { lang, routeId } = Astro.props;
 const t = copyFor(lang);
+// Where the column is narrow, the address breaks only after the @.
+const [emailUser, emailHost] = SUPPORT_EMAIL.split('@');
 const isGuide = routeId !== null && !(CORE_ROUTE_IDS as readonly string[]).includes(routeId);
 const pages = CORE_ROUTE_IDS.map((id) => ({
   id,
@@ -60,7 +62,7 @@ const socials = socialLinksFor(lang);
       <div class="ftr__contact">
         <div class="ftr__group">
           <h2 class="ftr__label">{t.footer.contact}</h2>
-          <a class="ftr__email" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
+          <a class="ftr__email" href={`mailto:${SUPPORT_EMAIL}`}>{emailUser}@<wbr />{emailHost}</a>
         </div>
         <div class="ftr__group">
           <h2 class="ftr__label">{t.footer.follow}</h2>
@@ -134,6 +136,9 @@ const socials = socialLinksFor(lang);
 
   .ftr__mark {
     display: block;
+    min-height: 44px;
+    /* The design's live-text box is 0.86em tall; the outlined wordmark is 0.712em. */
+    padding-block: 0.074em;
     width: fit-content;
     font-size: 44px;
     color: var(--ftr-fg);
@@ -289,6 +294,21 @@ const socials = socialLinksFor(lang);
     .ftr__fine {
       margin-top: var(--s-9);
       grid-template-columns: 1.4fr 1.6fr 0.6fr;
+    }
+  }
+
+  /* From 1280 px the full 64 px wordmark fits beside the longest Russian navigation label; below that it
+     scales down to its column. */
+  /* From 1100 px the contact column is wide enough for the address on one line. */
+  @media (min-width: 1100px) {
+    .ftr__email {
+      overflow-wrap: normal;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .ftr__mark :global(.wordmark) {
+      max-width: none;
     }
   }
 </style>
