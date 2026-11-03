@@ -34,4 +34,4 @@ the design's idea.
 
 | Where | Design and copy deck | Build | Why |
 | --- | --- | --- | --- |
-| Menu paths in Support ("Settings → Report a bug", "Settings → Game reminders", all three languages) | "→" | "›" | No site font has an arrow glyph, so "→" fell back to a system font. "›" is in all three languages' fonts and reads as a menu path, like the chevrons in iOS Settings. |
+| Menu paths in Support ("Settings → Report a bug", "Settings → Game reminders") | "→" in all three languages | "›" in English and Armenian; Russian says «открой «Настройки» и выбери «…»» | No site font has an arrow glyph, so "→" fell back to a system font. "›" is in the English and Armenian fonts and reads as a menu path, like the chevrons in iOS Settings. In Russian, "›" between «ёлочки» read as a stray quote mark, so the copy names the steps instead. |
