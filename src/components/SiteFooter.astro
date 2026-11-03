@@ -137,8 +137,10 @@ const socials = socialLinksFor(lang);
   .ftr__mark {
     display: block;
     min-height: 44px;
-    /* The design's live-text box is 0.86em tall; the outlined wordmark is 0.712em. */
+    /* The design's live-text box is 0.86em tall; the outlined wordmark is 0.712em. Where 0.86em is under the
+       44 px tap height, negative margins take the difference back, so the tagline sits where the design has it. */
     padding-block: 0.074em;
+    margin-block: min(0px, calc((0.86em - 44px) / 2));
     width: fit-content;
     font-size: 44px;
     color: var(--ftr-fg);
@@ -301,6 +303,9 @@ const socials = socialLinksFor(lang);
   @media (min-width: 1100px) {
     .ftr__email {
       overflow-wrap: normal;
+    }
+    .ftr__email wbr {
+      display: none;
     }
   }
 
