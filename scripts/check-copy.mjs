@@ -4,7 +4,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ALLOWED, findBanned } from './lib/banned.mjs';
+import { findBanned } from './lib/banned.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const LANGS = ['en', 'ru', 'hy'];
@@ -43,7 +43,8 @@ const ARM = 'Ա-և';
 for (const l of LANGS) {
   const all = strings(copy[l]);
   for (const [path, text] of all) {
-    const banned = findBanned(text, ALLOWED[path]);
+    if (!text.trim()) fail(`${l} ${path}: empty string`);
+    const banned = findBanned(text);
     if (banned) fail(`${l} ${path}: banned term "${banned}" (.claude/rules/copy.md)`);
     if (l !== 'hy' && /\s{2,}/.test(text)) fail(`${l} ${path}: double space`);
     if (l === 'ru') {

@@ -8,8 +8,8 @@ import { extname, join, posix, relative } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { ELEMENT_NODE, parse, TEXT_NODE, walkSync } from 'ultrahtml';
 import { querySelector, querySelectorAll } from 'ultrahtml/selector';
-import { ALLOWED, findBanned } from './lib/banned.mjs';
-import { DIST, expectedPages, LANGS, PENDING_ROUTE_IDS, ROOT, routes, SITE_URL } from './lib/site.mjs';
+import { findBanned } from './lib/banned.mjs';
+import { DIST, expectedPages, PENDING_ROUTE_IDS, routes, SITE_URL } from './lib/site.mjs';
 
 const KB = 1024;
 const BUDGET = {
@@ -25,20 +25,8 @@ const BUDGET = {
   homeFirstLoad: 500 * KB,
 };
 
-const copy = Object.fromEntries(LANGS.map((l) => [l, JSON.parse(readFileSync(join(ROOT, 'content/copy', `${l}.json`), 'utf8'))]));
-const getPath = (obj, path) => path.split('.').reduce((o, k) => o?.[k], obj);
 const errors = [];
 const fail = (where, msg) => errors.push(`${where}: ${msg}`);
-// The independence lines may say "endorsed by"; they are removed before matching, once they pass with only
-// their own allowance.
-const EXEMPT_TEXT = LANGS.flatMap((l) =>
-  Object.entries(ALLOWED).map(([path, allowed]) => {
-    const text = getPath(copy[l], path).replace(/\s+/g, ' ');
-    const banned = findBanned(text, allowed);
-    if (banned) fail(`content/copy/${l}.json ${path}`, `banned phrase "${banned}"`);
-    return text;
-  }),
-);
 const gz = (buf) => gzipSync(buf, { level: 9 }).length;
 const fmt = (bytes) => `${(bytes / KB).toFixed(1)} KB`;
 
@@ -204,8 +192,7 @@ for (const page of htmlTargets) {
   ]
     .map((n) => ['alt', 'title', 'aria-label', 'content'].map((k) => attr(n, k) ?? '').join(' '))
     .join(' ');
-  let scanned = `${title} ${bodyText} ${attributeText} ${jsonLd}`.replace(/\s+/g, ' ');
-  for (const exempt of EXEMPT_TEXT) scanned = scanned.split(exempt).join(' ');
+  const scanned = `${title} ${bodyText} ${attributeText} ${jsonLd}`.replace(/\s+/g, ' ');
   const banned = findBanned(scanned);
   if (banned) fail(where, `banned phrase "${banned}" (.claude/rules/copy.md)`);
 
@@ -221,8 +208,10 @@ for (const page of htmlTargets) {
       fail(where, `insecure link ${href}`);
       continue;
     }
-    if (/^https?:\/\//.test(href)) {
-      if (href.startsWith(SITE_URL)) fail(where, `internal link written as an absolute URL: ${href}`);
+    // Links out, including protocol-relative ones (//host/path), are not checked; a link back to this site must be
+    // written as a path.
+    if (/^(https?:)?\/\//.test(href)) {
+      if (new URL(href, SITE_URL).origin === SITE_URL) fail(where, `internal link written as an absolute URL: ${href}`);
       continue;
     }
     // The 404 page is served at any address, so its links must not depend on where it is.

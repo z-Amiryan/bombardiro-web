@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 // E2E_PORT lets a second checkout test its own build without reusing another checkout's server.
-const PORT = Number(process.env.E2E_PORT ?? 4173);
+const PORT = Number(process.env.E2E_PORT || 4173);
 const isCI = !!process.env.CI;
 
 // Runs against the production build in dist/, served the way Vercel serves it (scripts/serve.mjs), so the
