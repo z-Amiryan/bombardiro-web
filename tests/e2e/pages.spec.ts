@@ -10,6 +10,7 @@ for (const p of PAGES) {
     expect(response?.status()).toBe(200);
     await expect(page.locator('html')).toHaveAttribute('lang', p.lang);
     await expect(page.locator('h1')).toHaveCount(1);
+    expect(await page.locator('img[src*="/app-store-"]').count()).toBeLessThanOrEqual(1);
     await page.waitForLoadState('networkidle');
     expect(problems).toEqual([]);
   });

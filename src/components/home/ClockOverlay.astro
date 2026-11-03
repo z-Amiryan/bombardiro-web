@@ -1,0 +1,85 @@
+---
+// While the turn is on screen: a 3 px clock bar along the top and a small clock pill at the bottom, so the
+// reading stays in view after the hero clock scrolls away. Hidden with reduced motion and without JavaScript.
+import { clockText } from '../../config/home';
+---
+
+<div class="topbar clock-scope" aria-hidden="true">
+  <span class="bar__fill"></span>
+  <span class="bar__fill bar__fill--late"></span>
+</div>
+<div class="pill clock-scope" aria-hidden="true">
+  <span class="pill__clock clock display"><span>{clockText(60)}</span></span>
+  <span class="pill__bar bar">
+    <span class="bar__fill"></span>
+    <span class="bar__fill bar__fill--late"></span>
+  </span>
+</div>
+
+<style>
+  .topbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 55;
+    height: 3px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .topbar .bar__fill {
+    border-radius: 0;
+  }
+
+  .pill {
+    position: fixed;
+    left: 50%;
+    bottom: 20px;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 18px;
+    border-radius: var(--r-pill);
+    background: var(--c-night-raise);
+    border: 1px solid rgba(237, 243, 230, 0.14);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, 16px);
+    transition:
+      opacity 0.25s,
+      transform 0.3s var(--ease-out);
+  }
+
+  .pill__clock {
+    font-size: 22px;
+    line-height: 1;
+    color: var(--fg);
+  }
+
+  .pill__bar {
+    width: 64px;
+    height: 4px;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  :global(.home[data-in-turn]) .topbar {
+    opacity: 1;
+  }
+
+  :global(.home[data-in-turn]) .pill {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  @media (prefers-reduced-motion: reduce), (scripting: none) {
+    .topbar,
+    .pill {
+      display: none;
+    }
+  }
+</style>

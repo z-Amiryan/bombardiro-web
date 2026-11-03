@@ -1,0 +1,72 @@
+---
+// Wide screens (≥ 1320 px): a referee's whistle that blows when the Home clock reaches 00:00. Sound is off
+// by default and turned on here (SPEC §10); the sound file loads on the first press.
+import whistleUrl from '../../../assets/brand/whistle.m4a?url';
+import { copyFor } from '../../lib/copy';
+import type { Lang } from '../../lib/routes';
+
+interface Props {
+  lang: Lang;
+}
+
+const w = copyFor(Astro.props.lang).pages.home.whistle;
+---
+
+<button type="button" class="whistle" aria-pressed="false" data-whistle data-src={whistleUrl}>
+  <span class="whistle__dot" aria-hidden="true"></span>
+  <span class="whistle__off">{w.off}</span>
+  <span class="whistle__on">{w.on}</span>
+</button>
+
+<style>
+  .whistle {
+    display: none;
+    align-items: center;
+    gap: 9px;
+    height: 44px;
+    padding: 0 16px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--hdr-line-2);
+    background: transparent;
+    color: var(--hdr-lang-off);
+    font: 600 12px/1 var(--fu);
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      border-color 0.16s,
+      color 0.16s;
+  }
+
+  @media (min-width: 1320px) and (scripting: enabled) {
+    .whistle {
+      display: flex;
+    }
+  }
+
+  @media (hover: hover) {
+    .whistle:hover {
+      border-color: var(--fg);
+    }
+  }
+
+  .whistle__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .whistle__on,
+  .whistle[aria-pressed='true'] .whistle__off {
+    display: none;
+  }
+
+  .whistle[aria-pressed='true'] {
+    color: var(--accent);
+  }
+
+  .whistle[aria-pressed='true'] .whistle__on {
+    display: inline;
+  }
+</style>

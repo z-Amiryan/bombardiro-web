@@ -38,3 +38,21 @@ the design's idea.
 | Where | Design and copy deck | Build | Why |
 | --- | --- | --- | --- |
 | Menu paths in Support ("Settings → Report a bug", "Settings → Game reminders") | "→" in all three languages | "›" in English and Armenian; Russian says «открой «Настройки» и выбери «…»» | No site font has an arrow glyph, so "→" fell back to a system font. "›" is in the English and Armenian fonts and reads as a menu path, like the chevrons in iOS Settings. In Russian, "›" between «ёлочки» read as a stray quote mark, so the copy names the steps instead. |
+
+## Home
+
+| Where | Design | Build | Why |
+| --- | --- | --- | --- |
+| Match clock, how it counts | A JavaScript scroll handler, with the clock counting from the very top of the page | A CSS scroll timeline on each beat (`components/home/clock.css`), with the same mapping in `scripts/home.ts` only for browsers without scroll timelines. The clock starts counting as the first beat enters the screen, and reads each beat's stamp exactly as that beat reaches the middle | SPEC §9 prefers CSS scroll-driven animation, and the design notes ask for a scroll timeline. Anchoring to the beats keeps the stamps (01:00, 00:40, 00:07, 00:00) and the clock in agreement at every viewport height. |
+| Clock turning red | A 300 ms colour transition | An instant switch at 10 seconds | The reading comes from a scroll-linked animation, and browsers don't run transitions on animated values. The red layer is a cross-faded copy, so only opacity changes. |
+| Third beat's stamp on Russian pages | 00:07 | 00:08 | The Russian capture of the late card shows 00:08. Each stamp matches its real screen. |
+| Inactive beat titles on wide screens | Opacity .32 | Opacity .42 | .32 gives 2.7:1 contrast, under WCAG's 3:1 for large text; .42 gives 3.6:1 and still recedes. |
+| Clock pill | Hides once the last beat has passed | Also hides as soon as the lime word band reaches the bottom of the screen | The pill sat over the band's headline for a moment. |
+| QR code | A hatched placeholder square | A real code, made at build time from the App Store link, dark on a light tile | Dark-on-light scans reliably on every phone camera. |
+| Pinned screen with reduced motion | The prototype code kept the first screen | The screens still change with each beat, as a 150 ms cross-fade with no movement | The design's motion table specifies a cross-fade only, and each beat should show its own screen. |
+| FAQ ("Quick answers") | `h3 > button[aria-expanded]`, opening by animating `grid-template-rows` | Native `<details>`/`<summary>`; the answer fades in with opacity and transform, one open at a time | `.claude/rules/performance.md` forbids animating layout properties, and answers must read with JavaScript off. The question isn't a heading inside the summary, which some screen readers mishandle. |
+| Word wall | Words from the prototype's own list | The same words taken by index from the real Easy packs, so every language shows the game's own spelling | "Use the app's terms exactly." |
+| Word wall without JavaScript | (not specified) | Still rows that scroll sideways, and no counter bar | Without JavaScript there's no Pause control, so nothing may move (WCAG 2.2.2), and scoring needs a script. |
+| Pause control | `aria-pressed` with a changing label | A plain button whose label changes between Pause and Play | A toggle with `aria-pressed` must keep one label. |
+| Whistle toggle | `aria-pressed` | `aria-pressed`, with the visible "Whistle: off/on" as its accessible name | Label-in-name (WCAG 2.5.3). |
+| Screenshot alt text | Two teams on the teams screen; "the winning team lifts the trophy" on the final screen | Three teams; "the winning team and the final score" | The captures show three teams and a champions screen, not a trophy lift. |

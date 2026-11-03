@@ -1,0 +1,43 @@
+---
+// A real app capture, without a device frame (legal.md), as AVIF with a WebP fallback at 1× and 2×.
+import { Picture } from 'astro:assets';
+import type { Lang } from '../lib/routes';
+import { screen, type ScreenId } from '../lib/screens';
+
+interface Props {
+  lang: Lang;
+  id: ScreenId;
+  /** The widest the image is shown, in CSS pixels. */
+  width: number;
+  /** The sizes attribute: how wide the image is at each viewport. */
+  sizes: string;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+}
+
+const { lang, id, width, sizes, class: className, loading = 'lazy' } = Astro.props;
+const { src, alt } = screen(lang, id);
+---
+
+<Picture
+  src={src}
+  alt={alt}
+  widths={[width, width * 2]}
+  sizes={sizes}
+  formats={['avif']}
+  fallbackFormat="webp"
+  quality={62}
+  loading={loading}
+  decoding="async"
+  class:list={['shot', className]}
+/>
+
+<style>
+  .shot {
+    display: block;
+    height: auto;
+    border-radius: var(--r-shot);
+    border: 1px solid rgba(237, 243, 230, 0.1);
+    background: var(--c-night-deep);
+  }
+</style>

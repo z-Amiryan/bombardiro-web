@@ -339,6 +339,15 @@ for (const page of htmlTargets) {
   checkForeignText(doc, page, where);
   checkFooter(page, where, textOf(querySelector(doc, 'body') ?? doc));
 
+  // Apple's badge: at most one per page, at least 40 px high, linking to the App Store (legal.md).
+  const badges = querySelectorAll(doc, 'img').filter((img) => /\/app-store-(en|ru)[^/]*\.svg$/.test(attr(img, 'src') ?? ''));
+  if (badges.length > 1) fail(where, `${badges.length} App Store badges (max 1)`);
+  for (const b of badges) {
+    if (Number(attr(b, 'height')) < 40) fail(where, 'App Store badge is under 40 px high');
+    const expected = page.lang === 'ru' ? 'app-store-ru' : 'app-store-en';
+    if (!(attr(b, 'src') ?? '').includes(expected)) fail(where, `App Store badge should be ${expected}`);
+  }
+
   // Links: internal targets must exist, fragments must point at an id, no plain-http links.
   for (const a of querySelectorAll(doc, 'a[href]')) {
     const href = attr(a, 'href');

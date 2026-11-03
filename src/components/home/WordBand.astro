@@ -1,0 +1,389 @@
+---
+// "Every word is football": the lime band (design 1b) with rows of real Easy words from the game's packs.
+// The rows drift; a visible Pause control stops them (WCAG 2.2.2), as does scrolling them out of view.
+// Tap a word to score it, as in the app. With reduced motion or JavaScript off, the rows stand still and
+// scroll sideways by hand.
+import { WALL_ROWS } from '../../config/home';
+import { copyFor } from '../../lib/copy';
+import { routePath, type Lang } from '../../lib/routes';
+import { word } from '../../lib/words';
+import Icon from '../Icon.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = copyFor(lang);
+const band = t.pages.home.words;
+const wall = t.pages.home.wall;
+const tapHint = t.pages.howToPlay.steps[3]?.title ?? '';
+// The counter starts at 00, which takes the language's plural for zero ("goals", «голов»).
+const zeroLabel = wall.goals[new Intl.PluralRules(lang).select(0) as keyof typeof wall.goals] ?? wall.goals.other;
+
+const row = (r: (typeof WALL_ROWS.above)[number], i: number) => ({
+  dir: i % 2 ? 'right' : 'left',
+  seconds: r.seconds,
+  words: r.indices.map((index) => ({ key: `${r.category}-${index}`, text: word(lang, r.category, 'easy', index) })),
+});
+const above = WALL_ROWS.above.map(row);
+const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
+---
+
+<section class="band" aria-labelledby="words-title" data-wall>
+  {
+    above.map((r) => (
+      <div class="row" data-dir={r.dir} data-seconds={r.seconds}>
+        <div class="row__track">
+          {[0, 1].map((copy) => (
+            <ul class="row__set" role="list" aria-hidden={copy ? 'true' : undefined}>
+              {r.words.map((w) => (
+                <li>
+                  <button type="button" class="word display" aria-pressed="false" data-key={w.key} tabindex={copy ? -1 : undefined}>
+                    {w.text}
+                  </button>
+                  <span class="row__dot" aria-hidden="true" />
+                </li>
+              ))}
+            </ul>
+          ))}
+        </div>
+      </div>
+    ))
+  }
+
+  <div class="band__mid">
+    <h2 id="words-title" class="band__title display">{band.title}</h2>
+    <div class="band__copy">
+      <p class="band__text">{band.text}</p>
+      <a class="band__cta" href={routePath('words', lang)}>
+        {band.cta}
+        <Icon name="arrow-right" />
+      </a>
+    </div>
+  </div>
+
+  {
+    below.map((r) => (
+      <div class="row" data-dir={r.dir} data-seconds={r.seconds}>
+        <div class="row__track">
+          {[0, 1].map((copy) => (
+            <ul class="row__set" role="list" aria-hidden={copy ? 'true' : undefined}>
+              {r.words.map((w) => (
+                <li>
+                  <button type="button" class="word display" aria-pressed="false" data-key={w.key} tabindex={copy ? -1 : undefined}>
+                    {w.text}
+                  </button>
+                  <span class="row__dot" aria-hidden="true" />
+                </li>
+              ))}
+            </ul>
+          ))}
+        </div>
+      </div>
+    ))
+  }
+
+  <div class="band__bar">
+    <div class="band__bar-in">
+      <p class="band__count" aria-live="polite">
+        <span class="band__n display" data-count>00</span>
+        <span class="band__label" data-count-label>{zeroLabel}</span>
+      </p>
+      <p class="band__hint">{tapHint}</p>
+      <button type="button" class="band__pause" data-pause data-label-pause={wall.pause} data-label-play={wall.play}>
+        {wall.pause}
+      </button>
+    </div>
+  </div>
+  <script is:inline type="application/json" data-plurals set:html={JSON.stringify(wall.goals)} />
+</section>
+
+<style>
+  .band {
+    --word: calc(36px * var(--k));
+    --row-h: 50px;
+    --stroke: 1.2px;
+    position: relative;
+    margin-top: 40px;
+    color: var(--c-ink);
+    background: linear-gradient(165deg, var(--c-lime-hi) 0%, var(--c-lime) 42%, var(--c-lime-low) 100%);
+    --focus: var(--c-ink);
+  }
+
+  .row {
+    height: var(--row-h);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    border-top: 1.5px solid var(--c-ink);
+  }
+
+  .row__track {
+    display: flex;
+    flex: none;
+    align-items: center;
+    width: max-content;
+    animation: marquee-left var(--seconds) linear infinite;
+    will-change: transform;
+  }
+
+  .row[data-dir='right'] .row__track {
+    animation-name: marquee-right;
+  }
+
+  .row[data-seconds='52'] {
+    --seconds: 52s;
+  }
+  .row[data-seconds='58'] {
+    --seconds: 58s;
+  }
+  .row[data-seconds='64'] {
+    --seconds: 64s;
+  }
+  .row[data-seconds='70'] {
+    --seconds: 70s;
+  }
+
+  .band[data-paused] .row__track,
+  .band[data-offscreen] .row__track {
+    animation-play-state: paused;
+  }
+
+  @keyframes marquee-left {
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @keyframes marquee-right {
+    from {
+      transform: translate3d(-50%, 0, 0);
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .row__set {
+    display: flex;
+    align-items: center;
+    margin: 0;
+  }
+
+  .row__set li {
+    display: flex;
+    align-items: center;
+  }
+
+  .row__dot {
+    flex: none;
+    width: calc(var(--word) * 0.16);
+    height: calc(var(--word) * 0.16);
+    margin: 0 calc(var(--word) * 0.22);
+    border-radius: 50%;
+    background: var(--c-ink);
+  }
+
+  /* A word: outlined until scored, then lime on ink, as a tap marks a goal in the app. The ink fill fades
+     in by opacity. */
+  .word {
+    position: relative;
+    min-height: 44px;
+    margin: 0 0.08em;
+    padding: 0.1em 0.2em 0.06em;
+    border: 0;
+    border-radius: 0.14em;
+    background: transparent;
+    font-size: var(--word);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    color: transparent;
+    -webkit-text-stroke: var(--stroke) var(--c-ink);
+    cursor: pointer;
+    user-select: none;
+    isolation: isolate;
+  }
+
+  .word::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--c-ink);
+    opacity: 0;
+    transition: opacity 0.18s var(--ease-out);
+  }
+
+  .word[aria-pressed='true'] {
+    color: var(--c-lime);
+    -webkit-text-stroke: 0 transparent;
+  }
+
+  .word[aria-pressed='true']::before {
+    opacity: 1;
+  }
+
+  .band__mid {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 28px 20px 32px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px 64px;
+    align-items: end;
+    border-top: 1.5px solid var(--c-ink);
+  }
+
+  .band__title {
+    font-size: calc(clamp(40px, 6.4vw, 96px) * var(--k));
+    line-height: 0.94;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  .band__text {
+    font: 500 clamp(16px, 1.3vw, 18px) / 1.55 var(--fu);
+    text-wrap: pretty;
+  }
+
+  .band__cta {
+    margin-top: 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 52px;
+    padding: 0 24px;
+    border-radius: var(--r-pill);
+    background: var(--c-ink);
+    color: var(--c-lime);
+    font: 700 16px/1 var(--fu);
+    text-decoration: none;
+    transition: transform 0.16s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .band__cta:hover {
+      color: var(--c-lime);
+      transform: translateY(-2px);
+    }
+  }
+
+  .band__cta:active {
+    transform: scale(0.97);
+  }
+
+  .band__bar {
+    border-top: 1.5px solid var(--c-ink);
+    background: var(--c-lime-bar);
+  }
+
+  .band__bar-in {
+    max-width: var(--max);
+    margin: 0 auto;
+    height: 68px;
+    padding: 0 10px 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .band__count {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .band__n {
+    font-size: 30px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .band__label {
+    font: 700 11px/1 var(--fu);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .band__hint {
+    font: 500 13px/1.3 var(--fu);
+    color: var(--c-ink-lime-soft);
+    text-align: center;
+  }
+
+  .band__pause {
+    height: 44px;
+    min-width: 84px;
+    padding: 0 16px;
+    border-radius: var(--r-pill);
+    border: 1.5px solid var(--c-ink);
+    background: transparent;
+    font: 700 11px/1 var(--fu);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-ink);
+    cursor: pointer;
+    transition:
+      background-color 0.16s,
+      color 0.16s;
+  }
+
+  @media (hover: hover) {
+    .band__pause:hover {
+      background: var(--c-ink);
+      color: var(--c-lime);
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .band {
+      --word: calc(64px * var(--k));
+      --row-h: 84px;
+      --stroke: 1.6px;
+      margin-top: 80px;
+    }
+
+    .band__mid {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      padding: 44px 64px 48px;
+    }
+
+    .band__bar-in {
+      padding: 0 52px 0 64px;
+    }
+  }
+
+  /* Still rows: reduced motion, or no JavaScript to pause them. Scroll them sideways by hand. */
+  @media (prefers-reduced-motion: reduce), (scripting: none) {
+    .row {
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .row__track {
+      animation: none;
+    }
+    .row__set[aria-hidden='true'] {
+      display: none;
+    }
+    .band__pause {
+      display: none;
+    }
+    .word::before {
+      transition: none;
+    }
+  }
+
+  /* Scoring needs JavaScript; without it the words are a list to read. */
+  @media (scripting: none) {
+    .band__bar {
+      display: none;
+    }
+    .word {
+      cursor: default;
+    }
+  }
+</style>
