@@ -18,7 +18,7 @@
     "check:copy": "node scripts/check-copy.mjs",
     "check:site": "node scripts/check-site.mjs",
     "test:e2e": "playwright test",
-    "lhci": "lhci autorun && node scripts/lighthouse-summary.mjs"
+    "lhci": "lhci autorun; status=$?; node scripts/lighthouse-summary.mjs; exit $status"
   },
   "dependencies": {
     "@vercel/analytics": "2.0.1",
@@ -38,12 +38,14 @@
     "astro": "7.4.4",
     "eslint": "10.14.0",
     "eslint-plugin-astro": "3.2.1",
-    "fontkitten": "1.0.3",
     "globals": "17.14.0",
     "node": "24.22.2",
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.1",
     "ultrahtml": "1.7.0",
     "vitest": "5.0.5"
+  },
+  "allowScripts": {
+    "node@24.22.2": true
   }
 }

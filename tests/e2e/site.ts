@@ -1,6 +1,7 @@
 // Pages and helpers shared by the end-to-end tests.
 import type { Page } from '@playwright/test';
 import { expectedPages } from '../../scripts/lib/site.mjs';
+import { GUIDE_ROUTE_IDS } from '../../src/lib/routes';
 
 export interface SitePage {
   id: string;
@@ -10,10 +11,14 @@ export interface SitePage {
 
 export const PAGES: SitePage[] = expectedPages().map(({ id, lang, path }) => ({ id, lang, path }));
 
-/** One page per template and language, for the slower checks (axe, screenshots). */
-export const TEMPLATES: SitePage[] = PAGES.filter(
-  (p, i, all) => all.findIndex((q) => q.id === p.id && q.lang === p.lang) === i,
-);
+/** Every guide shares one template. */
+const template = (id: string) => ((GUIDE_ROUTE_IDS as readonly string[]).includes(id) ? 'guide' : id);
+
+/** One page per template and language, plus the 404, for the slower checks (axe, screenshots). */
+export const TEMPLATES: SitePage[] = [
+  ...PAGES.filter((p, i, all) => all.findIndex((q) => template(q.id) === template(p.id) && q.lang === p.lang) === i),
+  { id: 'notFound', lang: 'en', path: '/404.html' },
+];
 
 /**
  * Collects console errors, page errors, failed responses and any request that leaves the site's origin.

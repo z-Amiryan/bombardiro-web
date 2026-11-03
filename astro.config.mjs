@@ -9,12 +9,10 @@ export default defineConfig({
   trailingSlash: 'always',
   build: {
     format: 'directory',
-    // External stylesheets only, so the Content-Security-Policy in vercel.json needs no style hashes.
+    // Component CSS stays in external files. The only inline styles are the @font-face blocks from Astro's
+    // <Font>, whose hashes are stable, which keeps the Content-Security-Policy in vercel.json short.
     inlineStylesheets: 'never',
   },
-  integrations: [
-    sitemap({
-      filter: (page) => !/\/404\/?$/.test(new URL(page).pathname),
-    }),
-  ],
+  // The sitemap integration leaves out the 404 page by itself.
+  integrations: [sitemap()],
 });

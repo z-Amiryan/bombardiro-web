@@ -25,8 +25,16 @@ test('an unknown address shows the 404 page in all three languages', async ({ pa
   expect(problems).toEqual([]);
 });
 
-test('a path without its trailing slash redirects to the canonical address', async ({ request }) => {
-  const response = await request.get('/how-to-play', { maxRedirects: 0 });
-  expect(response.status()).toBe(308);
-  expect(response.headers()['location']).toBe('/how-to-play/');
+test('trailing slashes follow Vercel: added to pages, removed after file names', async ({ request }) => {
+  const page = await request.get('/how-to-play', { maxRedirects: 0 });
+  expect(page.status()).toBe(308);
+  expect(page.headers()['location']).toBe('/how-to-play/');
+  const file = await request.get('/robots.txt/', { maxRedirects: 0 });
+  expect(file.status()).toBe(308);
+  expect(file.headers()['location']).toBe('/robots.txt');
+});
+
+test('a malformed address is a 404, and the server keeps serving', async ({ request }) => {
+  expect((await request.get('/%E0%A4%A.png')).status()).toBe(404);
+  expect((await request.get('/')).status()).toBe(200);
 });

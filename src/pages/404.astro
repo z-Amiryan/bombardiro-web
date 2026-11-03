@@ -3,7 +3,9 @@ import { copyFor } from '../lib/copy';
 import { LANGS, routePath } from '../lib/routes';
 
 const blocks = LANGS.map((lang) => ({ lang, t: copyFor(lang) }));
-const title = ['404', ...blocks.map((b) => b.t.notFound.title)].join(' · ');
+// "404" is the status code, the same in every language, so it is the page's one h1 and the start of its title.
+const STATUS = '404';
+const title = [STATUS, ...blocks.map((b) => b.t.notFound.title)].join(' · ');
 ---
 
 <!doctype html>
@@ -17,6 +19,7 @@ const title = ['404', ...blocks.map((b) => b.t.notFound.title)].join(' · ');
   </head>
   <body>
     <main id="main">
+      <h1>{STATUS}</h1>
       {
         blocks.map(({ lang, t }) => (
           <section lang={lang}>

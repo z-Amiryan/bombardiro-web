@@ -4,6 +4,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { EXEMPT_PATHS, findBanned } from './lib/banned.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const LANGS = ['en', 'ru', 'hy'];
@@ -36,22 +37,15 @@ for (const l of LANGS) {
   if (JSON.stringify(shape(copy[l])) !== reference) fail(`${l}: structure differs from en`);
 }
 
-const BANNED_EVERYWHERE = [
-  /\bfifa\b/i, /\buefa\b/i, /world cup 2026/i, /чм[- ]?2026/i, /crocodilo/i, /brainrot/i,
-  /heads up/i, /\btaboo\b/i, /catchphrase/i, /codenames/i, /#1\b/, /\bultimate\b/i,
-  /\bbest\b(?!-known)/i, /\bofficial\b/i, /\bswipe/i, /team colou?rs/i, /online multiplayer/i,
-  /thousands of words/i, /10,000\+/, /for kids/i, /ad-free/i, /add your own words/i, /custom decks/i,
-  /fix any call/i, /edit any round/i, /для детей/i, /официальн/i, /тысячи слов/i,
-  /պաշտոնական/, /երեխաների համար/,
-];
 const GENDERED_RU = /(?<![а-яё])(нашёл|нашла|сделал|сделала|выбрал|выбрала|готов|готова|уверен|уверена)(?![а-яё])/i;
 const ARM = 'Ա-և';
 
 for (const l of LANGS) {
   const all = strings(copy[l]);
   for (const [path, text] of all) {
-    if (path === 'footer.apple') continue;
-    for (const re of BANNED_EVERYWHERE) if (re.test(text)) fail(`${l} ${path}: banned term ${re}`);
+    if (EXEMPT_PATHS.includes(path)) continue;
+    const banned = findBanned(text);
+    if (banned) fail(`${l} ${path}: banned term "${banned}" (.claude/rules/copy.md)`);
     if (l !== 'hy' && /\s{2,}/.test(text)) fail(`${l} ${path}: double space`);
     if (l === 'ru') {
       if (text.includes('"')) fail(`ru ${path}: use «ёлочки», not straight quotes`);

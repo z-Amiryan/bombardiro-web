@@ -5,11 +5,11 @@ import { fileURLToPath } from 'node:url';
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const DIST = join(ROOT, 'dist');
-/** @type {Array<'en' | 'ru' | 'hy'>} */
-export const LANGS = ['en', 'ru', 'hy'];
 
 export const routes = JSON.parse(readFileSync(join(ROOT, 'handoff/routes.json'), 'utf8'));
 export const SITE_URL = routes.site;
+/** @type {Array<'en' | 'ru' | 'hy'>} */
+export const LANGS = routes.locales;
 
 /**
  * Route ids whose pages are built in a later milestone of handoff/SPEC.md §15. Every check that needs a page
@@ -19,22 +19,16 @@ export const PENDING_ROUTE_IDS = new Set(['guideAliasRules', 'guideOnePhone', 'g
 
 /**
  * Every page the build must contain: one entry per route id and language.
- * @param {{ includePending?: boolean }} [options]
  * @returns {Array<{ id: string, lang: 'en' | 'ru' | 'hy', path: string, file: string }>}
  */
-export function expectedPages({ includePending = false } = {}) {
+export function expectedPages() {
   const out = [];
   for (const [id, byLang] of Object.entries(routes.pages)) {
-    if (!includePending && PENDING_ROUTE_IDS.has(id)) continue;
+    if (PENDING_ROUTE_IDS.has(id)) continue;
     for (const lang of LANGS) {
       const path = byLang[lang];
       if (path) out.push({ id, lang, path, file: join(DIST, path, 'index.html') });
     }
   }
   return out;
-}
-
-/** The page's language versions, as listed in routes.json. */
-export function alternatesOf(id) {
-  return LANGS.filter((l) => routes.pages[id][l]).map((l) => ({ lang: l, path: routes.pages[id][l] }));
 }

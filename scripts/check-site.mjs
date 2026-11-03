@@ -1,20 +1,21 @@
 #!/usr/bin/env node
 // Checks the production build in dist/: every route exists with the right language and one h1, titles and
-// descriptions are unique and within limits, internal links and fragments resolve, the sitemap matches
-// handoff/routes.json, robots.txt is right, banned claims never reach a page, and every page is inside the
-// budgets in handoff/SPEC.md §9. Exits 1 on any failure.
+// descriptions are unique and within limits, internal links, fragments and assets resolve, the sitemap
+// matches handoff/routes.json, robots.txt is right, banned claims never reach a page (text or attributes),
+// and every page is inside the budgets in handoff/SPEC.md §9. Exits 1 on any failure.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { extname, join, posix, relative } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { ELEMENT_NODE, parse, TEXT_NODE, walkSync } from 'ultrahtml';
 import { querySelector, querySelectorAll } from 'ultrahtml/selector';
-import { DIST, expectedPages, PENDING_ROUTE_IDS, routes, SITE_URL } from './lib/site.mjs';
+import { EXEMPT_PATHS, findBanned } from './lib/banned.mjs';
+import { DIST, expectedPages, LANGS, PENDING_ROUTE_IDS, ROOT, routes, SITE_URL } from './lib/site.mjs';
 
 const KB = 1024;
 const BUDGET = {
-  /** Home's first-load JavaScript, including the 2.4 KB of Vercel loaders. */
+  /** Home's first-load JavaScript, including the 2.4 KB of Vercel loaders (inline scripts, counted as such). */
   jsHome: 30 * KB,
-  /** Every other page's first-load JavaScript, including the Vercel loaders. */
+  /** Every other page's first-load JavaScript. */
   jsOther: 8 * KB,
   /** Effects loaded after the page is interactive. */
   lazyEffects: 40 * KB,
@@ -23,18 +24,13 @@ const BUDGET = {
   fontPreloadBytes: 60 * KB,
   homeFirstLoad: 500 * KB,
 };
-/** The two Vercel loader scripts (Web Analytics and Speed Insights), counted once they're on a page. */
-const VERCEL_LOADERS = 2.4 * KB;
-const VERCEL_SCRIPT = /^\/_vercel\/(insights|speed-insights)\//;
 
-// Phrases from .claude/rules/copy.md that must never reach a page, in any language.
-const NEVER_SAY = [
-  /coming soon/i, /launching soon/i, /\bwaitlist\b/i, /\bfifa\b/i, /\buefa\b/i, /world cup 2026/i,
-  /чм[- ]?2026/i, /скоро (выйдет|запуск)/i, /\bofficial(ly)?\b/i, /официальн/i, /պաշտոնական/,
-  /\bad-free\b/i, /thousands of words/i, /тысячи слов/i, /10,000\+/, /online multiplayer/i,
-  /add your own words/i, /custom decks/i, /\bswipe/i, /team colou?rs/i, /at the app store/i,
-  /apple app store/i, /\bdownloadable\b/i, /\bultimate\b/i, /#1\b/,
-];
+const copy = Object.fromEntries(LANGS.map((l) => [l, JSON.parse(readFileSync(join(ROOT, 'content/copy', `${l}.json`), 'utf8'))]));
+const getPath = (obj, path) => path.split('.').reduce((o, k) => o?.[k], obj);
+// Copy that may name a banned word because it denies the claim ("isn't … endorsed by"); removed before matching.
+const EXEMPT_TEXT = LANGS.flatMap((l) => EXEMPT_PATHS.map((p) => getPath(copy[l], p)))
+  .filter(Boolean)
+  .map((s) => s.replace(/\s+/g, ' '));
 
 const errors = [];
 const fail = (where, msg) => errors.push(`${where}: ${msg}`);
@@ -49,32 +45,40 @@ if (!existsSync(DIST)) {
 // ---------------------------------------------------------------------------------------------------------
 // Helpers
 
-function textOf(node) {
-  let out = '';
-  walkSync(node, (n) => {
-    if (n.type === TEXT_NODE) out += n.value;
-  });
-  return out.replace(/\s+/g, ' ').trim();
-}
-
 function decodeEntities(s) {
   return s
     .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
     .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d)))
     .replace(/&quot;/g, '"')
     .replace(/&apos;/g, "'")
-    .replace(/&#39;/g, "'")
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&nbsp;/g, '\u00a0')
     .replace(/&amp;/g, '&');
 }
 
+function textOf(node) {
+  let out = '';
+  walkSync(node, (n) => {
+    if (n.type === TEXT_NODE) out += n.value;
+  });
+  return decodeEntities(out).replace(/\s+/g, ' ').trim();
+}
+
 const attr = (node, name) => (node?.attributes?.[name] === undefined ? undefined : decodeEntities(String(node.attributes[name])));
+
+function safeDecode(s) {
+  try {
+    return decodeURIComponent(s);
+  } catch {
+    return null;
+  }
+}
 
 /** Where a site path lives in dist/, or null if nothing is there. */
 function distFileFor(pathname) {
-  const clean = decodeURIComponent(pathname);
+  const clean = safeDecode(pathname);
+  if (clean === null) return null;
   if (clean.endsWith('/')) {
     const file = join(DIST, clean, 'index.html');
     return existsSync(file) ? file : null;
@@ -101,7 +105,7 @@ function idsIn(file) {
   return idsByFile.get(file);
 }
 
-/** Static imports (first load) and dynamic imports (lazy) of a built module, followed recursively. */
+/** Static imports and re-exports (first load) and dynamic imports (lazy) of a built module, recursively. */
 function moduleGraph(entry, seen = new Set(), lazy = new Set()) {
   if (seen.has(entry)) return { seen, lazy };
   seen.add(entry);
@@ -110,12 +114,18 @@ function moduleGraph(entry, seen = new Set(), lazy = new Set()) {
   const code = readFileSync(file, 'utf8');
   const dir = posix.dirname(entry);
   const resolve = (spec) => (spec.startsWith('/') ? spec : posix.join(dir, spec));
-  for (const m of code.matchAll(/\bimport\s*(?:[\w$*{}\s,]+\s*from\s*)?["']([^"']+\.m?js)["']/g)) {
+  for (const m of code.matchAll(/\b(?:import|export)\s*(?:[\w$*{}\s,]+\s*from\s*)?["']([^"']+\.m?js)["']/g)) {
     moduleGraph(resolve(m[1]), seen, lazy);
   }
   for (const m of code.matchAll(/\bimport\(\s*["']([^"']+\.m?js)["']\s*\)/g)) lazy.add(resolve(m[1]));
   return { seen, lazy };
 }
+
+const bytesOf = (modules) =>
+  [...modules].reduce((sum, m) => sum + (existsSync(join(DIST, m)) ? gz(readFileSync(join(DIST, m))) : 0), 0);
+
+/** The URLs a srcset lists, without their descriptors. */
+const srcsetUrls = (srcset) => (srcset ?? '').split(',').map((c) => c.trim().split(/\s+/)[0]).filter(Boolean);
 
 // ---------------------------------------------------------------------------------------------------------
 // 1. Every route is built, and nothing else is.
@@ -133,13 +143,16 @@ for (const file of allFiles(DIST).filter((f) => f.endsWith('.html'))) {
 if (!existsSync(join(DIST, '404.html'))) fail('/404.html', 'missing');
 
 // ---------------------------------------------------------------------------------------------------------
-// 2. Per page: language, one h1, title and description, banned claims, links.
+// 2. Per page.
 
 const titles = new Map();
 const descriptions = new Map();
 const budgetRows = [];
 
-const htmlTargets = [...pages.filter((p) => existsSync(p.file)), { id: 'notFound', lang: 'en', path: '/404.html', file: join(DIST, '404.html') }];
+const htmlTargets = [
+  ...pages.filter((p) => existsSync(p.file)),
+  { id: 'notFound', lang: 'en', path: '/404.html', file: join(DIST, '404.html') },
+];
 
 for (const page of htmlTargets) {
   if (!existsSync(page.file)) continue;
@@ -152,7 +165,7 @@ for (const page of htmlTargets) {
   if (attr(htmlEl, 'lang') !== page.lang) fail(where, `<html lang="${attr(htmlEl, 'lang')}">, expected "${page.lang}"`);
 
   const h1s = querySelectorAll(doc, 'h1');
-  if (!isNotFound && h1s.length !== 1) fail(where, `${h1s.length} h1 elements, expected exactly 1`);
+  if (h1s.length !== 1) fail(where, `${h1s.length} h1 elements, expected exactly 1`);
   if (h1s.some((h) => !textOf(h))) fail(where, 'empty h1');
 
   const title = textOf(querySelector(doc, 'title') ?? { children: [] });
@@ -168,11 +181,18 @@ for (const page of htmlTargets) {
     descriptions.set(description, where);
   }
 
+  // Banned claims, in visible text and in the attributes people and machines read.
   const bodyText = textOf(querySelector(doc, 'body') ?? doc);
-  for (const re of NEVER_SAY) {
-    const m = re.exec(`${title} ${description} ${bodyText}`);
-    if (m) fail(where, `banned phrase "${m[0]}" (.claude/rules/copy.md)`);
-  }
+  const attributeText = [
+    ...querySelectorAll(doc, '[alt], [title], [aria-label]'),
+    ...querySelectorAll(doc, 'meta[content]'),
+  ]
+    .map((n) => ['alt', 'title', 'aria-label', 'content'].map((k) => attr(n, k) ?? '').join(' '))
+    .join(' ');
+  let scanned = `${title} ${bodyText} ${attributeText}`.replace(/\s+/g, ' ');
+  for (const exempt of EXEMPT_TEXT) scanned = scanned.split(exempt).join(' ');
+  const banned = findBanned(scanned);
+  if (banned) fail(where, `banned phrase "${banned}" (.claude/rules/copy.md)`);
 
   // Links: internal targets must exist, fragments must point at an id, no plain-http links.
   for (const a of querySelectorAll(doc, 'a[href]')) {
@@ -190,9 +210,11 @@ for (const page of htmlTargets) {
       if (href.startsWith(SITE_URL)) fail(where, `internal link written as an absolute URL: ${href}`);
       continue;
     }
+    // The 404 page is served at any address, so its links must not depend on where it is.
+    if (isNotFound && !href.startsWith('/') && !href.startsWith('#')) fail(where, `relative link ${href} on the 404 page`);
     const url = new URL(href, `${SITE_URL}${where}`);
-    if (url.pathname === where.replace(/index\.html$/, '') || href.startsWith('#')) {
-      const id = decodeURIComponent(url.hash.slice(1));
+    if (href.startsWith('#') || url.pathname === where) {
+      const id = safeDecode(url.hash.slice(1));
       if (id && !idsIn(page.file).has(id)) fail(where, `link to #${id}, which isn't on the page`);
       continue;
     }
@@ -208,53 +230,65 @@ for (const page of htmlTargets) {
       if (!pendingTarget) fail(where, `broken link to ${url.pathname}`);
       continue;
     }
-    const id = decodeURIComponent(url.hash.slice(1));
+    const id = safeDecode(url.hash.slice(1));
     if (id && target.endsWith('.html') && !idsIn(target).has(id)) {
       fail(where, `link to ${url.pathname}#${id}, which has no such id`);
     }
   }
 
-  // Budgets.
-  const scripts = querySelectorAll(doc, 'script');
+  // Assets: every internal image, source, video, poster and icon must exist.
+  const assetUrls = [];
+  for (const n of querySelectorAll(doc, 'img, source, video')) {
+    for (const key of ['src', 'poster']) if (attr(n, key)) assetUrls.push(attr(n, key));
+    assetUrls.push(...srcsetUrls(attr(n, 'srcset')));
+  }
+  for (const n of [...querySelectorAll(doc, 'link[rel="icon"]'), ...querySelectorAll(doc, 'link[rel="apple-touch-icon"]')]) {
+    assetUrls.push(attr(n, 'href'));
+  }
+  for (const u of assetUrls) {
+    if (!u || u.startsWith('data:')) continue;
+    if (/^https?:\/\//.test(u)) {
+      fail(where, `third-party asset ${u}`);
+      continue;
+    }
+    if (isNotFound && !u.startsWith('/')) fail(where, `relative asset URL ${u} on the 404 page`);
+    if (!distFileFor(new URL(u, `${SITE_URL}${where}`).pathname)) fail(where, `missing asset ${u}`);
+  }
+
+  // Budgets. First-load JS: module scripts, their static imports and re-exports, modulepreloads, Astro island
+  // modules and inline scripts (which include the Vercel loaders once they're on the page).
   const firstLoadModules = new Set();
   const lazyModules = new Set();
+  const addGraph = (url) => {
+    const { seen, lazy } = moduleGraph(new URL(url, `${SITE_URL}${where}`).pathname);
+    seen.forEach((m) => firstLoadModules.add(m));
+    lazy.forEach((m) => lazyModules.add(m));
+  };
   let inlineJs = 0;
-  let vercel = false;
-  for (const s of scripts) {
+  for (const s of querySelectorAll(doc, 'script')) {
     const type = attr(s, 'type') ?? '';
     if (type === 'application/ld+json' || type === 'application/json') continue;
     const src = attr(s, 'src');
     if (src) {
-      if (VERCEL_SCRIPT.test(src)) {
-        vercel = true;
-        continue;
-      }
-      if (/^https?:\/\//.test(src)) {
-        fail(where, `third-party script ${src}`);
-        continue;
-      }
-      const { seen, lazy } = moduleGraph(new URL(src, `${SITE_URL}${where}`).pathname);
-      seen.forEach((m) => firstLoadModules.add(m));
-      lazy.forEach((m) => lazyModules.add(m));
+      if (/^https?:\/\//.test(src)) fail(where, `third-party script ${src}`);
+      else addGraph(src);
     } else {
-      inlineJs += gz(Buffer.from(textOf(s) || s.children?.map((c) => c.value ?? '').join('') || ''));
+      inlineJs += gz(Buffer.from(s.children?.map((c) => c.value ?? '').join('') ?? ''));
     }
   }
-  for (const link of querySelectorAll(doc, 'link[rel="modulepreload"]')) {
-    const { seen, lazy } = moduleGraph(new URL(attr(link, 'href'), `${SITE_URL}${where}`).pathname);
-    seen.forEach((m) => firstLoadModules.add(m));
-    lazy.forEach((m) => lazyModules.add(m));
+  for (const link of querySelectorAll(doc, 'link[rel="modulepreload"]')) addGraph(attr(link, 'href'));
+  for (const island of querySelectorAll(doc, 'astro-island')) {
+    for (const key of ['component-url', 'renderer-url', 'before-hydration-url']) {
+      if (attr(island, key)) addGraph(attr(island, key));
+    }
   }
   const lazyOnly = new Set();
   for (const m of lazyModules) {
     const { seen } = moduleGraph(m);
     seen.forEach((x) => !firstLoadModules.has(x) && lazyOnly.add(x));
   }
-  const jsBytes =
-    [...firstLoadModules].reduce((sum, m) => sum + (existsSync(join(DIST, m)) ? gz(readFileSync(join(DIST, m))) : 0), 0) +
-    inlineJs +
-    (vercel ? VERCEL_LOADERS : 0);
-  const lazyBytes = [...lazyOnly].reduce((sum, m) => sum + (existsSync(join(DIST, m)) ? gz(readFileSync(join(DIST, m))) : 0), 0);
+  const jsBytes = bytesOf(firstLoadModules) + inlineJs;
+  const lazyBytes = bytesOf(lazyOnly);
 
   let cssBytes = 0;
   for (const link of querySelectorAll(doc, 'link[rel="stylesheet"]')) {
@@ -282,16 +316,25 @@ for (const page of htmlTargets) {
     else fail(where, `preloaded font ${href} is missing`);
   }
 
-  // Eager images: anything without loading="lazy" is fetched with the page.
+  // Eager images (no loading="lazy"), weighed by their largest candidate, plus video posters.
+  const sizeOf = (u) => {
+    const file = u && !u.startsWith('data:') ? distFileFor(new URL(u, `${SITE_URL}${where}`).pathname) : null;
+    return file ? statSync(file).size : 0;
+  };
   let eagerImageBytes = 0;
   for (const img of querySelectorAll(doc, 'img')) {
-    const src = attr(img, 'src') ?? '';
-    if (/^https?:\/\//.test(src)) fail(where, `third-party image ${src}`);
-    if (!attr(img, 'width') || !attr(img, 'height')) fail(where, `image without width and height: ${src}`);
-    if (attr(img, 'loading') === 'lazy' || !src || src.startsWith('data:')) continue;
-    const file = distFileFor(new URL(src, `${SITE_URL}${where}`).pathname);
-    if (file) eagerImageBytes += statSync(file).size;
+    if (!attr(img, 'width') || !attr(img, 'height')) fail(where, `image without width and height: ${attr(img, 'src')}`);
+    if (attr(img, 'loading') === 'lazy') continue;
+    const candidates = [attr(img, 'src'), ...srcsetUrls(attr(img, 'srcset'))];
+    eagerImageBytes += Math.max(0, ...candidates.map(sizeOf));
   }
+  for (const picture of querySelectorAll(doc, 'picture')) {
+    const img = querySelector(picture, 'img');
+    if (!img || attr(img, 'loading') === 'lazy') continue;
+    const source = querySelector(picture, 'source');
+    if (source) eagerImageBytes += Math.max(0, ...srcsetUrls(attr(source, 'srcset')).map(sizeOf));
+  }
+  for (const video of querySelectorAll(doc, 'video[poster]')) eagerImageBytes += sizeOf(attr(video, 'poster'));
 
   const htmlBytes = gz(Buffer.from(html));
   const isHome = page.id === 'home';
@@ -305,7 +348,7 @@ for (const page of htmlTargets) {
   if (isHome && firstLoad > BUDGET.homeFirstLoad) {
     fail(where, `first-load weight ${fmt(firstLoad)} is over the ${fmt(BUDGET.homeFirstLoad)} budget`);
   }
-  budgetRows.push({ page: where, html: htmlBytes, js: jsBytes, lazy: lazyBytes, css: cssBytes, fonts: fontBytes, preloads: fontPreloads.length, images: eagerImageBytes, total: firstLoad });
+  budgetRows.push({ page: where, html: htmlBytes, js: jsBytes, lazy: lazyBytes, css: cssBytes, fonts: fontBytes, images: eagerImageBytes, total: firstLoad });
 }
 
 // ---------------------------------------------------------------------------------------------------------
@@ -344,11 +387,13 @@ if (!existsSync(robotsFile)) {
 
 const pad = (s, n) => String(s).padEnd(n);
 const rpad = (s, n) => String(s).padStart(n);
-console.log('Budgets (gzip; fonts and images as stored)');
+console.log('Budgets per page: gzip for text, stored size for fonts and images.');
+console.log('"total" is a lower bound (fonts that are used but not preloaded, and CSS images, are not in it);');
+console.log("Lighthouse CI's total-byte-weight is the real first-load gate.\n");
 console.log(`${pad('page', 46)}${rpad('html', 9)}${rpad('js', 9)}${rpad('lazy', 9)}${rpad('css', 9)}${rpad('fonts', 9)}${rpad('img', 9)}${rpad('total', 10)}`);
 for (const r of budgetRows) {
   console.log(
-    `${pad(r.page, 46)}${rpad(fmt(r.html), 9)}${rpad(fmt(r.js), 9)}${rpad(fmt(r.lazy), 9)}${rpad(fmt(r.css), 9)}${rpad(`${fmt(r.fonts)}`, 9)}${rpad(fmt(r.images), 9)}${rpad(fmt(r.total), 10)}`,
+    `${pad(r.page, 46)}${rpad(fmt(r.html), 9)}${rpad(fmt(r.js), 9)}${rpad(fmt(r.lazy), 9)}${rpad(fmt(r.css), 9)}${rpad(fmt(r.fonts), 9)}${rpad(fmt(r.images), 9)}${rpad(fmt(r.total), 10)}`,
   );
 }
 if (PENDING_ROUTE_IDS.size) console.log(`\nNot built yet (later milestone): ${[...PENDING_ROUTE_IDS].join(', ')}`);
