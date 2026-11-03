@@ -33,6 +33,7 @@
     "copyright": "© 2026 Bombardiro"
   },
   "notFound": {
+    "code": "404",
     "title": "Offside",
     "text": "This page isn't on the pitch. The link may be old or mistyped.",
     "home": "Back to the home page"
