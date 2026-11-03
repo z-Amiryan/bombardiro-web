@@ -3,7 +3,7 @@
 // The rows drift; a visible Pause control stops them (WCAG 2.2.2), as does scrolling them out of view.
 // Tap a word to score it, as in the app. With reduced motion or JavaScript off, the rows stand still and
 // scroll sideways by hand.
-import { WALL_ROWS } from '../../config/home';
+import { WALL_ROWS, type WallRow } from '../../config/home';
 import { copyFor } from '../../lib/copy';
 import { routePath, type Lang } from '../../lib/routes';
 import { word } from '../../lib/words';
@@ -21,7 +21,7 @@ const tapHint = t.pages.howToPlay.steps[3]?.title ?? '';
 // The counter starts at 00, which takes the language's plural for zero ("goals", «голов»).
 const zeroLabel = wall.goals[new Intl.PluralRules(lang).select(0) as keyof typeof wall.goals] ?? wall.goals.other;
 
-const row = (r: (typeof WALL_ROWS.above)[number], i: number) => ({
+const row = (r: WallRow, i: number) => ({
   dir: i % 2 ? 'right' : 'left',
   seconds: r.seconds,
   words: r.indices.map((index) => ({ key: `${r.category}-${index}`, text: word(lang, r.category, 'easy', index) })),

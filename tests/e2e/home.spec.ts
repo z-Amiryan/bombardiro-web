@@ -13,7 +13,9 @@ test.describe('Home on a wide screen', () => {
   test('the match clock runs down as the turn scrolls by, and the pinned screen follows the beats', async ({ page }) => {
     await page.goto('/');
     expect(await scaleOf(page, '.hero .bar__fill')).toBeCloseTo(1, 2);
-    await page.locator('#beat-3').evaluate((el) => window.scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight / 2 + el.offsetHeight * 0.6));
+    await page
+      .locator('#beat-3')
+      .evaluate((el: HTMLElement) => window.scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight / 2 + el.offsetHeight * 0.6));
     await expect.poll(() => scaleOf(page, '.hero .bar__fill')).toBeLessThan(7 / 60);
     await expect(page.locator('[data-pinned] [data-beat="3"]')).toHaveAttribute('data-state', 'on');
     await expect(page.locator('.home')).toHaveAttribute('data-in-turn', '');
