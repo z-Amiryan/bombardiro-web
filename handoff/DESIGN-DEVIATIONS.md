@@ -11,6 +11,7 @@ the design's idea.
 | BOMBARDIRO wordmark (header, menu sheet, footer, print sheet, guide card) | Live text in Archivo 900 italic on every page | The same letters as outlined SVG paths, shaped from the site's own Archivo file with the design's letter-spacing (`scripts/build-font-assets.py`) | SPEC §8: each language loads only its own fonts. Russian and Armenian pages would otherwise download Archivo for one word. The result is pixel-identical. |
 | «бомбардир» on About | Live text in Noto Sans 900 italic on every page | Outlined SVG, same font and letter-spacing | Same reason: English and Armenian pages don't load Noto Sans. |
 | Foreign-script words in body text (the language names in the switcher, «бомбардир» in About's text) | System fallback font | Tiny glyph subsets of Noto Sans and Noto Sans Armenian (4–6 KB), part of each language's body family | Look designed, not tolerated; a download happens only where those characters appear. |
+| Russian display headings | Line-heights from 0.84 to 0.95, as in English | Line-height 1 | The breve of Й (and the dots of Ё) ran into the line above at the tighter values. |
 
 ## Layout and components
 
