@@ -6,7 +6,6 @@ import { absoluteUrl, LANGS, routePath, type Lang } from './routes';
 
 export const ORG_ID = `${SITE_URL}/#organization`;
 export const WEBSITE_ID = `${SITE_URL}/#website`;
-export const APP_ID = `${SITE_URL}/#app`;
 
 type Json = Record<string, unknown>;
 
@@ -37,7 +36,8 @@ export function app(lang: Lang): Json {
   const t = copyFor(lang);
   return {
     '@type': ['VideoGame', 'MobileApplication'],
-    '@id': APP_ID,
+    // One node per language: each Home describes the app in its own language and URL.
+    '@id': `${absoluteUrl(routePath('home', lang))}#app`,
     name: t.brand.name,
     description: t.pages.home.meta.description,
     url: absoluteUrl(routePath('home', lang)),

@@ -316,6 +316,11 @@ for (const page of htmlTargets) {
     if (descriptions.has(description)) fail(where, `description also used on ${descriptions.get(description)}`);
     titles.set(title, where);
     descriptions.set(description, where);
+    // The name alone autocompletes to an unrelated meme, so titles and descriptions always pair it with
+    // football (.claude/rules/seo.md). The domain, bombardiro.app, is lowercase and not counted.
+    for (const [kind, text] of [['title', title], ['description', description]]) {
+      if (/\bBombardiro\b/.test(text) && !/football|футбол|ֆուտբոլ/i.test(text)) fail(where, `${kind} names Bombardiro without football (seo.md)`);
+    }
   }
 
   // Banned claims, in visible text and in the attributes people and machines read.

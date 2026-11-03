@@ -58,7 +58,7 @@ function card(lang) {
   .foot{position:absolute;left:60px;right:60px;bottom:56px;display:flex;align-items:flex-end;justify-content:space-between;gap:40px}
   .h{font-family:${t.fd};font-style:${t.fds};font-weight:900;font-size:${t.size}px;line-height:.95;letter-spacing:-.015em;text-transform:uppercase}
   .h span{display:block}.h span:last-child{color:#BFF747}
-  .side{flex:none;text-align:right;font-family:${t.fu};font-weight:700;font-size:20px;line-height:1.35;color:#C5CEC0;max-width:300px}
+  .side{flex:none;text-align:right;font-family:${t.fu};font-weight:700;font-size:20px;line-height:1.35;color:#C5CEC0;max-width:380px}
   .side span{display:block;font-weight:500;color:#9AA59A}
   </style></head><body><div class="og">
   <div class="glow"></div><div class="cone"></div><div class="ring"></div>
@@ -66,7 +66,7 @@ function card(lang) {
   <div class="clock">01:00</div>
   <div class="bar"><i></i></div>
   <div class="foot"><div class="h"><span>${esc(a)}</span><span>${esc(b)}</span><span>${esc(c)}</span></div>
-  <div class="side">${esc(copy.pages.home.eyebrow)}<span>${esc(copy.cta.availability)}</span></div></div>
+  <div class="side">${esc(copy.pages.home.eyebrow)}<span>${esc(copy.cta.availability).replace(/ (\S+)$/, '\u00a0$1')}</span></div></div>
   </div></body></html>`;
 }
 
