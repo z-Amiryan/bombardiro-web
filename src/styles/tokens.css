@@ -76,22 +76,28 @@
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
   --ease-spring: cubic-bezier(0.3, 1.3, 0.5, 1);
   --ease-enter: cubic-bezier(0, 0, 0.2, 1);
+}
 
-  /* Type, per script. --fd display, --fds display style, --fu interface and body, --k display scale. */
+/* Type, per script: the page's language, or a block marked data-type (the 404 shows all three).
+   --fd display, --fds display style, --fu interface and body, --k display scale. */
+:root,
+[data-type='en'] {
   --fd: var(--font-archivo);
   --fds: italic;
   --fu: var(--font-space-grotesk);
   --k: 1;
 }
 
-:root[lang='ru'] {
+:root[lang='ru'],
+[data-type='ru'] {
   --fd: var(--font-noto-sans);
   --fds: italic;
   --fu: var(--font-noto-sans);
   --k: 0.95;
 }
 
-:root[lang='hy'] {
+:root[lang='hy'],
+[data-type='hy'] {
   --fd: var(--font-noto-armenian);
   --fds: normal;
   --fu: var(--font-noto-armenian);

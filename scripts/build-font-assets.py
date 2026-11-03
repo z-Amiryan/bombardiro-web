@@ -13,7 +13,7 @@
 
 Run it when the wordmark, the fonts or the copy's foreign words change. The font-coverage unit test fails
 when a subset is missing a character.
-    python3 -m pip install fonttools brotli uharfbuzz
+    python3 -m pip install -r scripts/requirements-fonts.txt
     python3 scripts/build-font-assets.py
 """
 import io

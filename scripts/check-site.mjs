@@ -229,7 +229,7 @@ function checkJsonLd(doc, page, where) {
     const items = crumbs.itemListElement ?? [];
     items.forEach((item, i) => {
       if (item.position !== i + 1) fail(where, 'breadcrumb positions must count from 1');
-      if (!item.name || !distFileFor(new URL(item.item).pathname)) fail(where, `breadcrumb ${item.name} points at ${item.item}, which isn't built`);
+      if (!item.name || !item.item || !URL.canParse(item.item) || !distFileFor(new URL(item.item).pathname)) fail(where, `breadcrumb ${item.name} points at ${item.item}, which isn't built`);
     });
     if (items.at(-1)?.item !== new URL(page.path, SITE_URL).href) fail(where, 'the last breadcrumb must be the page itself');
   }
@@ -256,7 +256,6 @@ function checkForeignText(doc, page, where) {
 
 /** The independence line on every page; Apple's credit line exactly once (.claude/rules/legal.md). */
 function checkFooter(page, where, bodyText) {
-  if (page.id === 'notFound') return;
   const t = copy[page.lang].footer;
   if (!bodyText.includes(t.independent)) fail(where, 'footer.independent is missing');
   const count = bodyText.split(t.apple).length - 1;

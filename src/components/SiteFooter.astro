@@ -116,7 +116,7 @@ const socials = socialLinksFor(lang);
   .ftr__in {
     max-width: var(--max);
     margin: 0 auto;
-    padding: 48px 20px 32px;
+    padding: 48px var(--s-5) var(--s-7);
   }
 
   .ftr__grid {
@@ -147,7 +147,7 @@ const socials = socialLinksFor(lang);
   .ftr__cta {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--s-2);
     min-height: 44px;
     width: fit-content;
     font: 700 15px/1.2 var(--fu);
@@ -224,7 +224,7 @@ const socials = socialLinksFor(lang);
 
   .ftr__socials {
     display: flex;
-    gap: 8px;
+    gap: var(--s-2);
     flex-wrap: wrap;
     margin: 0;
   }
@@ -233,7 +233,7 @@ const socials = socialLinksFor(lang);
     display: flex;
     align-items: center;
     height: 44px;
-    padding: 0 16px;
+    padding: 0 var(--s-4);
     border-radius: var(--r-pill);
     border: 1px solid var(--ftr-rule-2);
     font: 600 14px/1 var(--fu);
@@ -277,17 +277,17 @@ const socials = socialLinksFor(lang);
 
   @media (min-width: 1000px) {
     .ftr__in {
-      padding: 72px 64px 40px;
+      padding: 72px var(--s-10) var(--s-8);
     }
     .ftr__grid {
       grid-template-columns: 1.4fr 1fr 1.2fr 1fr;
-      gap: 56px;
+      gap: var(--s-9);
     }
     .ftr__mark {
       font-size: 64px;
     }
     .ftr__fine {
-      margin-top: 56px;
+      margin-top: var(--s-9);
       grid-template-columns: 1.4fr 1.6fr 0.6fr;
     }
   }

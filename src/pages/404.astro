@@ -3,6 +3,7 @@
 import '../styles/tokens.css';
 import '../styles/base.css';
 import Fonts from '../components/Fonts.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import { copyFor } from '../lib/copy';
 import { LANGS, routePath } from '../lib/routes';
@@ -34,7 +35,7 @@ const title = [code, ...blocks.map((b) => b.t.notFound.title)].join(' · ');
       <div class="nf__blocks">
         {
           blocks.map(({ lang, t }) => (
-            <section lang={lang} class="nf__block">
+            <section lang={lang} data-type={lang} class="nf__block">
               <p class="nf__name">{t.languageNames[lang]}</p>
               <h2 class="nf__title">{t.notFound.title}</h2>
               <p>{t.notFound.text}</p>
@@ -46,6 +47,7 @@ const title = [code, ...blocks.map((b) => b.t.notFound.title)].join(' · ');
         }
       </div>
     </main>
+    <SiteFooter lang="en" routeId={null} />
   </body>
 </html>
 
@@ -66,24 +68,6 @@ const title = [code, ...blocks.map((b) => b.t.notFound.title)].join(' · ');
     padding: 24px 0 28px;
     border-top: 1px solid var(--rule);
     font-family: var(--fu);
-  }
-  .nf__block:lang(en) {
-    --fd: var(--font-archivo);
-    --fds: italic;
-    --fu: var(--font-space-grotesk);
-    --k: 1;
-  }
-  .nf__block:lang(ru) {
-    --fd: var(--font-noto-sans);
-    --fds: italic;
-    --fu: var(--font-noto-sans);
-    --k: 0.95;
-  }
-  .nf__block:lang(hy) {
-    --fd: var(--font-noto-armenian);
-    --fds: normal;
-    --fu: var(--font-noto-armenian);
-    --k: 0.8;
   }
   .nf__name {
     font: 700 11px/1 var(--fu);

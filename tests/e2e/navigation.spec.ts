@@ -1,16 +1,15 @@
 import { expect, test } from '@playwright/test';
-import { alternatesOf } from '../../scripts/lib/site.mjs';
 import { copyFor } from '../../src/lib/copy';
-import { LANGS } from '../../src/lib/routes';
+import { alternates, LANGS, routePath, type RouteId } from '../../src/lib/routes';
 import { PAGES } from './site';
 
 // The language switcher goes to the same page in the other language, or to that language's guides hub.
 for (const p of PAGES) {
   test(`${p.path}: hreflang is reciprocal and the language links reach the right page`, async ({ page }) => {
     await page.goto(p.path);
-    const alts = alternatesOf(p.id);
+    const alts = alternates(p.id as RouteId);
     for (const lang of LANGS) {
-      const target = alts.find((a) => a.lang === lang)?.path ?? (await guidesHub(lang));
+      const target = alts.find((a) => a.lang === lang)?.path ?? routePath('guides', lang);
       const link = page.locator(`.ftr__langs a[hreflang="${lang}"]`);
       await expect(link).toHaveAttribute('href', target);
       if (alts.some((a) => a.lang === lang)) {
@@ -20,10 +19,6 @@ for (const p of PAGES) {
       }
     }
   });
-}
-
-async function guidesHub(lang: string) {
-  return lang === 'en' ? '/guides/' : `/${lang}/guides/`;
 }
 
 test('the header language link opens the same page in Russian', async ({ page }) => {
@@ -56,6 +51,24 @@ test.describe('menu sheet on a phone', () => {
       await expect(page.locator('#site-menu nav').getByRole('link', { name: label })).toBeVisible();
     }
     await expect(page.locator('#site-menu').getByRole('link', { name: t.cta.textLink })).toHaveAttribute('href', /apps\.apple\.com/);
+  });
+
+  test('keeps keyboard focus inside while open, and lets it out when closed', async ({ page, browserName }) => {
+    test.skip(browserName === 'webkit', 'WebKit only tabs to links with "Press Tab to highlight each item" on');
+    await page.goto('/');
+    await page.locator('.hdr__menu').click();
+    for (let i = 0; i < 15; i++) {
+      await page.keyboard.press('Tab');
+      // Inside the sheet, or out in the browser's own interface (body), never on the page behind it.
+      const where = await page.evaluate(() => {
+        const el = document.activeElement;
+        return el === document.body || document.getElementById('site-menu')?.contains(el) ? 'ok' : el?.outerHTML.slice(0, 80);
+      });
+      expect(where).toBe('ok');
+    }
+    await page.keyboard.press('Escape');
+    await expect(page.locator('.hdr__menu')).toBeFocused();
+    await expect(page.locator('#main')).not.toHaveAttribute('inert');
   });
 });
 

@@ -70,7 +70,7 @@ function siteText(lang: Lang): Array<[string, string]> {
 }
 
 // Copy keys set in the display face (titles, headlines, category names), which must be drawn by it too.
-const DISPLAY_KEY = /(^|\.)(h1|title|eyebrow|name|value|getApp)$|\.steps\[\d+\]\.title$/;
+const DISPLAY_KEY = /(^|\.)(h1|title|eyebrow|name|value|getApp)$|\.steps\[\d+\]\.title$|^nav\.(home|howToPlay|words|guides|support|about)$/;
 const REQUIRED: Record<Lang, string> = { en: '«»—–', ru: '«»—–№', hy: '«»—–։՝՞' };
 
 describe('font coverage', () => {

@@ -1,6 +1,7 @@
 // Icons cut from assets/brand/ at build time, so the repository keeps one source for each.
 import { join } from 'node:path';
 import sharp from 'sharp';
+import { THEME_COLOR } from './surface';
 
 const brand = (file: string) => join(process.cwd(), 'assets/brand', file);
 
@@ -10,7 +11,7 @@ export function pngResponse(body: Buffer, type = 'image/png'): Response {
 
 /** The app icon at a square size, opaque, as PNG. */
 export function appIcon(size: number): Promise<Buffer> {
-  return sharp(brand('icon.png')).resize(size, size).flatten({ background: '#101418' }).png({ compressionLevel: 9 }).toBuffer();
+  return sharp(brand('icon.png')).resize(size, size).flatten({ background: THEME_COLOR.night }).png({ compressionLevel: 9 }).toBuffer();
 }
 
 export function favicon(size: number): Promise<Buffer> {
