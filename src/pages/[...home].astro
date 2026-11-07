@@ -6,6 +6,7 @@ import ClockOverlay from '../components/home/ClockOverlay.astro';
 import '../components/home/clock.css';
 import FeatureRow from '../components/home/FeatureRow.astro';
 import FinalCta from '../components/home/FinalCta.astro';
+import Icon from '../components/Icon.astro';
 import HomeHero from '../components/home/HomeHero.astro';
 import TurnSection from '../components/home/TurnSection.astro';
 import WhistleToggle from '../components/home/WhistleToggle.astro';
@@ -13,7 +14,7 @@ import WordBand from '../components/home/WordBand.astro';
 import { turnTimes } from '../config/home';
 import Base from '../layouts/Base.astro';
 import { copyFor } from '../lib/copy';
-import { staticPathsFor, type Lang } from '../lib/routes';
+import { routePath, staticPathsFor, type Lang } from '../lib/routes';
 
 export function getStaticPaths() {
   return staticPathsFor('home', 'home');
@@ -24,7 +25,8 @@ interface Props {
 }
 
 const { lang } = Astro.props;
-const t = copyFor(lang).pages.home;
+const c = copyFor(lang);
+const t = c.pages.home;
 ---
 
 <Base lang={lang} routeId="home" surface="night" bp={1100} title={t.meta.title} description={t.meta.description}>
@@ -51,7 +53,13 @@ const t = copyFor(lang).pages.home;
     <FinalCta lang={lang} />
 
     <section class="answers" aria-labelledby="faq-title">
-      <h2 id="faq-title" class="answers__title display fit"><span class="fit__t">{t.faq.title}</span></h2>
+      <div>
+        <h2 id="faq-title" class="answers__title display fit"><span class="fit__t">{t.faq.title}</span></h2>
+        <a class="answers__more" href={routePath('guides', lang)}>
+          {c.nav.guides}
+          <Icon name="arrow-right" />
+        </a>
+      </div>
       <Faq name="home-faq" items={t.faq.items} />
     </section>
   </div>
@@ -119,6 +127,25 @@ const t = copyFor(lang).pages.home;
     /* The longest word, in em (.fit in base.css). */
     --fit: 5.6;
     line-height: 0.95;
+  }
+
+  .answers__more {
+    margin-top: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    font: 700 15px/1 var(--fu);
+    color: var(--accent);
+    text-decoration: none;
+  }
+  @media (hover: hover) {
+    .answers__more:hover {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 5px;
+      text-decoration-thickness: 2px;
+    }
   }
 
   :global(:root[lang='ru']) .answers__title {

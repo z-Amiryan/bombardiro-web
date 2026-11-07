@@ -52,6 +52,14 @@
     "text": "This page isn't on the pitch. The link may be old or mistyped.",
     "home": "Back to the home page"
   },
+  "article": {
+    "toc": "On this page",
+    "short": "The short answer",
+    "updated": "Updated {date}",
+    "endLink": "How to play Bombardiro",
+    "related": "More guides",
+    "aliasRules": "Alias rules"
+  },
   "pages": {
     "home": {
       "meta": {

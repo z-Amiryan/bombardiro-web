@@ -85,7 +85,27 @@ the design's idea.
 | Support's report checklist | Two columns from 1100 px | Two columns once each item has 240 px, one before that | At 1000–1300 px the two columns squeezed the Russian and Armenian items past their boxes. |
 | H1s on Support, About, Privacy and the Guides hub | Fixed sizes | The design's sizes, capped so the longest word fits (`.fit`) | ПОДДЕРЖКА, BOMBARDIRO, «Конфиденциальность» and ԱՋԱԿՑՈՒԹՅՈՒՆ broke in the middle of the word in their columns. |
 | "→" before BOMBARDIRO on About | The interface font's arrow | The drawn arrow icon | No site font has "→" (as in the header). |
+| Circle behind «бомбардир» on About | Centred on the section | Centred on the outlined word | Centred on the section, it moved whenever a web font arrived and the paragraph below rewrapped: a 0.137 layout shift on the Armenian page. The word's height is fixed by its proportions. |
 | Press kit | `press-kit.zip`, a placeholder | `/press/bombardiro-press-kit.zip`, built at build time from `assets/`: the app icon, the wordmark as outlined SVG in the Night and Chalk colours, and six iPhone screenshots each in English and Russian | SPEC §8. Building it keeps one copy of each file in the repository. |
 | Privacy date | "2 November 2026" through the browser's locale | `LAST_UPDATED` formatted per language at build time: "2 November 2026", «2 ноября 2026 г.», «2 նոյեմբերի, 2026 թ.» | SPEC §5. |
 | Guides hub reading time | "5 min read", «5 минут», «4 րոպե» | `pages.guides.readTime`: "{n} min read", «{n} мин чтения», «{n} րոպե ընթերցանություն», from the guide's word count at 200 words a minute | The abbreviation needs no Russian plural forms. |
 | Copy and Copied, the video's play label | Written in the prototype's code | In `content/copy/` in all three languages | No hard-coded text. |
+
+## Guides
+
+| Where | Design | Build | Why |
+| --- | --- | --- | --- |
+| Article content | A JavaScript object per guide | One YAML file per guide and language (`src/content/guides/{lang}/`), with the design's structure: numbered sections, a numbered list, paragraphs, a note, a house-rules label, a comparison table, facts and glossary terms | The font subsets and the coverage test read the guides' text from YAML, and the design's blocks map onto it one to one. Links in the text name a route id, never a URL. |
+| Bombardiro card | Inside the comparison section of the Alias guide | After the one section about Bombardiro in each guide, marked `app: true` | `handoff/guide-briefs.md`: one section about Bombardiro per guide. |
+| Breadcrumb | `<nav aria-label="Breadcrumb">` | A plain line with the link to the hub and the kicker; the BreadcrumbList is in the JSON-LD | Two links don't need a landmark, and the English label would be hard-coded text. |
+| Section and contents numbers | #0E9C49 on chalk; inactive contents numbers at 40 % ink | Grass #0A7C39; inactive contents numbers in the muted ink | #0E9C49 is 3.3:1 on chalk and 40 % ink lower still, under WCAG AA's 4.5:1 for this size. |
+| Reading progress bar | Driven by a scroll handler | A CSS scroll-driven animation (Chrome 115+, Safari 26+); absent elsewhere | SPEC §9 prefers scroll-driven animation, and it costs no JavaScript. |
+| Glossary (Russian) | Not designed | The comparison table's style, four columns (term, English, Armenian, meaning), each row with its own anchor, in a horizontally scrolling region on phones | The brief asks for real table markup and an anchor per term. |
+| Foreign letters on the Russian glossary | — | Its Armenian column draws on a second subset (`foreign-ru-armenian-guides.woff2`, 17 KB) whose unicode-range holds only the letters the switcher doesn't use, so other Russian pages still load only the 4 KB switcher subset | SPEC §8: each page loads only the faces it needs. |
+
+## Links the keyword map asks for
+
+| Where | Design | Build | Why |
+| --- | --- | --- | --- |
+| Home, "Quick answers" | No link to the guides | A "Guides" text link under the heading | `handoff/keyword-map.md`: Home links to How to play, Words and Guides from its content. |
+| How to play, Words | No link to the Alias rules guide | An "Alias rules" text link beside the existing one | The same map; `check:site` now enforces every row of it. |

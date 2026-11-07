@@ -178,10 +178,16 @@ const tips = t.tips.items.map((item) => {
             ))
           }
         </ul>
-        <a class="more" href={routePath('words', lang)}>
-          {c.nav.words}
-          <Icon name="arrow-right" />
-        </a>
+        <p class="more-links">
+          <a class="more" href={routePath('words', lang)}>
+            {c.nav.words}
+            <Icon name="arrow-right" />
+          </a>
+          <a class="more" href={routePath('guideAliasRules', lang)}>
+            {c.article.aliasRules}
+            <Icon name="arrow-right" />
+          </a>
+        </p>
       </div>
     </div>
   </section>
@@ -478,8 +484,13 @@ const tips = t.tips.items.map((item) => {
     border-radius: 50%;
     border: 2px solid var(--accent);
   }
-  .more {
+  .more-links {
     margin-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 28px;
+  }
+  .more {
     display: inline-flex;
     align-items: center;
     gap: 8px;

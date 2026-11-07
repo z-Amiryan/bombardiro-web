@@ -1,0 +1,71 @@
+routeId: guideAliasRules
+lang: en
+title: "How to play Alias: rules of the word-guessing game"
+description: "Alias rules in plain English: teams, the timer, what you can't say and how to score, plus how to play on a phone and a version for football fans."
+kicker: Rules
+datePublished: "2026-11-07"
+dateModified: "2026-11-07"
+short: "Alias is a team word game. One player describes a word without saying it, their team guesses against a timer, and every correct guess scores a point. Teams take turns, a different player describes each round, and the first team to reach the finish wins. You need four or more people, a list of words and a clock."
+sections:
+  - id: rules
+    h: The rules in short
+    list:
+      - Split into teams of at least two players.
+      - Teams take turns. In each turn, one player describes and the rest of the team guesses.
+      - The describer can't say the word or any word with the same root. Synonyms, opposites and hints are allowed.
+      - A timer limits each turn. The board game uses an hourglass.
+      - Every guessed word scores. In many editions, a skipped word costs a point.
+      - The first team to reach the finish wins.
+    note: Details differ between editions, so agree on them before you start.
+  - id: need
+    h: What you need
+    p:
+      - "Four or more people, a set of words, a timer and a way to keep score. The board game comes with word cards, an hourglass and a board to move along. A phone can do all four jobs. If you'd rather play on paper, our [free football word list](words) prints on A4, ready to cut into cards."
+  - id: turn
+    h: How a turn works
+    p:
+      - "The describer takes a card and starts the timer. They describe the first word, the team shouts guesses, and the moment someone gets it, the describer moves on to the next word. When the time runs out, the turn ends, the team counts its words, and the next team goes."
+      - "Next round, someone else on the team describes. Over a game, everyone gets a go, so the quiet players get their moment too."
+  - id: cant
+    h: What you can't say
+    list:
+      - The word itself.
+      - "Any word with the same root: for “goalkeeper”, you can't say “goal”."
+      - Many groups also ban spelling the word, giving its first letter or translating it. These are house rules, so agree on them first.
+    after:
+      - "Everything else is fair: synonyms, opposites, examples and hints. Whether gestures count is up to your group, so settle it before the first turn."
+  - id: score
+    h: How to score
+    p:
+      - "Each guessed word is a point. Many editions take a point away for every skip, so describers don't give up too quickly. In the board game, points move your team's piece along the board, and the first team to reach the finish wins."
+      - "Playing without a board? Agree on a target before you start, such as 30 points, or play a fixed number of rounds and add up the totals."
+  - id: three
+    h: Playing with two or three
+    house: House rules
+    p:
+      - "With three, play as individuals: one describes, the other two race to guess, and whoever guesses first takes the point. Swap the describer every turn."
+      - "With two, play together against the clock: take turns describing and try to beat your own record."
+  - id: tips
+    h: How to describe well
+    list:
+      - "Start with the category: “a player”, “a city”, “something in the kitchen”."
+      - "Use opposites and comparisons: “not hot but…”, “like a bus, but on rails”."
+      - Give an example or a famous moment instead of a definition.
+      - Stuck on one word? Skip it. The clock won't wait.
+  - id: phone
+    h: Playing on a phone
+    p:
+      - "A phone replaces the cards, the timer and the scorepad. One phone is enough: the describer holds it, taps each word as the team gets it, then passes it to the next team. Nobody has to shuffle cards or watch an hourglass."
+      - "For more games that need only one phone, see [one-phone party games](guideOnePhone)."
+  - id: football
+    h: The football version
+    p:
+      - "We make Bombardiro, a football version of Alias for iPhone and iPad. Every word is football: players, clubs, stadiums, legends, tactics and trophies, and the World Cup, nearly 1,700 words in English, Russian and Armenian. It changes a few of the rules above:"
+    compare:
+      cols: ["", Classic Alias, Bombardiro]
+      rows:
+        - [Missed words, Often cost a point, Simply left unmarked]
+        - [Winning, First to the finish, "First to 51, 101, 151 or 201 points"]
+        - [Turns, The game can end mid-round, The round is played out so everyone gets equal turns]
+        - [Words, Every topic, "Football only, Easy or Hard"]
+    app: true

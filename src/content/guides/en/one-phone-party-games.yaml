@@ -1,0 +1,74 @@
+routeId: guideOnePhone
+lang: en
+title: "One-phone party games: 7 games to pass around the room"
+description: "Party games that only need one phone: what each one is, how many people you need and how it works with no wifi. Pass it around and play."
+kicker: Party games
+datePublished: "2026-11-07"
+dateModified: "2026-11-07"
+short: "The easiest one-phone party games are word, acting and bluffing games: describe-the-word (Alias), the hat game, charades, an imposter game, draw-and-pass and would-you-rather. The phone is the timer, the word list or the scorepad, so none of them needs wifi. Most work for four to twelve people, and a round takes a few minutes."
+sections:
+  - id: alias
+    h: Describe the word (Alias)
+    p:
+      - "Teams take turns. One player describes words without saying them while their team guesses, and every word guessed before the timer runs out is a point. It's the classic pass-around game, and it scales from four people to a whole room. Read the full [Alias rules](guideAliasRules), or print our [football word list](words) if you want ready-made cards."
+    facts:
+      - [Players, "4 or more, in teams of 2+"]
+      - [The phone, Timer and word list]
+      - [A round, "1 minute per turn"]
+  - id: hat
+    h: The hat game
+    p:
+      - "Everyone writes a few words or names on slips of paper and drops them in a hat. The game runs in three rounds with the same slips: describe them freely, then use only one word, then act them out in silence. By the third round everyone remembers the slips, which is where the laughs come from."
+      - "The phone keeps the time and the score, and paper does the rest. No paper? Each player types their words into a shared note before you start."
+    facts:
+      - [Players, "6 or more, in two teams"]
+      - [The phone, Timer and scorepad]
+      - [A game, About 30 minutes]
+  - id: charades
+    h: Charades
+    p:
+      - "One player acts out a word or a title without speaking, and their team guesses. Agree on signs for “film”, “book” and “how many words” before you start. It needs no reading, so it works well across ages and languages."
+    facts:
+      - [Players, 4 or more]
+      - [The phone, Shows the secret word to the actor and runs the timer]
+      - [A turn, 1–2 minutes]
+  - id: imposter
+    h: The imposter game
+    p:
+      - "Everyone sees the same secret word on the phone, except one player, the imposter, who sees nothing. Pass the phone round so each player looks in turn. Then take turns saying one word linked to the secret. The imposter has to bluff, and everyone else has to spot them without giving the word away. Vote, then reveal."
+    facts:
+      - [Players, 4–10]
+      - [The phone, Shows each player their card in turn]
+      - [A round, 5–10 minutes]
+  - id: draw
+    h: Draw and pass
+    p:
+      - "The first player types a phrase. The next player draws it on the phone, the next writes what they think the drawing shows, and so on round the circle. At the end, scroll back through the chain and see how “a goalkeeper on holiday” turned into “a crab in a hat”. Any drawing or notes app on your phone does the job."
+    facts:
+      - [Players, 4–10]
+      - [The phone, The sketchbook and the paper]
+      - [A round, About 10 minutes]
+  - id: rather
+    h: Would you rather
+    p:
+      - "One player reads out a dilemma, everyone picks a side, and the minority explains themselves. There's no winner, which makes it a good warm-up while people arrive. Write your own questions in advance, or take turns making them up."
+    facts:
+      - [Players, 3 or more]
+      - [The phone, Holds the list of questions]
+      - [A round, As long as you like]
+  - id: football
+    h: "The football option: Bombardiro"
+    p:
+      - "We make Bombardiro, a football party word game for iPhone and iPad. It's describe-the-word where every word is football: players, clubs, stadiums, legends, tactics and trophies, and the World Cup. 2–4 teams share one phone, the app deals the cards, runs the clock and keeps the score, and it works offline once installed. It's free, in English, Russian and Armenian."
+    facts:
+      - [Players, "2–4 teams"]
+      - [The phone, "Cards, clock, whistle and scoreboard"]
+      - [A turn, "30, 60, 90 or 120 seconds"]
+    app: true
+  - id: tips
+    h: Tips for a one-phone game night
+    list:
+      - Charge the phone first, and turn the brightness up so the whole team can see it.
+      - Turn on Do Not Disturb, so a message doesn't pop up over the secret word.
+      - Agree on how the phone moves, clockwise or team by team, before the first turn.
+      - Keep the scores on the phone, so nobody argues about them at the end.

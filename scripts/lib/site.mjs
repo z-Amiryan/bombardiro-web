@@ -13,9 +13,10 @@ export const LANGS = routes.locales;
 
 /**
  * Route ids whose pages are built in a later milestone of handoff/SPEC.md §15. Every check that needs a page
- * skips these until then. The guides arrive in milestone 5, which empties this list.
+ * skips these until then. Empty since milestone 5: every route in handoff/routes.json must be built.
+ * @type {Set<string>}
  */
-export const PENDING_ROUTE_IDS = new Set(['guideAliasRules', 'guideOnePhone', 'guideFootballParty', 'guideGlossary']);
+export const PENDING_ROUTE_IDS = new Set();
 
 /**
  * Every page the build must contain: one entry per route id and language.

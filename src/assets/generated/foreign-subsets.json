@@ -1,0 +1,33 @@
+{
+  "en": [
+    {
+      "src": "./src/assets/fonts/foreign-en-cyrillic.woff2",
+      "script": "cyrillic",
+      "unicodeRange": "U+0410, U+0411, U+0414, U+0418, U+0419, U+041A, U+041C, U+041E, U+0420, U+0421, U+0423, U+0430, U+0431, U+0434, U+0438, U+0439, U+043A, U+043C, U+043E, U+0440, U+0441, U+0443"
+    },
+    {
+      "src": "./src/assets/fonts/foreign-en-armenian.woff2",
+      "script": "armenian",
+      "unicodeRange": "U+0531, U+0535, U+0540, U+0545, U+0546, U+0550, U+0561, U+0565, U+0570, U+0575, U+0576, U+0580"
+    }
+  ],
+  "ru": [
+    {
+      "src": "./src/assets/fonts/foreign-ru-armenian.woff2",
+      "script": "armenian",
+      "unicodeRange": "U+0531, U+0535, U+0540, U+0545, U+0546, U+0550, U+0561, U+0565, U+0570, U+0575, U+0576, U+0580"
+    },
+    {
+      "src": "./src/assets/fonts/foreign-ru-armenian-guides.woff2",
+      "script": "armenian",
+      "unicodeRange": "U+0532, U+0533, U+0534, U+0536, U+0539, U+053A, U+053B, U+053C, U+053D, U+053E, U+053F, U+0541, U+0542, U+0543, U+0544, U+0547, U+0548, U+0549, U+054A, U+054B, U+054C, U+054D, U+054E, U+054F, U+0551, U+0552, U+0553, U+0554, U+0555, U+0556, U+0562, U+0563, U+0564, U+0566, U+0569, U+056A, U+056B, U+056C, U+056D, U+056E, U+056F, U+0571, U+0572, U+0573, U+0574, U+0577, U+0578, U+0579, U+057A, U+057B, U+057C, U+057D, U+057E, U+057F, U+0581, U+0582, U+0583, U+0584, U+0585, U+0586"
+    }
+  ],
+  "hy": [
+    {
+      "src": "./src/assets/fonts/foreign-hy-cyrillic.woff2",
+      "script": "cyrillic",
+      "unicodeRange": "U+0410, U+0411, U+0414, U+0418, U+0419, U+041A, U+041C, U+041E, U+0420, U+0421, U+0423, U+0430, U+0431, U+0434, U+0438, U+0439, U+043A, U+043C, U+043E, U+0440, U+0441, U+0443"
+    }
+  ]
+}

@@ -126,10 +126,16 @@ const total = String(cats.length).padStart(2, '0');
             ))
           }
         </ol>
-        <a class="more" href={routePath('howToPlay', lang)}>
-          {c.nav.howToPlay}
-          <Icon name="arrow-right" />
-        </a>
+        <p class="more-links">
+          <a class="more" href={routePath('howToPlay', lang)}>
+            {c.nav.howToPlay}
+            <Icon name="arrow-right" />
+          </a>
+          <a class="more" href={routePath('guideAliasRules', lang)}>
+            {c.article.aliasRules}
+            <Icon name="arrow-right" />
+          </a>
+        </p>
       </div>
       <div class="note">
         <h2 class="note__title display">{t.appNote.title}</h2>
@@ -445,8 +451,13 @@ const total = String(cats.length).padStart(2, '0');
     font-size: 30px;
     line-height: 1;
   }
-  .more {
+  .more-links {
     margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 28px;
+  }
+  .more {
     display: inline-flex;
     align-items: center;
     gap: 8px;

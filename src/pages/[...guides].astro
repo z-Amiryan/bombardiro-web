@@ -23,7 +23,7 @@ const items = (await guidesIn(lang)).map((g, i, all) => ({
   title: g.data.title,
   text: g.data.description,
   n: String(i + 1).padStart(2, '0'),
-  read: t.readTime.replace('{n}', String(readingMinutes(g.body ?? ''))),
+  read: t.readTime.replace('{n}', String(readingMinutes(g.data))),
   lead: i === 0,
   wide: i === 0 && all.length > 1,
 }));

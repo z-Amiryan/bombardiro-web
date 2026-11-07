@@ -1,0 +1,26 @@
+---
+// Guide text: [words](routeId) links resolved for the page's language, and other-script words marked with
+// their own lang (src/lib/foreign.ts).
+import { linkRuns } from '../lib/guides';
+import type { Lang } from '../lib/routes';
+import LangText from './LangText.astro';
+
+interface Props {
+  text: string;
+  lang: Lang;
+}
+
+const { text, lang } = Astro.props;
+---
+
+{
+  linkRuns(text, lang).map((r) =>
+    r.href ? (
+      <a href={r.href}>
+        <LangText text={r.text} lang={lang} />
+      </a>
+    ) : (
+      <LangText text={r.text} lang={lang} />
+    ),
+  )
+}

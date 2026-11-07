@@ -5,6 +5,7 @@ import Icon from '../components/Icon.astro';
 import { APP_PRIVACY_URL, LAST_UPDATED } from '../config/site';
 import Base from '../layouts/Base.astro';
 import { copyFor } from '../lib/copy';
+import { formatDate } from '../lib/dates';
 import { staticPathsFor, type Lang } from '../lib/routes';
 
 export function getStaticPaths() {
@@ -17,10 +18,7 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = copyFor(lang).pages.privacy;
-const LOCALES: Record<Lang, string> = { en: 'en-GB', ru: 'ru-RU', hy: 'hy-AM' };
-const date = new Intl.DateTimeFormat(LOCALES[lang], { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
-  new Date(`${LAST_UPDATED}T12:00:00Z`),
-);
+const date = formatDate(lang, LAST_UPDATED);
 const [before = '', after = ''] = t.updated.split('{date}');
 ---
 
