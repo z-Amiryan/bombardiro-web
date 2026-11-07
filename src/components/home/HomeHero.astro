@@ -399,7 +399,8 @@ const beats = home.turn.steps.map((step, i) => ({ title: step.title, time: clock
     display: flex;
     align-items: center;
     gap: 18px;
-    height: 54px;
+    /* The design's 54 px row plus its 1 px rule, as in the menu sheet. */
+    height: 55px;
     border-top: 1px dashed color-mix(in srgb, var(--c-ink-hi) 18%, transparent);
     text-decoration: none;
     transition: background-color 0.16s;

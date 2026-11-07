@@ -393,8 +393,9 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
     .row__set[aria-hidden='true'] {
       display: none;
     }
+    /* Nothing drifts, so there's nothing to pause; the button keeps its space so the hint stays centred. */
     .band__pause {
-      display: none;
+      visibility: hidden;
     }
     .word::before {
       transition: none;
