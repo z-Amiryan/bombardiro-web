@@ -23,10 +23,10 @@ the design's idea.
 | Grids on phones | `1fr` columns | `minmax(0, 1fr)` | A long unbreakable word (an email address) could widen a `1fr` column past the screen. |
 | Circle behind Home's feature screens | 340 px on phones | Up to 340 px, never wider than the screen | It widened 320 px pages by 10 px. |
 | Footer and menu links | 40 px rows | 44 px rows | SPEC §10: touch targets at least 44 px. |
-| Arrows after links (header, footer, menu sheet) | "→" in the interface font | A drawn arrow icon (`Icon.astro`), 1em, the text colour; 18 px with a 1.5 stroke in the menu sheet (the design's is 22 px) | No site font has "→" (U+2192), so the design's arrow was a system-font fallback; same reason as the "›" row under Copy. |
+| Arrows after links and buttons (header, footer, menu sheet, Home's calls to action and the phone hero's "↓") | "→" in the interface font | A drawn arrow icon (`Icon.astro`), 1em, the text colour; 18 px with a 1.5 stroke in the menu sheet (the design's is 22 px) | No site font has "→" (U+2192), so the design's arrow was a system-font fallback; same reason as the "›" row under Copy. |
 | Footer wordmark under 1310 px | 64 px from 1000 px | 64 px from 1310 px; from 1000 to 1309 px it scales down to its column | At full size it pushes the footer's columns into each other next to the longest Russian navigation label. |
 | Menu sheet under 390 px | 65 px rows, 16 px pill padding | 56 px rows, 12 px pill padding | The languages live in the sheet under 390 px; this keeps the pills on one row and the store link on a 568 px-tall screen. |
-| Menu close button | "×" in the system font at 24 px | A drawn close icon (`Icon.astro`), 20 px | Same reason as the arrows: the system "×" looks different on every system. |
+| Menu close button and the FAQ's +/× | "×" in the system font at 24 px | Drawn icons (`Icon.astro` and two CSS bars), slightly heavier than the glyphs | Same reason as the arrows: the system "×" looks different on every system. |
 | Footer email, 1000–1099 px | One line | Breaks after the @ | On one line it widened the page in Russian. |
 | Mobile menu sheet | A JavaScript-driven overlay | The same sheet as a native popover | Opens, closes on Esc and works with JavaScript off; looks and animates the same. |
 
@@ -47,7 +47,7 @@ the design's idea.
 | Where | Design | Build | Why |
 | --- | --- | --- | --- |
 | Match clock, how it counts | A JavaScript scroll handler, with the clock counting from the very top of the page | A CSS scroll timeline on each beat (`components/home/clock.css`), with the same mapping in `scripts/home.ts` only for browsers without scroll timelines. The clock starts counting as the first beat enters the screen, and reads each beat's stamp exactly as that beat reaches the middle | SPEC §9 prefers CSS scroll-driven animation, and the design notes ask for a scroll timeline. Anchoring to the beats keeps the stamps (01:00, 00:40, 00:07, 00:00) and the clock in agreement at every viewport height. |
-| Clock turning red | A 300 ms colour transition | An instant switch at 10 seconds | The reading comes from a scroll-linked animation, and browsers don't run transitions on animated values. The red layer is a cross-faded copy, so only opacity changes. |
+| Clock turning red, and the active beat's highlight | 300 ms colour and opacity transitions | Instant switches, at 10 seconds and as each beat becomes current | The reading comes from a scroll-linked animation, and browsers don't run transitions on animated values. The red layer is a cross-faded copy, so only opacity changes. |
 | Third beat's stamp on Russian pages | 00:07 | 00:08 | The Russian capture of the late card shows 00:08. Each stamp matches its real screen. |
 | Inactive beat titles on wide screens | Opacity .32 | Opacity .42 | .32 gives 2.7:1 contrast, under WCAG's 3:1 for large text; .42 gives 3.6:1 and still recedes. |
 | Clock pill | Hides once the last beat has passed | Also hides as soon as the lime word band reaches the bottom of the screen | The pill sat over the band's headline for a moment. |
@@ -59,6 +59,7 @@ the design's idea.
 | Pause control | `aria-pressed` with a changing label | A plain button whose label changes between Pause and Play | A toggle with `aria-pressed` must keep one label. |
 | Whistle toggle | `aria-pressed` | A plain button whose visible label, "Whistle: off" or "Whistle: on", is its name; no `aria-pressed` | Same pattern as the Pause control: the state is said once, and the name is the visible label (WCAG 2.5.3). |
 | Screenshot alt text | Two teams on the teams screen; "the winning team lifts the trophy" on the final screen | Three teams; "the winning team and the final score" | The captures show three teams and a champions screen, not a trophy lift. |
+| Turn section without JavaScript, 1100 px and up | (not specified) | Each beat shows its screen inline, under its text; the pinned column stays empty | The pinned screen follows the beats with a script; without one, every screen still shows next to its beat. |
 
 ## How to play
 

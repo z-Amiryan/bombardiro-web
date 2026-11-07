@@ -84,7 +84,8 @@ describe('font coverage', () => {
       const missing = new Map<string, string>();
       for (const [where, text] of siteText(lang)) {
         for (const ch of text) {
-          if (/\s/.test(ch)) continue;
+          // Whitespace, and invisible format characters such as the word joiner after a hyphen, draw nothing.
+          if (/[\s\p{Default_Ignorable_Code_Point}]/u.test(ch)) continue;
           if (!covered(ch.codePointAt(0)!, all)) missing.set(ch, where);
         }
       }
@@ -96,7 +97,7 @@ describe('font coverage', () => {
       for (const [where, text] of siteText(lang)) {
         if (!DISPLAY_KEY.test(where) || where.includes('meta.') || where.startsWith('languageNames')) continue;
         for (const ch of text) {
-          if (/\s/.test(ch)) continue;
+          if (/[\s\p{Default_Ignorable_Code_Point}]/u.test(ch)) continue;
           if (!covered(ch.codePointAt(0)!, [fonts.display.family], fonts.display.style)) missing.push(`${ch} in ${where}`);
         }
       }
