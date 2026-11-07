@@ -4,7 +4,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { PAGES, type SitePage } from './site';
 
-const WIDTHS = [320, 360, 390, 768, 1000, 1024, 1280, 1440, 1920];
+const WIDTHS = [320, 360, 390, 768, 1000, 1024, 1280, 1440, 1920, 2560];
 const pages: SitePage[] = [...PAGES, { id: 'notFound', lang: 'en', path: '/404.html' }];
 
 /** Overflow at the current width, as messages. Text clipped or scrolled on purpose is skipped. */
