@@ -57,7 +57,7 @@ the design's idea.
 | Word wall | Words from the prototype's own list | The same words taken by index from the real Easy packs, so every language shows the game's own spelling | "Use the app's terms exactly." |
 | Word wall without JavaScript | (not specified) | Still rows that scroll sideways, and no counter bar | Without JavaScript there's no Pause control, so nothing may move (WCAG 2.2.2), and scoring needs a script. |
 | Pause control | `aria-pressed` with a changing label | A plain button whose label changes between Pause and Play | A toggle with `aria-pressed` must keep one label. |
-| Whistle toggle | `aria-pressed` | `aria-pressed`, with the visible "Whistle: off/on" as its accessible name | Label-in-name (WCAG 2.5.3). |
+| Whistle toggle | `aria-pressed` | A plain button whose visible label, "Whistle: off" or "Whistle: on", is its name; no `aria-pressed` | Same pattern as the Pause control: the state is said once, and the name is the visible label (WCAG 2.5.3). |
 | Screenshot alt text | Two teams on the teams screen; "the winning team lifts the trophy" on the final screen | Three teams; "the winning team and the final score" | The captures show three teams and a champions screen, not a trophy lift. |
 
 ## How to play

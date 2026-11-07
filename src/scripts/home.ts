@@ -94,12 +94,26 @@ if (home && beats.length === 4) {
   // The whistle: off until pressed; blows when the last beat reaches the middle of the screen (00:00).
   const whistle = document.querySelector<HTMLButtonElement>('[data-whistle]');
   let audio: HTMLAudioElement | null = null;
+  const label = whistle?.querySelector<HTMLElement>('[data-whistle-label]');
   whistle?.addEventListener('click', () => {
-    const on = whistle.getAttribute('aria-pressed') !== 'true';
-    whistle.setAttribute('aria-pressed', String(on));
+    const on = !whistle.hasAttribute('data-on');
+    whistle.toggleAttribute('data-on', on);
+    if (label) label.textContent = (on ? whistle.dataset.labelOn : whistle.dataset.labelOff) ?? '';
     if (on && !audio && whistle.dataset.src) {
       audio = new Audio(whistle.dataset.src);
       audio.preload = 'auto';
+      // Safari lets an element play with sound later only if it first played inside a tap: start it muted
+      // here, then rewind and unmute.
+      const unlocking = audio;
+      unlocking.muted = true;
+      unlocking
+        .play()
+        .then(() => {
+          unlocking.pause();
+          unlocking.currentTime = 0;
+          unlocking.muted = false;
+        })
+        .catch(() => undefined);
     }
   });
   const last = beats[3];
@@ -107,7 +121,7 @@ if (home && beats.length === 4) {
     new IntersectionObserver(
       ([entry]) => {
         // Entering from below means the clock just ran out.
-        if (entry?.isIntersecting && entry.boundingClientRect.top > 0 && whistle?.getAttribute('aria-pressed') === 'true') {
+        if (entry?.isIntersecting && entry.boundingClientRect.top > 0 && whistle?.hasAttribute('data-on')) {
           audio?.play().catch(() => undefined);
         }
       },
