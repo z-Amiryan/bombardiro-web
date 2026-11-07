@@ -2,10 +2,12 @@
 
 ## Build, done by Claude Code
 
-- [ ] All 28 pages exist and CI is green on `main`.
-- [ ] Every agent in `.claude/agents/` has passed.
-- [ ] `handoff/DESIGN-DEVIATIONS.md` lists every departure from the design, or says there are none.
-- [ ] Lighthouse and budget results are in the final PR description.
+- [x] All 28 pages exist and CI is green on `main`.
+- [ ] Every agent in `.claude/agents/` has passed. Milestones 3–9 were audited by hand against each agent's
+      checklist (code, copy, design, quality, SEO, tests) and every finding was fixed; the agents themselves
+      weren't run, at the owner's request. Run them once before launch if you want their verdicts on record.
+- [x] `handoff/DESIGN-DEVIATIONS.md` lists every departure from the design, or says there are none.
+- [x] Lighthouse and budget results are in the final PR description.
 
 ## Owner, before the domain goes live
 
