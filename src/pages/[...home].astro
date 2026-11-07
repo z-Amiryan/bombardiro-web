@@ -1,5 +1,16 @@
 ---
-import PageIntro from '../components/PageIntro.astro';
+// Home (design/export/Home.dc.html, direction 1a "Sixty seconds"): a turn told as a minute on the match
+// clock, the lime word wall, three features, plays anywhere, full time and quick answers.
+import Faq from '../components/Faq.astro';
+import ClockOverlay from '../components/home/ClockOverlay.astro';
+import '../components/home/clock.css';
+import FeatureRow from '../components/home/FeatureRow.astro';
+import FinalCta from '../components/home/FinalCta.astro';
+import HomeHero from '../components/home/HomeHero.astro';
+import TurnSection from '../components/home/TurnSection.astro';
+import WhistleToggle from '../components/home/WhistleToggle.astro';
+import WordBand from '../components/home/WordBand.astro';
+import { turnTimes } from '../config/home';
 import Base from '../layouts/Base.astro';
 import { copyFor } from '../lib/copy';
 import { staticPathsFor, type Lang } from '../lib/routes';
@@ -17,5 +28,119 @@ const t = copyFor(lang).pages.home;
 ---
 
 <Base lang={lang} routeId="home" surface="night" bp={1100} title={t.meta.title} description={t.meta.description}>
-  <PageIntro h1={t.h1} lead={t.lead} />
+  <WhistleToggle slot="header-tools" lang={lang} />
+  <div class="home" data-s3={turnTimes(lang)[2]}>
+    <ClockOverlay />
+    <HomeHero lang={lang} />
+    <TurnSection lang={lang} />
+    <WordBand lang={lang} />
+
+    <div class="features">
+      <FeatureRow lang={lang} n={1} title={t.room.title} text={t.room.text} shot="teams" />
+      <FeatureRow lang={lang} n={2} title={t.fair.title} text={t.fair.text} shot="wordEditor" flip />
+      <FeatureRow lang={lang} n={3} title={t.languages.title} text={t.languages.text} shot="languages" />
+    </div>
+
+    <section class="anywhere" aria-labelledby="anywhere-title">
+      <div class="anywhere__in">
+        <h2 id="anywhere-title" class="anywhere__title display">{t.anywhere.title}</h2>
+        <p class="anywhere__text">{t.anywhere.text}</p>
+      </div>
+    </section>
+
+    <FinalCta lang={lang} />
+
+    <section class="answers" aria-labelledby="faq-title">
+      <h2 id="faq-title" class="answers__title display fit"><span class="fit__t">{t.faq.title}</span></h2>
+      <Faq name="home-faq" items={t.faq.items} />
+    </section>
+  </div>
 </Base>
+
+<script>
+  import '../scripts/home';
+  import '../scripts/word-wall';
+</script>
+
+<style>
+  .features {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 72px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 88px;
+  }
+
+  .anywhere {
+    border-top: 1px solid rgba(237, 243, 230, 0.08);
+    border-bottom: 1px solid rgba(237, 243, 230, 0.08);
+    background: var(--c-night-deep);
+  }
+
+  .anywhere__in {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 56px 20px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px 64px;
+    align-items: end;
+  }
+
+  /* Outlined display type: the stroke is the text, so it reads at full contrast. */
+  .anywhere__title {
+    font-size: calc(clamp(40px, 6.4vw, 96px) * var(--k));
+    line-height: 0.94;
+    letter-spacing: -0.015em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--fg);
+  }
+
+  .anywhere__text {
+    font: 400 clamp(16px, 1.3vw, 19px) / 1.55 var(--fu);
+    color: var(--fg-body);
+    text-wrap: pretty;
+  }
+
+  .answers {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 64px 20px 88px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px 96px;
+    align-items: start;
+  }
+
+  .answers__title {
+    --fs: calc(clamp(34px, 4vw, 56px) * var(--k));
+    --ls: -0.012em;
+    /* The longest word, in em (.fit in base.css). */
+    --fit: 5.6;
+    line-height: 0.95;
+  }
+
+  :global(:root[lang='ru']) .answers__title {
+    --fit: 4.75;
+  }
+
+  :global(:root[lang='hy']) .answers__title {
+    --fit: 8.6;
+  }
+
+  @media (min-width: 1100px) {
+    .features {
+      padding: 140px 64px;
+      gap: 160px;
+    }
+    .anywhere__in {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      padding: 96px 64px;
+    }
+    .answers {
+      grid-template-columns: 360px minmax(0, 1fr);
+      padding: 120px 64px 140px;
+    }
+  }
+</style>

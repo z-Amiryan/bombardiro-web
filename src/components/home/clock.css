@@ -1,0 +1,163 @@
+/* The match clock (DESIGN-NOTES.md essential 2). One reading, --t, from 60 down to 0 seconds, drives the
+   hero clock and bar, the clock pill, the top bar and which beat is active.
+
+   Where scroll-driven animations are supported (Chrome 125+, Safari 26+, Firefox with timelines), each beat
+   of the turn is a view timeline and three animations move --clock-a/b/c from 0 to 1:
+     a: beat 1 entering the viewport → its bottom at mid-screen   (01:00 → 00:40)
+     b: beat 2 top at mid-screen     → its bottom at mid-screen   (00:40 → the late stamp, 00:07)
+     c: beat 3 top at mid-screen     → its bottom at mid-screen   (00:07 → 00:00)
+   so each beat's own time stamp is on the clock as that beat reaches the middle of the screen. Elsewhere
+   src/scripts/home.ts sets --t from the scroll position with the same anchors. With JavaScript off or reduced
+   motion, nothing counts: the clock reads 01:00 and every beat shows its own stamp. */
+
+@property --clock-a {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+@property --clock-b {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+@property --clock-c {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+.home {
+  /* Seconds on the "late" capture: 7 on the English screen, 8 on the Russian one. */
+  --s3: 7;
+  timeline-scope: --beat-1, --beat-2, --beat-3;
+}
+.home[data-s3='8'] {
+  --s3: 8;
+}
+
+@supports (animation-timeline: --x) and (timeline-scope: --x) and (top: mod(3px, 2px)) {
+  @media (prefers-reduced-motion: no-preference) {
+    .clock-scope {
+      --clock-live: 1;
+      --t: calc(60 - 20 * var(--clock-a) - (40 - var(--s3)) * var(--clock-b) - var(--s3) * var(--clock-c));
+      animation-name: clock-a, clock-b, clock-c;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+    }
+    /* A separate, more specific rule: the CSS minifier would otherwise fold the timeline into an animation
+       shorthand, which browsers reject. */
+    .home .clock-scope {
+      animation-timeline: --beat-1, --beat-2, --beat-3;
+      animation-range:
+        cover 0% exit calc(100% - 50vh),
+        cover 50vh exit calc(100% - 50vh),
+        cover 50vh exit calc(100% - 50vh);
+    }
+  }
+}
+
+@keyframes clock-a {
+  from {
+    --clock-a: 0;
+  }
+  to {
+    --clock-a: 1;
+  }
+}
+@keyframes clock-b {
+  from {
+    --clock-b: 0;
+  }
+  to {
+    --clock-b: 1;
+  }
+}
+@keyframes clock-c {
+  from {
+    --clock-c: 0;
+  }
+  to {
+    --clock-c: 1;
+  }
+}
+
+/* The digits: the static "01:00" in the page, and two live layers drawn with CSS counters (normal and alarm
+   red) that cross-fade by opacity. All three share one grid cell, so nothing moves. The live layers need CSS
+   round() and mod(); without them the static clock stays. */
+.clock {
+  display: grid;
+  font-variant-numeric: tabular-nums;
+}
+.clock > span,
+.clock::before,
+.clock::after {
+  grid-area: 1 / 1;
+}
+
+/* A bar that empties with the clock: lime, then alarm red for the last ten seconds. */
+.bar {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(237, 243, 230, 0.12);
+}
+.bar__fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--c-lime);
+  transform: scaleX(calc(var(--t, 60) / 60));
+  transform-origin: 0 50%;
+}
+.bar__fill--late {
+  background: var(--c-alarm);
+  opacity: 0;
+}
+
+/* Which beat is on. Static: the first. Live: the one whose stretch of the turn the clock is in. */
+.beat-on-1 {
+  --on: 1;
+}
+.beat-on-2,
+.beat-on-3,
+.beat-on-4 {
+  --on: 0;
+}
+
+@supports (top: round(1.5px, 1px)) and (top: mod(3px, 2px)) {
+  .clock-scope {
+    --sec: round(var(--t, 60));
+    /* 1 once the clock is at 10 seconds or less: the last seconds turn alarm red. */
+    --late: clamp(0, 11 - var(--sec), 1);
+  }
+  .clock > span {
+    opacity: calc(1 - var(--clock-live, 0));
+  }
+  .clock::before,
+  .clock::after {
+    counter-reset: m calc(round(down, var(--sec) / 60)) s calc(mod(var(--sec), 60));
+    content: counter(m, decimal-leading-zero) ':' counter(s, decimal-leading-zero);
+  }
+  .clock::before {
+    opacity: calc(var(--clock-live, 0) * (1 - var(--late)));
+  }
+  .clock::after {
+    color: var(--c-alarm);
+    opacity: calc(var(--clock-live, 0) * var(--late));
+  }
+  .bar__fill--late {
+    opacity: calc(var(--clock-live, 0) * var(--late));
+  }
+  .beat-on-1 {
+    --on: clamp(0, var(--sec) - 40, 1);
+  }
+  .beat-on-2 {
+    --on: clamp(0, min(var(--sec) - var(--s3), 41 - var(--sec)), 1);
+  }
+  .beat-on-3 {
+    --on: clamp(0, min(var(--sec), var(--s3) + 1 - var(--sec)), 1);
+  }
+  .beat-on-4 {
+    --on: clamp(0, 1 - var(--sec), 1);
+  }
+}

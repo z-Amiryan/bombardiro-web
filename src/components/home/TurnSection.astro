@@ -1,0 +1,286 @@
+---
+// "How a turn works": four beats, each with its clock stamp and its real screen. Phones show each screen
+// under its beat. Wide screens pin one screen beside the beats and swap it as each beat crosses the middle
+// of the screen (src/scripts/home.ts); without JavaScript they fall back to the inline screens.
+import { clockText, turnTimes } from '../../config/home';
+import { copyFor } from '../../lib/copy';
+import { routePath, type Lang } from '../../lib/routes';
+import type { ScreenId } from '../../lib/screens';
+import Icon from '../Icon.astro';
+import Screenshot from '../Screenshot.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const turn = copyFor(lang).pages.home.turn;
+const times = turnTimes(lang);
+const SHOTS: ScreenId[] = ['settings', 'liveCard', 'liveLate', 'scoreboard'];
+const beats = turn.steps.map((step, i) => ({
+  ...step,
+  n: i + 1,
+  time: clockText(times[i] ?? 0),
+  late: i >= 2,
+  shot: SHOTS[i] ?? 'settings',
+}));
+---
+
+<section id="turn" class="turn clock-scope" aria-labelledby="turn-title">
+  <div class="turn__head">
+    <h2 id="turn-title" class="turn__title display">{turn.title}</h2>
+    <a class="turn__cta" href={routePath('howToPlay', lang)}>
+      {turn.cta}
+      <Icon name="arrow-right" />
+    </a>
+  </div>
+
+  <div class="turn__grid">
+    <ol class="beats" role="list">
+      {
+        beats.map((beat) => (
+          <li id={`beat-${beat.n}`} class:list={['beat', `beat-on-${beat.n}`]}>
+            <div class="beat__meta">
+              <span class:list={['beat__time', 'display', { 'beat__time--late': beat.late }]}>{beat.time}</span>
+              <span class="beat__rule" aria-hidden="true" />
+              <span class="beat__n">{`0${beat.n} / 04`}</span>
+            </div>
+            <h3 class="beat__title display">{beat.title}</h3>
+            <p class="beat__text">{beat.text}</p>
+            <Screenshot lang={lang} id={beat.shot} width={268} sizes="min(268px, 72vw)" class="beat__shot" />
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="turn__pin">
+      <div class="turn__pin-in" data-pinned>
+        <span class="turn__cone" aria-hidden="true" />
+        {
+          beats.map((beat) => (
+            <div class="turn__screen" data-beat={beat.n} data-state={beat.n === 1 ? 'on' : 'after'}>
+              <Screenshot lang={lang} id={beat.shot} width={304} sizes="304px" class="turn__shot" />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .turn {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 56px 20px 24px;
+  }
+
+  .turn__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .turn__title {
+    font-size: calc(clamp(36px, 5vw, 72px) * var(--k));
+    line-height: 0.95;
+    letter-spacing: -0.012em;
+  }
+
+  .turn__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    font: 700 15px/1 var(--fu);
+    color: var(--accent);
+    text-decoration: none;
+    text-underline-offset: 5px;
+    text-decoration-thickness: 2px;
+  }
+
+  @media (hover: hover) {
+    .turn__cta:hover {
+      color: var(--accent);
+      text-decoration-line: underline;
+    }
+  }
+
+  .turn__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 8px;
+  }
+
+  .beats {
+    margin: 0;
+  }
+
+  .beat {
+    padding: 40px 0 16px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .beat:nth-child(1) {
+    view-timeline: --beat-1 block;
+  }
+  .beat:nth-child(2) {
+    view-timeline: --beat-2 block;
+  }
+  .beat:nth-child(3) {
+    view-timeline: --beat-3 block;
+  }
+
+  .beat__meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .beat__time {
+    font-size: clamp(24px, 2.4vw, 32px);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--c-lime);
+  }
+
+  .beat__time--late {
+    color: var(--c-alarm);
+  }
+
+  .beat__rule {
+    flex: 1;
+    height: 1px;
+    background: repeating-linear-gradient(90deg, rgba(237, 243, 230, 0.28) 0 5px, transparent 5px 10px);
+  }
+
+  .beat__n {
+    font: 600 11px/1 var(--fu);
+    letter-spacing: 0.14em;
+    color: var(--fg-muted);
+  }
+
+  .beat__title {
+    margin: 18px 0 10px;
+    font-size: calc(clamp(30px, 3.6vw, 52px) * var(--k));
+    line-height: 0.96;
+    letter-spacing: -0.01em;
+  }
+
+  .beat__text {
+    max-width: 34ch;
+    font: 400 clamp(16px, 1.3vw, 19px) / 1.5 var(--fu);
+    color: var(--fg-body);
+    text-wrap: pretty;
+  }
+
+  .beat :global(.beat__shot) {
+    width: min(268px, 72vw);
+    margin: 28px auto 8px;
+  }
+
+  .turn__pin {
+    display: none;
+  }
+
+  @media (min-width: 1100px) {
+    .turn {
+      padding: 120px 64px 40px;
+    }
+
+    .turn__grid {
+      grid-template-columns: minmax(0, 1fr) 420px;
+      gap: 0 96px;
+      margin-top: 24px;
+    }
+
+    .beat {
+      min-height: 86vh;
+      padding: 0;
+      justify-content: center;
+    }
+
+    .beat :global(.beat__shot) {
+      display: none;
+    }
+
+    .beat__title {
+      /* The beat the clock is in is at full strength; the others recede to .42 (the design's .32 is 2.7:1,
+         under WCAG's 3:1 for large text; .42 is 3.6:1). */
+      opacity: calc(1 - var(--clock-live, 0) * (1 - var(--on)) * 0.58);
+    }
+
+    .turn__pin {
+      display: block;
+      position: relative;
+    }
+
+    .turn__pin-in {
+      position: sticky;
+      top: calc(50vh - 330px);
+      height: 660px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .turn__cone {
+      position: absolute;
+      left: 50%;
+      top: -120px;
+      width: 520px;
+      height: 900px;
+      margin-left: -260px;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(237, 243, 230, 0.09) 0%, rgba(237, 243, 230, 0.02) 60%, rgba(237, 243, 230, 0) 85%);
+      clip-path: polygon(40% 0, 60% 0, 100% 100%, 0 100%);
+    }
+
+    .turn__screen {
+      position: absolute;
+      top: 0;
+      width: 304px;
+      opacity: 0;
+      transform: translateY(14px) scale(0.985);
+      transition:
+        opacity 0.35s var(--ease-out),
+        transform 0.5s var(--ease-out);
+    }
+
+    .turn__screen[data-state='before'] {
+      transform: translateY(-14px) scale(0.985);
+    }
+
+    .turn__screen[data-state='on'] {
+      opacity: 1;
+      transform: none;
+    }
+
+    .turn__screen :global(.turn__shot) {
+      width: 304px;
+      border-radius: var(--r-shot-lg);
+    }
+  }
+
+  /* Without JavaScript the pinned screen can't follow the beats, so wide screens show them inline too. */
+  @media (min-width: 1100px) and (scripting: none) {
+    .beat :global(.beat__shot) {
+      display: block;
+      margin: 28px 0 0;
+      width: 268px;
+    }
+    .turn__pin {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .turn__screen,
+    .turn__screen[data-state='before'] {
+      transform: none;
+      transition: opacity 0.15s linear;
+    }
+  }
+</style>

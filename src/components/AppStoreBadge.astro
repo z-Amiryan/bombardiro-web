@@ -1,0 +1,42 @@
+---
+// Apple's badge, unmodified, 48 px high, once per page (legal.md). Every layout that places it keeps at least
+// 12 px (a quarter of its height) clear around it. English and Armenian pages use the English badge; Apple has
+// no Armenian one.
+import badgeEn from '../../assets/badges/app-store-en.svg?url';
+import badgeRu from '../../assets/badges/app-store-ru.svg?url';
+import { storeUrl, type StorePlacement } from '../config/site';
+import { copyFor } from '../lib/copy';
+import type { Lang } from '../lib/routes';
+
+interface Props {
+  lang: Lang;
+  placement: StorePlacement;
+  class?: string;
+}
+
+const { lang, placement, class: className } = Astro.props;
+---
+
+<a class:list={['badge', className]} href={storeUrl(placement)}>
+  <img
+    src={lang === 'ru' ? badgeRu : badgeEn}
+    alt={copyFor(lang).cta.badgeAlt}
+    lang={lang === 'hy' ? 'en' : undefined}
+    width="144"
+    height="48"
+  />
+</a>
+
+<style>
+  .badge {
+    display: block;
+    flex: none;
+    line-height: 0;
+    border-radius: 8px;
+  }
+  .badge img {
+    display: block;
+    width: auto;
+    height: 48px;
+  }
+</style>

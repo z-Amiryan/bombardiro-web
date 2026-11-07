@@ -1,0 +1,448 @@
+---
+// Home hero (design/export/Home.dc.html): the headline is the largest paint, static text that waits for
+// nothing. On a phone the clock sits under the headline on the centre circle; on a wide screen it runs across
+// the top beside the four beats of a turn, over a full-width bar. One set of elements serves both layouts,
+// rearranged by CSS grid, so the badge and the h1 appear once.
+import { clockText, turnTimes } from '../../config/home';
+import { copyFor } from '../../lib/copy';
+import type { Lang } from '../../lib/routes';
+import AppStoreBadge from '../AppStoreBadge.astro';
+import Icon from '../Icon.astro';
+import QrToStore from '../QrToStore.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = copyFor(lang);
+const home = t.pages.home;
+// The headline is three short sentences, one per line; the last is the lime "Score."
+const [a = '', b = '', ...rest] = (home.h1.match(/[^.!?։]+[.!?։]+/g) ?? [home.h1]).map((s) => s.trim());
+const c = rest.join(' ');
+const times = turnTimes(lang);
+const beats = home.turn.steps.map((step, i) => ({ title: step.title, time: clockText(times[i] ?? 0), n: i + 1 }));
+---
+
+<section class="hero clock-scope" aria-labelledby="hero-title">
+  <div class="hero__bg" aria-hidden="true">
+    <span class="hero__cone hero__cone--left"></span>
+    <span class="hero__cone hero__cone--right"></span>
+    <span class="hero__cone hero__cone--centre"></span>
+  </div>
+
+  <div class="hero__copy">
+    <p class="eyebrow">{home.eyebrow}</p>
+    <h1 id="hero-title" class="hero__h1 display">
+      <span>{a}</span>{' '}
+      <span>{b}</span>{' '}
+      <span class="hero__score">{c}</span>
+    </h1>
+  </div>
+
+  <div class="hero__stage" aria-hidden="true">
+    <div class="hero__clock clock display"><span>{clockText(60)}</span></div>
+    <div class="hero__bar bar">
+      <span class="hero__ring"></span>
+      <span class="bar__fill"></span>
+      <span class="bar__fill bar__fill--late"></span>
+      <span class="hero__spot"></span>
+    </div>
+  </div>
+
+  <div class="hero__side">
+    <p class="hero__lead">{home.lead}</p>
+    <div class="hero__store">
+      <AppStoreBadge lang={lang} placement="hero" />
+      <p class="hero__avail">{t.cta.availability}</p>
+    </div>
+    <QrToStore lang={lang} class="hero__qr" />
+  </div>
+
+  <nav class="hero__beats" aria-labelledby="hero-beats-title">
+    <p id="hero-beats-title" class="hero__beats-title">{home.turn.title}</p>
+    <ol role="list">
+      {
+        beats.map((beat) => (
+          <li class={`beat-on-${beat.n}`}>
+            <a href={`#beat-${beat.n}`}>
+              <span class="hero__time display" aria-hidden="true">
+                <span class="hero__time-dim">{beat.time}</span>
+                <span class="hero__time-on">{beat.time}</span>
+                <span class="hero__time-late">{beat.time}</span>
+              </span>
+              <span class="sr-only">{beat.time}</span>{' '}
+              <span class="hero__beat-title">{beat.title}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+
+  <a class="hero__more" href="#turn">
+    {home.turn.title}
+    <Icon name="arrow-down" />
+  </a>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100svh - var(--header-h));
+    padding: 14px 20px 22px;
+    isolation: isolate;
+  }
+
+  .hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(120% 70% at 50% -10%, #1c242a 0%, var(--c-night) 62%);
+  }
+
+  .hero__cone {
+    position: absolute;
+    background: linear-gradient(180deg, rgba(237, 243, 230, 0.11) 0%, rgba(237, 243, 230, 0.035) 55%, rgba(237, 243, 230, 0) 88%);
+    clip-path: polygon(41% 0, 59% 0, 100% 100%, 0 100%);
+  }
+
+  .hero__cone--left,
+  .hero__cone--right {
+    display: none;
+  }
+
+  .hero__cone--centre {
+    left: 50%;
+    top: -60px;
+    width: 560px;
+    height: 820px;
+    margin-left: -280px;
+  }
+
+  .hero__h1 {
+    margin-top: 16px;
+    font-size: calc(clamp(38px, 11vw, 56px) * var(--k));
+    line-height: 0.95;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+  }
+
+  .hero__h1 span {
+    display: block;
+  }
+
+  .hero__score {
+    color: var(--accent);
+  }
+
+  /* Phone: the clock on the centre circle, between the headline and the lead. */
+  .hero__stage {
+    position: relative;
+    flex: 1;
+    min-height: 240px;
+    margin: 0 -20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero__stage::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 330px;
+    height: 330px;
+    margin: -165px 0 0 -165px;
+    border-radius: 50%;
+    border: 1px solid rgba(237, 243, 230, 0.09);
+  }
+
+  .hero__stage::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: rgba(237, 243, 230, 0.09);
+  }
+
+  .hero__clock {
+    position: relative;
+    z-index: 1;
+    font-size: clamp(96px, 29vw, 140px);
+    line-height: 0.82;
+    letter-spacing: -0.035em;
+    color: var(--fg);
+  }
+
+  .hero__bar {
+    z-index: 1;
+    width: calc(100% - 40px);
+    margin-top: 20px;
+  }
+
+  .hero__ring,
+  .hero__spot {
+    display: none;
+  }
+
+  .hero__lead {
+    max-width: 40ch;
+    font: 400 16px/1.5 var(--fu);
+    color: var(--fg-body);
+    text-wrap: pretty;
+  }
+
+  .hero__store {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 22px;
+  }
+
+  .hero__avail {
+    max-width: 16ch;
+    font: 500 13px/1.35 var(--fu);
+    color: var(--fg-muted);
+  }
+
+  .hero :global(.hero__qr),
+  .hero__beats {
+    display: none;
+  }
+
+  .hero__more {
+    margin-top: 22px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    width: fit-content;
+    font: 600 12px/1 var(--fu);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--fg);
+    text-decoration: none;
+  }
+
+  .hero__more :global(.icon) {
+    font-size: 15px;
+    color: var(--accent);
+  }
+
+  /* Wide: clock and beats across the top, the bar under them, headline and store under the bar. */
+  @media (min-width: 1100px) {
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 388px;
+      grid-template-rows: minmax(0, 1fr) auto auto;
+      grid-template-areas:
+        'clock beats'
+        'bar bar'
+        'copy side';
+      column-gap: 96px;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 36px 64px 64px;
+    }
+
+    .hero__bg {
+      background: radial-gradient(80% 75% at 50% 0%, var(--c-night-glow) 0%, var(--c-night) 58%);
+    }
+
+    .hero__cone--centre {
+      display: none;
+    }
+
+    .hero__cone--left,
+    .hero__cone--right {
+      display: block;
+      top: -170px;
+      width: 560px;
+      height: 1300px;
+      transform-origin: 50% 0;
+      background: linear-gradient(180deg, rgba(237, 243, 230, 0.12) 0%, rgba(237, 243, 230, 0.035) 48%, rgba(237, 243, 230, 0) 78%);
+      clip-path: polygon(45% 0, 55% 0, 100% 100%, 0 100%);
+    }
+
+    .hero__cone--left {
+      left: -20px;
+      transform: rotate(-36deg);
+    }
+
+    .hero__cone--right {
+      right: -20px;
+      transform: rotate(36deg);
+    }
+
+    .hero__copy {
+      grid-area: copy;
+    }
+
+    .hero__h1 {
+      margin-top: 20px;
+      font-size: calc(clamp(64px, 6vw, 92px) * var(--k));
+      line-height: 0.92;
+      letter-spacing: -0.015em;
+    }
+
+    .hero__stage {
+      display: contents;
+    }
+
+    .hero__stage::before,
+    .hero__stage::after {
+      display: none;
+    }
+
+    .hero__clock {
+      grid-area: clock;
+      align-self: end;
+      font-size: clamp(160px, calc((100vw - 620px) / 2.75), 296px);
+      line-height: 0.8;
+      letter-spacing: -0.045em;
+    }
+
+    .hero__bar {
+      grid-area: bar;
+      width: auto;
+      margin: 30px 0 40px;
+    }
+
+    .hero__ring,
+    .hero__spot {
+      display: block;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero__ring {
+      width: 600px;
+      height: 600px;
+      margin: -300px 0 0 -300px;
+      border: 1px solid rgba(237, 243, 230, 0.08);
+    }
+
+    .hero__ring::before {
+      content: '';
+      position: absolute;
+      inset: -61px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(191, 247, 71, 0.07) 0%, rgba(191, 247, 71, 0) 60%);
+    }
+
+    .hero__spot {
+      width: 14px;
+      height: 14px;
+      margin: -7px 0 0 -7px;
+      background: var(--c-night);
+      border: 2px solid rgba(237, 243, 230, 0.55);
+    }
+
+    .hero__side {
+      grid-area: side;
+      padding-top: 34px;
+    }
+
+    .hero__lead {
+      max-width: none;
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    .hero__store {
+      margin-top: 28px;
+    }
+
+    .hero :global(.hero__qr) {
+      display: flex;
+      margin-top: 22px;
+      padding-top: 22px;
+      border-top: 1px dashed rgba(237, 243, 230, 0.16);
+    }
+
+    .hero__beats {
+      display: block;
+      grid-area: beats;
+      align-self: end;
+    }
+
+    .hero__more {
+      display: none;
+    }
+  }
+
+  .hero__beats-title {
+    padding-bottom: 16px;
+    font: 600 12px/1 var(--fu);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+
+  .hero__beats ol {
+    margin: 0;
+  }
+
+  .hero__beats a {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    height: 54px;
+    border-top: 1px dashed rgba(237, 243, 230, 0.18);
+    text-decoration: none;
+    transition: background-color 0.16s;
+  }
+
+  @media (hover: hover) {
+    .hero__beats a:hover {
+      background: rgba(237, 243, 230, 0.03);
+    }
+  }
+
+  .hero__time {
+    display: grid;
+    width: 76px;
+    flex: none;
+    font-size: 22px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hero__time > span {
+    grid-area: 1 / 1;
+  }
+
+  .hero__time-dim {
+    color: var(--c-ink-dim);
+    opacity: calc(1 - var(--on));
+  }
+
+  .hero__time-on {
+    color: var(--c-lime);
+    opacity: calc(var(--on) * (1 - var(--late, 0)));
+  }
+
+  .hero__time-late {
+    color: var(--c-alarm);
+    opacity: calc(var(--on) * var(--late, 0));
+  }
+
+  .hero__beat-title {
+    font: 500 16px/1.2 var(--fu);
+    color: var(--fg);
+    /* #EDF3E6 at 62% reads as the design's #9AA59A; opacity is the only property that changes. */
+    opacity: calc(0.62 + 0.38 * var(--on));
+  }
+</style>

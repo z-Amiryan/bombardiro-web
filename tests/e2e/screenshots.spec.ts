@@ -15,8 +15,16 @@ for (const size of SIZES) {
     for (const p of TEMPLATES) {
       test(`${p.path}`, async ({ page }) => {
         await page.goto(p.path);
-        await page.waitForLoadState('networkidle');
         await page.evaluate(() => document.fonts.ready);
+        // Scroll through the page so lazy images load, then return to the top.
+        await page.evaluate(async () => {
+          for (let y = 0; y < document.documentElement.scrollHeight; y += innerHeight / 2) {
+            window.scrollTo(0, y);
+            await new Promise((r) => setTimeout(r, 60));
+          }
+          window.scrollTo(0, 0);
+        });
+        await page.waitForLoadState('networkidle');
         await page.screenshot({ path: `test-results/screenshots/${p.id}-${p.lang}-${size.name}.png`, fullPage: true });
       });
     }

@@ -1,0 +1,49 @@
+---
+// Desktop only: a QR code beside the badge, so a visitor on a computer can open the App Store on their
+// iPhone. Generated at build time from the same campaign link (placement "qr").
+import { storeUrl } from '../config/site';
+import { copyFor } from '../lib/copy';
+import { qrPath } from '../lib/qr';
+import type { Lang } from '../lib/routes';
+
+interface Props {
+  lang: Lang;
+  class?: string;
+}
+
+const { lang, class: className } = Astro.props;
+const { size, d } = qrPath(storeUrl('qr'));
+---
+
+<div class:list={['qr', className]}>
+  <svg class="qr__code" viewBox={`0 0 ${size} ${size}`} width="84" height="84" aria-hidden="true" focusable="false" shape-rendering="crispEdges">
+    <rect width={size} height={size} rx="2" class="qr__bg"></rect>
+    <path d={d} class="qr__fg"></path>
+  </svg>
+  <p class="qr__text">{copyFor(lang).cta.scan}</p>
+</div>
+
+<style>
+  .qr {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .qr__code {
+    flex: none;
+    width: 84px;
+    height: 84px;
+    border-radius: var(--r-sm);
+  }
+  .qr__bg {
+    fill: var(--c-ink-hi);
+  }
+  .qr__fg {
+    fill: var(--c-night);
+  }
+  .qr__text {
+    max-width: 24ch;
+    font: 400 13px/1.45 var(--fu);
+    color: var(--fg-muted);
+  }
+</style>

@@ -1,0 +1,181 @@
+---
+// Full time: the red 00:00, "Crown the champions", the app's skewed PLAY-button shape as the call to action
+// (a text link: the badge appears once, in the hero) and the final screen.
+import { storeUrl } from '../../config/site';
+import { copyFor } from '../../lib/copy';
+import type { Lang } from '../../lib/routes';
+import { clockText } from '../../config/home';
+import Icon from '../Icon.astro';
+import Screenshot from '../Screenshot.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = copyFor(lang);
+const final = t.pages.home.final;
+---
+
+<section class="final" aria-labelledby="final-title">
+  <span class="final__cone" aria-hidden="true"></span>
+  <div class="final__in">
+    <div>
+      <p class="final__stamp display" aria-hidden="true">{clockText(0)}</p>
+      <h2 id="final-title" class="final__title display fit"><span class="fit__t">{final.title}</span></h2>
+      <p class="final__text">{final.text}</p>
+      <a class="skew" href={storeUrl('final')}>
+        <span class="skew__bg" aria-hidden="true"></span>
+        <span class="skew__label display">{t.cta.getApp}<Icon name="arrow-right" /></span>
+      </a>
+      <p class="final__avail">{t.cta.availability}</p>
+    </div>
+    <div class="final__media">
+      <Screenshot lang={lang} id="final" width={304} sizes="(min-width: 1100px) 304px, min(268px, 72vw)" class="final__shot" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .final {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .final__cone {
+    position: absolute;
+    z-index: -1;
+    left: 50%;
+    top: -80px;
+    width: 900px;
+    height: 1100px;
+    margin-left: -450px;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(237, 243, 230, 0.1) 0%, rgba(237, 243, 230, 0.03) 55%, rgba(237, 243, 230, 0) 85%);
+    clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
+  }
+
+  .final__in {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 80px 20px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px 96px;
+    align-items: center;
+  }
+
+  .final__stamp {
+    font-size: clamp(28px, 2.6vw, 36px);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--c-alarm);
+  }
+
+  .final__title {
+    margin: 18px 0 16px;
+    --fs: calc(clamp(44px, 7vw, 108px) * var(--k));
+    --ls: -0.02em;
+    /* The longest word, in em (.fit in base.css). */
+    --fit: 6.8;
+    line-height: 0.9;
+    text-wrap: balance;
+  }
+
+  :global(:root[lang='ru']) .final__title {
+    --fit: 6.5;
+  }
+
+  :global(:root[lang='hy']) .final__title {
+    --fit: 5.2;
+  }
+
+  .final__text {
+    max-width: 30ch;
+    font: 400 clamp(17px, 1.4vw, 20px) / 1.5 var(--fu);
+    color: var(--fg-body);
+  }
+
+  /* The app's PLAY button: a skewed lime-gradient plate behind upright text. */
+  .skew {
+    position: relative;
+    margin-top: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 64px;
+    padding: 0 34px;
+    color: var(--c-ink);
+    text-decoration: none;
+    transition: transform 0.16s var(--ease-out);
+  }
+
+  .skew__bg {
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    transform: skewX(-8deg);
+    background: linear-gradient(100deg, #c8fa55 0%, #8cc81e 100%);
+    box-shadow: 0 12px 32px rgba(191, 247, 71, 0.22);
+  }
+
+  .skew__bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(100deg, #d4ff66 0%, #99d42a 100%);
+    box-shadow: 0 16px 36px rgba(191, 247, 71, 0.3);
+    opacity: 0;
+    transition: opacity 0.16s var(--ease-out);
+  }
+
+  .skew__label {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+  }
+
+  @media (hover: hover) {
+    .skew:hover {
+      color: var(--c-ink);
+      transform: translateY(-2px);
+    }
+    .skew:hover .skew__bg::after {
+      opacity: 1;
+    }
+  }
+
+  .skew:active {
+    transform: scale(0.97);
+  }
+
+  .final__avail {
+    margin-top: 16px;
+    font: 500 13px/1.4 var(--fu);
+    color: var(--fg-muted);
+  }
+
+  .final__media {
+    display: flex;
+    justify-content: center;
+  }
+
+  .final__media :global(.final__shot) {
+    width: min(268px, 72vw);
+  }
+
+  @media (min-width: 1100px) {
+    .final__in {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      padding: 140px 64px;
+    }
+    .final__media :global(.final__shot) {
+      width: 304px;
+    }
+  }
+</style>

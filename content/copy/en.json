@@ -28,6 +28,17 @@
     "textLink": "Available on the App Store",
     "scan": "Scan with your iPhone camera to get the app"
   },
+  "screens": {
+    "settings": "Match settings with a 60-second turn selected",
+    "liveCard": "A live card at 00:40 with three words scored",
+    "liveLate": "The same card at 00:07: five words scored, the clock in red",
+    "scoreboard": "The scoreboard after a turn, ready to pass the phone",
+    "teams": "Team setup: three teams with names and crests",
+    "wordEditor": "Editing the last turn: each word marked GOAL or MISS",
+    "languages": "The language menu: English, Russian and Armenian",
+    "final": "Full time: the winning team and the final score",
+    "categories": "Choosing categories before a match"
+  },
   "footer": {
     "follow": "Follow us",
     "contact": "Contact",
@@ -57,12 +68,12 @@
           { "title": "The clock starts", "text": "30, 60, 90 or 120 seconds. You set it." },
           { "title": "Describe, don't say", "text": "A card shows 5 to 8 football words. Describe each one without saying it." },
           { "title": "Every guess is a goal", "text": "Tap each word your team gets. Clear the card and a fresh one drops on the same clock." },
-          { "title": "The whistle ends it", "text": "Only the timer ends a turn. Pass the phone to the next team." }
+          { "title": "The whistle ends it", "text": "The timer ends the turn, not the card. Pass the phone to the next team." }
         ]
       },
       "words": {
         "title": "Every word is football",
-        "text": "Players, clubs, stadiums, legends, tactics and trophies, World Cup moments: nearly 1,700 words in every language. Easy deals the household names. Hard deals the deep cuts.",
+        "text": "Players, clubs, stadiums, legends, tactics and trophies, the World Cup: nearly 1,700 words in every language. Easy deals the household names. Hard deals the deep cuts.",
         "cta": "See the words"
       },
       "room": {
@@ -85,6 +96,8 @@
         "title": "Crown the champions",
         "text": "Grab your friends, pick your categories and start the match."
       },
+      "wall": {"goals": {"one": "goal", "few": "goals", "many": "goals", "other": "goals"}, "pause": "Pause", "play": "Play"},
+      "whistle": {"off": "Whistle: off", "on": "Whistle: on"},
       "faq": {
         "title": "Quick answers",
         "items": [
@@ -92,7 +105,7 @@
           { "q": "How many people can play?", "a": "2 to 4 teams share one phone. Each team needs someone to describe and someone to guess, so four people is a good minimum." },
           { "q": "Do I need an account or internet?", "a": "No. There's no sign-up, and every word is inside the app, so it plays offline." },
           { "q": "Can we play online, from different places?", "a": "No. Bombardiro is played in one room, on one device." },
-          { "q": "Is there an Android version?", "a": "Not yet. Bombardiro is available on iPhone and iPad." }
+          { "q": "Is there an Android version?", "a": "No. Bombardiro is available on iPhone and iPad." }
         ]
       }
     },

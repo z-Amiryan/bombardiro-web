@@ -133,6 +133,12 @@ main:focus {
   text-transform: uppercase;
 }
 
+/* Russian capitals carry marks above the cap height (Й, Ё): at the design's tight line-heights the breve of Й
+   ran into the line above. One line-height for every Russian display heading clears it. */
+:root[lang='ru'] .display {
+  line-height: 1;
+}
+
 /* Big type that keeps its design size but never outgrows its box, in any language: the text sits in a
    .fit__t span, sized at the smaller of --fs (the design size) and the box width divided by --fit (the width of
    the longest word in em, set per language beside the element's styles). tests/e2e/layout.spec.ts measures
