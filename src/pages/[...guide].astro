@@ -1,0 +1,777 @@
+---
+// A guide (design/export/Guide.dc.html, the chalk reading surface): breadcrumb, title and dates, the short
+// answer, a contents list that follows the reader, numbered sections, the Bombardiro card once, and related
+// reading. Content comes from src/content/guides/{lang}/*.yaml.
+import { getCollection } from 'astro:content';
+import BadgeLine from '../components/BadgeLine.astro';
+import Icon from '../components/Icon.astro';
+import RichText from '../components/RichText.astro';
+import Wordmark from '../components/Wordmark.astro';
+import Base from '../layouts/Base.astro';
+import { copyFor } from '../lib/copy';
+import { formatDate } from '../lib/dates';
+import { guidesIn, readingMinutes, type Guide } from '../lib/guides';
+import { routePath, type GuideRouteId, type Lang } from '../lib/routes';
+import { article } from '../lib/structured-data';
+
+export async function getStaticPaths() {
+  const all = await getCollection('guides');
+  return all.map((entry) => ({
+    params: { guide: routePath(entry.data.routeId as GuideRouteId, entry.data.lang).replace(/^\/|\/$/g, '') },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: Guide;
+}
+
+const { entry } = Astro.props;
+const g = entry.data;
+const lang = g.lang as Lang;
+const routeId = g.routeId as GuideRouteId;
+const c = copyFor(lang);
+const a = c.article;
+const path = routePath(routeId, lang);
+const sections = g.sections.map((s, i) => ({ ...s, n: String(i + 1).padStart(2, '0') }));
+const related = [
+  ...(await guidesIn(lang)).filter((o) => o.data.routeId !== routeId).map((o) => ({ title: o.data.title, href: routePath(o.data.routeId as GuideRouteId, lang) })),
+  { title: c.nav.words, href: routePath('words', lang) },
+];
+const crumbs = [
+  { name: c.nav.home, path: routePath('home', lang) },
+  { name: c.nav.guides, path: routePath('guides', lang) },
+  { name: g.title, path },
+];
+const jsonLd = [article({ lang, path, title: g.title, description: g.description, datePublished: g.datePublished, dateModified: g.dateModified })];
+const [updatedBefore = '', updatedAfter = ''] = a.updated.split('{date}');
+---
+
+<Base lang={lang} routeId={routeId} surface="chalk" bp={1100} title={g.title} description={g.description} ogType="article" crumbs={crumbs} jsonLd={jsonLd}>
+  <div class="progress" aria-hidden="true"><span></span></div>
+  <article class="guide">
+    <header class="head wrap">
+      <p class="crumbs">
+        <a href={routePath('guides', lang)}>{c.nav.guides}</a>
+        <span aria-hidden="true">/</span>
+        <span class="crumbs__kicker">{g.kicker}</span>
+      </p>
+      <h1 class="title display">{g.title}</h1>
+      <p class="meta">
+        <span>{updatedBefore}<time datetime={g.dateModified}>{formatDate(lang, g.dateModified)}</time>{updatedAfter}</span>
+        <span>{c.pages.guides.readTime.replace('{n}', String(readingMinutes(g)))}</span>
+        <span>{c.brand.name}</span>
+      </p>
+    </header>
+
+    <div class="body wrap">
+      <nav class="toc" aria-label={a.toc}>
+        <p class="toc__label" aria-hidden="true">{a.toc}</p>
+        <ol role="list">
+          {
+            sections.map((s) => (
+              <li>
+                <a href={`#${s.id}`} data-toc={s.id}>
+                  <span class="toc__n" aria-hidden="true">
+                    {s.n}
+                  </span>
+                  <span>{s.h}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ol>
+      </nav>
+
+      <div class="main">
+        <section class="short" aria-labelledby="short-label">
+          <h2 id="short-label" class="short__label">{a.short}</h2>
+          <p class="short__text"><RichText text={g.short} lang={lang} /></p>
+        </section>
+
+        <details class="toc-m">
+          <summary>
+            {a.toc}
+            <span class="toc-m__icon" aria-hidden="true"></span>
+          </summary>
+          <ol role="list">
+            {
+              sections.map((s) => (
+                <li>
+                  <a href={`#${s.id}`}>
+                    <span class="toc__n" aria-hidden="true">
+                      {s.n}
+                    </span>
+                    {s.h}
+                  </a>
+                </li>
+              ))
+            }
+          </ol>
+        </details>
+
+        {
+          sections.map((s) => (
+            <section id={s.id} class="sec" aria-labelledby={`${s.id}-title`}>
+              <div class="sec__head">
+                <span class="sec__n display" aria-hidden="true">
+                  {s.n}
+                </span>
+                <h2 id={`${s.id}-title`} class="sec__title display">
+                  {s.h}
+                </h2>
+                {s.house && <span class="sec__house">{s.house}</span>}
+              </div>
+              {s.p?.map((t) => (
+                <p class="text">
+                  <RichText text={t} lang={lang} />
+                </p>
+              ))}
+              {s.list && (
+                <ol class="steps" role="list">
+                  {s.list.map((t, i) => (
+                    <li>
+                      <span class="steps__n" aria-hidden="true">
+                        {i + 1}
+                      </span>
+                      <span>
+                        <RichText text={t} lang={lang} />
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              )}
+              {s.after?.map((t) => (
+                <p class="text">
+                  <RichText text={t} lang={lang} />
+                </p>
+              ))}
+              {s.facts && (
+                <dl class="facts">
+                  {s.facts.map(([label, value]) => (
+                    <div>
+                      <dt>{label}</dt>
+                      <dd>
+                        <RichText text={value} lang={lang} />
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+              {s.note && (
+                <p class="note">
+                  <RichText text={s.note} lang={lang} />
+                </p>
+              )}
+              {s.compare && (
+                <div class="table-wrap" tabindex="0" role="region" aria-labelledby={`${s.id}-title`}>
+                  <table class="compare">
+                    <thead>
+                      <tr>
+                        {s.compare.cols.map((col) => (
+                          <th scope="col">{col}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {s.compare.rows.map(([x, y, z]) => (
+                        <tr>
+                          <th scope="row">{x}</th>
+                          <td>{y}</td>
+                          <td>{z}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              {s.terms && g.termHeads && (
+                <div class="table-wrap" tabindex="0" role="region" aria-labelledby={`${s.id}-title`}>
+                  <table class="terms">
+                    <thead>
+                      <tr>
+                        <th scope="col">{g.termHeads[0]}</th>
+                        <th scope="col" lang="en">
+                          {g.termHeads[1]}
+                        </th>
+                        <th scope="col" lang="hy">
+                          {g.termHeads[2]}
+                        </th>
+                        <th scope="col">{g.termHeads[3]}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {s.terms.map((t) => (
+                        <tr id={t.id}>
+                          <th scope="row">{t.ru}</th>
+                          <td lang="en">{t.en}</td>
+                          <td lang="hy">{t.hy}</td>
+                          <td>{t.def}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              {s.app && (
+                <div class="app">
+                  <img class="app__icon" src="/apple-touch-icon.png" alt="" width="72" height="72" loading="lazy" decoding="async" />
+                  <div>
+                    <p class="app__mark" aria-hidden="true">
+                      <Wordmark />
+                    </p>
+                    <p class="app__avail">{c.cta.availability}</p>
+                    <a class="app__link" href={routePath('howToPlay', lang)}>
+                      {a.endLink}
+                      <Icon name="arrow-right" />
+                    </a>
+                  </div>
+                  <BadgeLine lang={lang} placement="guide" class="app__badge" />
+                </div>
+              )}
+            </section>
+          ))
+        }
+
+        <aside class="related" aria-labelledby="related-title">
+          <h2 id="related-title" class="related__title">{a.related}</h2>
+          <ul role="list">
+            {
+              related.map((r) => (
+                <li>
+                  <a href={r.href}>
+                    <span>{r.title}</span>
+                    <Icon name="arrow-right" />
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </article>
+</Base>
+
+<script>
+  // The contents list marks the section being read (wide screens), from a single IntersectionObserver.
+  const links = new Map([...document.querySelectorAll<HTMLAnchorElement>('[data-toc]')].map((a) => [a.dataset.toc ?? '', a]));
+  if (links.size) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          for (const a of links.values()) a.removeAttribute('aria-current');
+          links.get(e.target.id)?.setAttribute('aria-current', 'location');
+        }
+      },
+      { rootMargin: '-20% 0px -70% 0px' },
+    );
+    for (const id of links.keys()) {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    }
+  }
+</script>
+
+<style>
+  /* Reading progress: a scroll-driven bar where supported (Chrome 115+, Safari 26+), absent elsewhere. */
+  .progress {
+    display: none;
+  }
+  @supports (animation-timeline: scroll()) {
+    .progress {
+      display: block;
+      position: fixed;
+      inset: 0 0 auto;
+      height: 3px;
+      z-index: 55;
+      pointer-events: none;
+    }
+    .progress span {
+      display: block;
+      height: 100%;
+      background: var(--c-grass-bright);
+      transform-origin: 0 50%;
+      animation: read linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+  @keyframes read {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  .head {
+    padding-block: 28px 32px;
+  }
+  .crumbs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font: 600 13px/1 var(--fu);
+    color: var(--fg-muted);
+  }
+  .crumbs a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--fg);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--rule-dash);
+  }
+  .crumbs__kicker {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .title {
+    margin-top: 14px;
+    max-width: 18ch;
+    font-size: calc(clamp(38px, 5.6vw, 84px) * var(--k));
+    line-height: 0.98;
+    letter-spacing: -0.022em;
+    text-transform: none;
+    text-wrap: balance;
+  }
+  .meta {
+    margin-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    font: 500 13px/1.3 var(--fu);
+    color: var(--fg-muted);
+  }
+
+  .body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px 72px;
+    align-items: start;
+    padding-bottom: 80px;
+    border-top: 3px solid var(--fg);
+  }
+  .toc {
+    display: none;
+  }
+  .main {
+    min-width: 0;
+    max-width: 760px;
+    padding-top: 28px;
+  }
+
+  .short {
+    padding: 24px 26px;
+    border-radius: var(--r-card);
+    background: var(--c-paper);
+    border: 1.5px solid var(--fg);
+    box-shadow: 4px 4px 0 var(--fg);
+  }
+  .short__label {
+    font: 700 11px/1 var(--fu);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .short__text {
+    margin-top: 12px;
+    font: 500 clamp(18px, 1.5vw, 21px) / 1.55 var(--fu);
+    text-wrap: pretty;
+  }
+
+  .toc-m {
+    margin-top: 24px;
+    border-block: 1px solid var(--rule);
+  }
+  .toc-m summary {
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font: 700 12px/1 var(--fu);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    list-style: none;
+  }
+  .toc-m summary::-webkit-details-marker {
+    display: none;
+  }
+  .toc-m__icon {
+    position: relative;
+    width: 14px;
+    height: 14px;
+  }
+  .toc-m__icon::before,
+  .toc-m__icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 14px;
+    height: 2px;
+    background: currentColor;
+    transition: transform 0.2s var(--ease-out);
+  }
+  .toc-m__icon::after {
+    transform: rotate(90deg);
+  }
+  .toc-m[open] .toc-m__icon::after {
+    transform: rotate(0deg);
+  }
+  .toc-m ol {
+    padding-bottom: 12px;
+  }
+  .toc-m a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    font: 500 16px/1.3 var(--fu);
+    color: var(--fg);
+    text-decoration: none;
+  }
+  .toc__n {
+    flex: none;
+    width: 20px;
+    font: 700 11px/1 var(--fu);
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+  }
+
+  .sec {
+    padding-top: 44px;
+    scroll-margin-top: calc(var(--header-h) + 24px);
+  }
+  .sec__head {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+  }
+  /* Grass, not the design's brighter #0E9C49, which is 3.3:1 on chalk at this size. */
+  .sec__n {
+    font-size: 18px;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+  }
+  .sec__title {
+    font-size: calc(clamp(26px, 2.4vw, 36px) * var(--k));
+    line-height: 1.08;
+    letter-spacing: -0.012em;
+    text-transform: none;
+    text-wrap: balance;
+  }
+  .sec__house {
+    padding: 6px 10px;
+    border-radius: var(--r-pill);
+    border: 1.5px dashed var(--fg);
+    font: 700 11px/1 var(--fu);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .text {
+    margin-top: 18px;
+    max-width: 66ch;
+    font: 400 clamp(17px, 1.3vw, 19px) / 1.7 var(--fu);
+    color: var(--fg-body);
+    text-wrap: pretty;
+  }
+  .text a,
+  .steps a,
+  .note a,
+  .short a,
+  .facts a {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .steps {
+    margin-top: 20px;
+  }
+  .steps li {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 6px;
+    padding: 12px 0;
+    border-top: 1px dashed var(--rule-dash);
+    font: 400 clamp(17px, 1.3vw, 19px) / 1.6 var(--fu);
+    text-wrap: pretty;
+  }
+  .steps__n {
+    width: 22px;
+    height: 22px;
+    margin-top: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--on-accent);
+    font: 700 11px/22px var(--fu);
+    text-align: center;
+  }
+  .facts {
+    margin-top: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .facts div {
+    display: flex;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: var(--r-sm);
+    background: var(--c-chalk-deep);
+    font: 400 14px/1.35 var(--fu);
+  }
+  .facts dt {
+    font-weight: 700;
+  }
+  .facts dt::after {
+    content: ':';
+  }
+  .note {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: var(--c-chalk-deep);
+    font: 500 15px/1.5 var(--fu);
+  }
+
+  .table-wrap {
+    margin-top: 22px;
+    overflow-x: auto;
+    border-radius: 16px;
+    border: 1.5px solid var(--fg);
+    background: var(--c-paper);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font: 400 15px/1.45 var(--fu);
+  }
+  .compare {
+    min-width: 520px;
+  }
+  .terms {
+    min-width: 640px;
+  }
+  thead th {
+    padding: 14px 16px;
+    text-align: left;
+    font: 700 12px/1.2 var(--fu);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1.5px solid var(--fg);
+  }
+  tbody th,
+  tbody td {
+    padding: 14px 16px;
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid rgb(var(--c-ink-ch) / 0.14);
+  }
+  tbody tr:first-child > * {
+    border-top: 0;
+  }
+  tbody th {
+    font: 700 14px/1.3 var(--fu);
+  }
+  tbody td {
+    color: var(--c-chalk-text);
+  }
+  .compare thead th:last-child {
+    background: var(--c-night);
+    color: var(--c-lime);
+  }
+  .compare tbody td:last-child {
+    font-weight: 600;
+    color: var(--fg);
+    background: var(--c-grass-tint);
+  }
+  /* Term, English, Armenian, then the definition with the most room. */
+  .terms {
+    table-layout: fixed;
+  }
+  .terms thead th:nth-child(1) {
+    width: 21%;
+  }
+  .terms thead th:nth-child(2) {
+    width: 18%;
+  }
+  .terms thead th:nth-child(3) {
+    width: 21%;
+  }
+  .terms tbody td:nth-child(2),
+  .terms tbody td:nth-child(3) {
+    font-weight: 600;
+    color: var(--fg);
+  }
+  .terms tr:target {
+    background: var(--c-grass-tint);
+  }
+  .terms tr {
+    scroll-margin-top: calc(var(--header-h) + 24px);
+  }
+
+  .app {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 22px 28px;
+    align-items: center;
+    padding: 22px;
+    border-radius: var(--r-lg);
+    background: var(--c-night);
+    color: var(--c-ink-hi);
+    --wm-a: var(--c-ink-hi);
+    --wm-b: var(--c-lime);
+    --badge-note: var(--c-ink-muted);
+    --focus: var(--c-lime);
+  }
+  .app__icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 22%;
+  }
+  .app__mark {
+    font-size: 24px;
+  }
+  .app__avail {
+    margin-top: 6px;
+    font: 400 15px/1.5 var(--fu);
+    color: var(--c-ink-body);
+  }
+  .app__link {
+    margin-top: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    font: 700 15px/1 var(--fu);
+    color: var(--c-lime);
+    text-decoration: none;
+  }
+  @media (hover: hover) {
+    .app__link:hover {
+      color: var(--c-lime);
+      text-decoration: underline;
+      text-underline-offset: 5px;
+    }
+  }
+  .app :global(.app__badge) {
+    grid-column: 1 / -1;
+    margin: -12px;
+  }
+  .app :global(.badge-line__note) {
+    display: none;
+  }
+
+  .related {
+    margin-top: 72px;
+    padding-top: 22px;
+    border-top: 3px solid var(--fg);
+  }
+  .related__title {
+    margin-bottom: 6px;
+    font: 700 12px/1 var(--fu);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .related li {
+    border-bottom: 1px solid var(--rule);
+  }
+  .related a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 64px;
+    padding-block: 10px;
+    font-family: var(--fd);
+    font-style: var(--fds);
+    font-weight: 800;
+    font-size: calc(20px * var(--k));
+    line-height: 1.2;
+    color: var(--fg);
+    text-decoration: none;
+    transition: color 0.16s;
+  }
+  @media (hover: hover) {
+    .related a:hover {
+      color: var(--accent);
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .head {
+      padding: 48px 64px 48px 376px;
+    }
+    .body {
+      grid-template-columns: 240px minmax(0, 720px) minmax(0, 1fr);
+      padding-bottom: 120px;
+    }
+    .toc {
+      display: block;
+      position: sticky;
+      top: calc(var(--header-h) + 24px);
+      padding-top: 40px;
+    }
+    .toc__label {
+      margin-bottom: 10px;
+      font: 700 11px/1 var(--fu);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+    }
+    .toc a {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      align-items: center;
+      min-height: 40px;
+      padding: 4px 0;
+      border-top: 1px solid rgb(var(--c-ink-ch) / 0.12);
+      font: 500 14px/1.3 var(--fu);
+      color: var(--fg-muted);
+      text-decoration: none;
+      transition: color 0.16s;
+    }
+    .toc a .toc__n {
+      color: var(--fg-muted);
+    }
+    .toc a[aria-current] {
+      font-weight: 700;
+      color: var(--fg);
+    }
+    .toc a[aria-current] .toc__n {
+      color: var(--accent);
+    }
+    @media (hover: hover) {
+      .toc a:hover {
+        color: var(--accent);
+      }
+    }
+    .main {
+      padding-top: 40px;
+    }
+    .toc-m {
+      display: none;
+    }
+    .sec {
+      padding-top: 56px;
+    }
+    .app {
+      grid-template-columns: 72px minmax(0, 1fr) auto;
+      padding: 28px;
+    }
+    .app :global(.app__badge) {
+      grid-column: auto;
+      margin: 0;
+    }
+  }
+</style>

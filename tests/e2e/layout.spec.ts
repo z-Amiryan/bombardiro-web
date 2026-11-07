@@ -38,6 +38,20 @@ function overflows(page: Page): Promise<string[]> {
           break;
         }
       }
+      // Big type wraps between words, never inside one ("SUPPO / RT"). Hyphenated words may break at the hyphen.
+      if (!seen.has(el) && el.closest('.display')) {
+        for (const m of node.textContent.matchAll(/[^\s\-‑]+/gu)) {
+          const word = document.createRange();
+          word.setStart(node, m.index);
+          word.setEnd(node, m.index + m[0].length);
+          const tops = new Set([...word.getClientRects()].filter((r) => r.width).map((r) => Math.round(r.top)));
+          if (tops.size > 1) {
+            seen.add(el);
+            out.push(`"${m[0]}" breaks across lines`);
+            break;
+          }
+        }
+      }
     }
     return out;
   });

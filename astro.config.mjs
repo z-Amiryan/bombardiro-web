@@ -24,13 +24,13 @@ export default defineConfig({
     // Astro's metric-matched fallbacks for Noto Sans and Noto Sans Armenian come from their Cyrillic and
     // Armenian files but are applied to Arial's Latin, which made the swap shift more, not less (quality audit,
     // milestone 2). Those two families fall back to plain Arial.
-    // Noto Sans falls back to "Noto Sans fallback" (base.css), local Arial resized to Noto Sans's metrics, so
-    // Russian text doesn't reflow when the font arrives late (quality audit, milestone 2).
-    ...(family.name === 'Noto Sans'
+    // Both fall back to "Noto Sans fallback" (base.css), local Arial resized to Noto Sans's Latin metrics, so
+    // Russian text, and the Latin words in Armenian text (Noto Sans Armenian's Latin is Noto Sans's), don't
+    // reflow when the font arrives late (quality audits, milestones 2 and 4). Arial has no Armenian, so
+    // Armenian letters fall through to the system's Armenian face as before.
+    ...(family.name.startsWith('Noto')
       ? { fallbacks: ['Noto Sans fallback', 'Arial', 'sans-serif'], optimizedFallbacks: false }
-      : family.name.startsWith('Noto')
-        ? { fallbacks: ['Arial', 'sans-serif'], optimizedFallbacks: false }
-        : { fallbacks: ['sans-serif'] }),
+      : { fallbacks: ['sans-serif'] }),
     display: 'swap',
     options: {
       variants: /** @type {[any, ...any[]]} */ (

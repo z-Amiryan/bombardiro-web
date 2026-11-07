@@ -1,0 +1,67 @@
+routeId: guideFootballParty
+lang: en
+title: "Football party games for adults: 6 ideas for match day"
+description: "Football (soccer) party games for a watch party or a night in, from describing players against the clock to match bingo. No pitch or kit needed."
+kicker: Match day
+datePublished: "2026-11-07"
+dateModified: "2026-11-07"
+short: "Six football (soccer) party games that need no pitch: describe players against the clock, match bingo, predicting the line-up, guessing a player from their career path, football charades and a half-time quiz. Each one works on a sofa with a few friends, before kick-off, at half-time or after the final whistle."
+sections:
+  - id: describe
+    h: Describe the player against the clock
+    p:
+      - "Split into teams. One player describes footballers, clubs and stadiums without saying the name, and their team shouts guesses until the timer runs out. It's Alias with a football deck, and it rewards both the stats nerd and the fan who only remembers the haircuts. Print our [football word list](words) and cut it into cards, or play it on a phone."
+      - "We make Bombardiro, a football party word game for iPhone and iPad built on exactly this idea. 2–4 teams share one phone, the app deals cards of 5–8 words and runs the clock, and every word your team guesses is a goal. It's free and works offline."
+    facts:
+      - [Players, "4 or more, in teams"]
+      - [You need, A word list or one phone]
+      - [When, Before kick-off or after the match]
+    app: true
+  - id: bingo
+    h: Match bingo
+    p:
+      - "Before kick-off, everyone gets a card with a grid of things that might happen in the match: a header goal, a yellow card in the first ten minutes, a goal from outside the box, the ball hitting the post, a substitution before half-time. Tick them off as they happen. First to a full row shouts, and the round goes on for a full card."
+      - "Make the cards different, so not everyone wins at once. A phone note works as well as paper."
+    facts:
+      - [Players, 3 or more]
+      - [You need, A live match and a card each]
+      - [When, During the match]
+  - id: lineup
+    h: Predict the line-up
+    p:
+      - "An hour before kick-off, everyone writes down the eleven they think will start, with the formation. When the teams are announced, score a point for every player you got right and a bonus for the formation. Play it for bragging rights only."
+    facts:
+      - [Players, 2 or more]
+      - [You need, Pen and paper or a phone note]
+      - [When, Before the team sheet comes out]
+  - id: career
+    h: Guess the player from their career path
+    p:
+      - "One player reads out a list of clubs, in order, that a footballer played for. The others guess who it is. Start with the early, obscure clubs and finish with the famous ones, so the deep cuts earn the points. Take turns being the quizmaster."
+    facts:
+      - [Players, 2 or more]
+      - [You need, A few careers written down in advance]
+      - [When, Half-time or a quiet evening]
+  - id: charades
+    h: Football charades
+    p:
+      - "Act out a player, a club, a famous goal celebration or a moment everyone remembers, without speaking. The team guesses before the timer runs out. Celebrations are easy to start with. Then try a club with no obvious mascot."
+    facts:
+      - [Players, 4 or more]
+      - [You need, A list of ideas and a timer]
+      - [When, Bigger groups]
+  - id: quiz
+    h: The half-time quiz
+    p:
+      - "Fifteen minutes is enough for a ten-question quiz. Mix easy questions about the match on screen with harder ones about history, stadiums and record holders, and read the answers out before the second half starts. Rotate the quizmaster each match day."
+    facts:
+      - [Players, 2 or more]
+      - [You need, Ten questions written in advance]
+      - [When, Half-time]
+  - id: tips
+    h: Tips for a good match-day game night
+    list:
+      - "Mix the levels: put a casual fan and a stats expert on the same team."
+      - Keep the games short, so nobody misses the action on screen.
+      - "Play for points and bragging rights, not for money."
+      - "For more ideas you can play with one phone, see [one-phone party games](guideOnePhone), and for the classic word game, the [Alias rules](guideAliasRules)."

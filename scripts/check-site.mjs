@@ -28,6 +28,18 @@ const BUDGET = {
 const copy = Object.fromEntries(LANGS.map((l) => [l, JSON.parse(readFileSync(join(ROOT, 'content/copy', `${l}.json`), 'utf8'))]));
 const APP_STORE_ID = '6813968416';
 const OG_LOCALE = { en: 'en_US', ru: 'ru_RU', hy: 'hy_AM' };
+// handoff/keyword-map.md, "Internal links": route ids each page must link to from its content. The guides hub
+// links to every guide in its language.
+const MUST_LINK = {
+  home: ['howToPlay', 'words', 'guides'],
+  howToPlay: ['words', 'guideAliasRules'],
+  words: ['howToPlay', 'guideAliasRules'],
+  guideAliasRules: ['howToPlay', 'words', 'guideOnePhone'],
+  guideOnePhone: ['guideAliasRules', 'howToPlay'],
+  guideGlossary: ['words', 'guideAliasRules'],
+  guideFootballParty: ['howToPlay', 'words', 'guideOnePhone'],
+};
+const guideIdsIn = (lang) => Object.keys(routes.pages).filter((id) => id.startsWith('guide') && id !== 'guides' && routes.pages[id][lang]);
 const THEME_COLOR = { night: '#101418', lime: '#BFF747', chalk: '#EEF2E9' };
 // Text in another script must carry its own lang (SPEC §10). Latin is shared by all three languages.
 const SCRIPT_LANG = [
@@ -222,6 +234,16 @@ function checkJsonLd(doc, page, where) {
       if (JSON.stringify(appNode.inLanguage) !== JSON.stringify(LANGS)) fail(where, 'app inLanguage must be ["en","ru","hy"]');
     }
   }
+  const isGuide = page.id.startsWith('guide') && page.id !== 'guides';
+  const articleNode = find('Article');
+  if (isGuide) {
+    if (!articleNode) fail(where, 'a guide needs an Article (SPEC §6)');
+    else {
+      for (const k of ['headline', 'description', 'datePublished', 'dateModified', 'inLanguage']) if (!articleNode[k]) fail(where, `Article has no ${k}`);
+      if (articleNode.inLanguage !== page.lang) fail(where, `Article inLanguage is ${articleNode.inLanguage}, not ${page.lang}`);
+      if (articleNode.author?.['@id'] !== org?.['@id']) fail(where, 'Article author must be the Organization');
+    }
+  } else if (articleNode) fail(where, 'only guides carry an Article');
   const crumbs = find('BreadcrumbList');
   if (page.id !== 'home' && !crumbs) fail(where, 'no BreadcrumbList');
   if (page.id === 'home' && crumbs) fail(where, 'Home should not have a BreadcrumbList');
@@ -346,6 +368,18 @@ for (const page of htmlTargets) {
     if (Number(attr(b, 'height')) < 40) fail(where, 'App Store badge is under 40 px high');
     const expected = page.lang === 'ru' ? 'app-store-ru' : 'app-store-en';
     if (!(attr(b, 'src') ?? '').includes(expected)) fail(where, `App Store badge should be ${expected}`);
+  }
+
+  // handoff/keyword-map.md: the links each page's main content must carry, where the target exists in that
+  // language. The header and footer link to every core page, so only <main> counts.
+  const mustLink = MUST_LINK[page.id] ?? (page.id === 'guides' ? guideIdsIn(page.lang) : []);
+  const main = querySelector(doc, 'main');
+  if (main && mustLink.length) {
+    const inMain = new Set(querySelectorAll(main, 'a[href]').map((a) => new URL(attr(a, 'href'), `${SITE_URL}${where}`).pathname));
+    for (const id of mustLink) {
+      const target = routes.pages[id]?.[page.lang];
+      if (target && !inMain.has(target)) fail(where, `no link to ${id} (${target}) in the page's content (keyword-map.md)`);
+    }
   }
 
   // Links: internal targets must exist, fragments must point at an id, no plain-http links.

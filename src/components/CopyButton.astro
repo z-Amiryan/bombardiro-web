@@ -1,0 +1,62 @@
+---
+// Copies a string to the clipboard and says so for 1.8 s. It needs JavaScript, so it stays hidden until the
+// script runs; the text it copies is always on the page as well. The confirmation is announced politely.
+interface Props {
+  value: string;
+  label: string;
+  done: string;
+  class?: string;
+}
+
+const { value, label, done, class: className } = Astro.props;
+---
+
+<button type="button" class:list={['copy', className]} data-copy={value} data-label={label} data-done={done} hidden>
+  <span data-copy-text aria-live="polite">{label}</span>
+</button>
+
+<script>
+  for (const button of document.querySelectorAll<HTMLButtonElement>('button[data-copy]')) {
+    const text = button.querySelector<HTMLElement>('[data-copy-text]');
+    let timer = 0;
+    button.hidden = !navigator.clipboard;
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy ?? '');
+      } catch {
+        return;
+      }
+      if (text) text.textContent = button.dataset.done ?? '';
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        if (text) text.textContent = button.dataset.label ?? '';
+      }, 1800);
+    });
+  }
+</script>
+
+<style>
+  .copy {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: var(--r-pill);
+    border: 1.5px solid currentColor;
+    background: transparent;
+    font: 700 13px/1 var(--fu);
+    cursor: pointer;
+    transition:
+      background-color 0.18s var(--ease-out),
+      color 0.18s var(--ease-out);
+  }
+  .copy[hidden] {
+    display: none;
+  }
+  @media (hover: hover) {
+    .copy:hover {
+      background: var(--copy-hover-bg, var(--fg));
+      color: var(--copy-hover-fg, var(--bg));
+    }
+  }
+</style>

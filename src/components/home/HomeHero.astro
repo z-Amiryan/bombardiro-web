@@ -102,12 +102,12 @@ const beats = home.turn.steps.map((step, i) => ({ title: step.title, time: clock
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    background: radial-gradient(120% 70% at 50% -10%, #1c242a 0%, var(--c-night) 62%);
+    background: radial-gradient(120% 70% at 50% -10%, var(--c-night-spot) 0%, var(--c-night) 62%);
   }
 
   .hero__cone {
     position: absolute;
-    background: linear-gradient(180deg, rgba(237, 243, 230, 0.11) 0%, rgba(237, 243, 230, 0.035) 55%, rgba(237, 243, 230, 0) 88%);
+    background: linear-gradient(180deg, rgb(var(--c-ink-hi-ch) / 0.11) 0%, rgb(var(--c-ink-hi-ch) / 0.035) 55%, rgb(var(--c-ink-hi-ch) / 0) 88%);
     clip-path: polygon(41% 0, 59% 0, 100% 100%, 0 100%);
   }
 
@@ -161,7 +161,7 @@ const beats = home.turn.steps.map((step, i) => ({ title: step.title, time: clock
     height: 330px;
     margin: -165px 0 0 -165px;
     border-radius: 50%;
-    border: 1px solid rgba(237, 243, 230, 0.09);
+    border: 1px solid rgb(var(--c-ink-hi-ch) / 0.09);
   }
 
   .hero__stage::after {
@@ -171,7 +171,7 @@ const beats = home.turn.steps.map((step, i) => ({ title: step.title, time: clock
     right: 0;
     top: 50%;
     height: 1px;
-    background: rgba(237, 243, 230, 0.09);
+    background: rgb(var(--c-ink-hi-ch) / 0.09);
   }
 
   .hero__clock {
@@ -269,7 +269,7 @@ const beats = home.turn.steps.map((step, i) => ({ title: step.title, time: clock
       width: 560px;
       height: 1300px;
       transform-origin: 50% 0;
-      background: linear-gradient(180deg, rgba(237, 243, 230, 0.12) 0%, rgba(237, 243, 230, 0.035) 48%, rgba(237, 243, 230, 0) 78%);
+      background: linear-gradient(180deg, rgb(var(--c-ink-hi-ch) / 0.12) 0%, rgb(var(--c-ink-hi-ch) / 0.035) 48%, rgb(var(--c-ink-hi-ch) / 0) 78%);
       clip-path: polygon(45% 0, 55% 0, 100% 100%, 0 100%);
     }
 
@@ -331,7 +331,7 @@ const beats = home.turn.steps.map((step, i) => ({ title: step.title, time: clock
       width: 600px;
       height: 600px;
       margin: -300px 0 0 -300px;
-      border: 1px solid rgba(237, 243, 230, 0.08);
+      border: 1px solid rgb(var(--c-ink-hi-ch) / 0.08);
     }
 
     .hero__ring::before {
@@ -339,7 +339,7 @@ const beats = home.turn.steps.map((step, i) => ({ title: step.title, time: clock
       position: absolute;
       inset: -61px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(191, 247, 71, 0.07) 0%, rgba(191, 247, 71, 0) 60%);
+      background: radial-gradient(circle, rgb(var(--c-lime-ch) / 0.07) 0%, rgb(var(--c-lime-ch) / 0) 60%);
     }
 
     .hero__spot {
@@ -347,7 +347,7 @@ const beats = home.turn.steps.map((step, i) => ({ title: step.title, time: clock
       height: 14px;
       margin: -7px 0 0 -7px;
       background: var(--c-night);
-      border: 2px solid rgba(237, 243, 230, 0.55);
+      border: 2px solid rgb(var(--c-ink-hi-ch) / 0.55);
     }
 
     .hero__side {
@@ -369,7 +369,7 @@ const beats = home.turn.steps.map((step, i) => ({ title: step.title, time: clock
       display: flex;
       margin-top: 22px;
       padding-top: 22px;
-      border-top: 1px dashed rgba(237, 243, 230, 0.16);
+      border-top: 1px dashed rgb(var(--c-ink-hi-ch) / 0.16);
     }
 
     .hero__beats {
@@ -400,14 +400,14 @@ const beats = home.turn.steps.map((step, i) => ({ title: step.title, time: clock
     align-items: center;
     gap: 18px;
     height: 54px;
-    border-top: 1px dashed rgba(237, 243, 230, 0.18);
+    border-top: 1px dashed rgb(var(--c-ink-hi-ch) / 0.18);
     text-decoration: none;
     transition: background-color 0.16s;
   }
 
   @media (hover: hover) {
     .hero__beats a:hover {
-      background: rgba(237, 243, 230, 0.03);
+      background: rgb(var(--c-ink-hi-ch) / 0.03);
     }
   }
 

@@ -52,6 +52,14 @@
     "text": "This page isn't on the pitch. The link may be old or mistyped.",
     "home": "Back to the home page"
   },
+  "article": {
+    "toc": "On this page",
+    "short": "The short answer",
+    "updated": "Updated {date}",
+    "endLink": "How to play Bombardiro",
+    "related": "More guides",
+    "aliasRules": "Alias rules"
+  },
   "pages": {
     "home": {
       "meta": {
@@ -155,7 +163,8 @@
       },
       "video": {
         "title": "Watch a match",
-        "caption": "A 25-second look at the app, from picking categories to full time."
+        "caption": "A 25-second look at the app, from picking categories to full time.",
+        "play": "Play the video"
       }
     },
     "words": {
@@ -166,6 +175,7 @@
       "h1": "Football words for your next game",
       "lead": "Free football (soccer) words for Alias, charades or any describe-the-word game, in six categories. Print the list, or get nearly 1,700 words in Bombardiro.",
       "print": "Print this list",
+      "reset": "Reset the score",
       "easyLabel": "Easy",
       "hardLabel": "Hard",
       "tipLabel": "How to describe",
@@ -196,7 +206,8 @@
         "description": "Rules, ideas and lists for game nights with friends, from how to play Alias to party games that only need one phone."
       },
       "h1": "Guides",
-      "lead": "Rules, ideas and lists for game nights with friends."
+      "lead": "Rules, ideas and lists for game nights with friends.",
+      "readTime": "{n} min read"
     },
     "support": {
       "meta": {
@@ -208,7 +219,9 @@
       "contact": {
         "title": "Write to us",
         "inApp": "You can also reach the same inbox from inside the app: Settings › Report a bug. That opens a mail composer with the app version and your iOS version already filled in, which makes problems much faster to track down.",
-        "response": "We read everything. Replies usually take a couple of days."
+        "response": "We read everything. Replies usually take a couple of days.",
+        "copy": "Copy address",
+        "copied": "Copied"
       },
       "faq": {
         "title": "Common questions",
@@ -262,7 +275,9 @@
         "title": "For press",
         "boilerplate": "Bombardiro is a football party word game for iPhone and iPad. 2–4 teams share one phone and describe nearly 1,700 football words against the clock, in English, Russian or Armenian. It is free, needs no account and works offline.",
         "kit": "Download logos and screenshots",
-        "contact": "Press contact"
+        "contact": "Press contact",
+        "copy": "Copy text",
+        "copied": "Copied"
       }
     },
     "privacy": {

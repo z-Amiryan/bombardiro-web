@@ -32,6 +32,7 @@ ROOT = Path(__file__).resolve().parent.parent
 FONTS = ROOT / 'node_modules' / '@fontsource-variable'
 OUT = ROOT / 'src' / 'assets' / 'generated' / 'outlines.json'
 SUBSETS = ROOT / 'src' / 'assets' / 'fonts'
+FOREIGN_MANIFEST = ROOT / 'src' / 'assets' / 'generated' / 'foreign-subsets.json'
 SCRIPTS = {
     'cyrillic': (re.compile(r'[\u0400-\u04FF]'), FONTS / 'noto-sans' / 'files' / 'noto-sans-cyrillic-wght-normal.woff2'),
     'armenian': (re.compile(r'[\u0530-\u058F\uFB13-\uFB17]'), FONTS / 'noto-sans-armenian' / 'files' / 'noto-sans-armenian-armenian-wght-normal.woff2'),
@@ -119,15 +120,23 @@ def outline(woff2: Path, parts, letter_spacing_em: float, weight: int):
     }
 
 
-def site_text(lang: str) -> str:
-    """Everything a language's pages say: its copy file and its guides."""
+def copy_text(lang: str) -> str:
+    """What a language's core pages say: its copy file, and the game's pack for the Words page."""
     text = (ROOT / 'content' / 'copy' / f'{lang}.json').read_text(encoding='utf-8')
     # The Words page sets words straight from the game's pack.
     text += (ROOT / 'content' / 'words' / f'words.{lang}.json').read_text(encoding='utf-8')
-    guides = ROOT / 'src' / 'content' / 'guides' / lang
-    if guides.is_dir():
-        text += ''.join(p.read_text(encoding='utf-8') for p in sorted(guides.glob('*.yaml')))
     return text
+
+
+def guides_text(lang: str) -> str:
+    """What a language's guides say."""
+    guides = ROOT / 'src' / 'content' / 'guides' / lang
+    return ''.join(p.read_text(encoding='utf-8') for p in sorted(guides.glob('*.yaml'))) if guides.is_dir() else ''
+
+
+def site_text(lang: str) -> str:
+    """Everything a language's pages say: its copy file and its guides."""
+    return copy_text(lang) + guides_text(lang)
 
 
 def cut(source: Path, target: Path, chars: str):
@@ -166,22 +175,38 @@ def build_latin():
             print(f'{target.relative_to(ROOT)}: {len(chars)} characters ({target.stat().st_size} bytes)')
 
 
+def both_cases(chars) -> list:
+    return sorted(set(chars) | {c.upper() for c in chars} | {c.lower() for c in chars})
+
+
+def unicode_range(chars) -> str:
+    return ', '.join(f'U+{ord(c):04X}' for c in chars)
+
+
 def build_subsets():
+    """Two subsets per language and foreign script: the characters its copy uses (the language switcher,
+    «бомбардир»), which most pages show, and any more that only its guides use (the glossary's Armenian
+    column). Each declares exactly its characters as its unicode-range, so a page downloads the second one
+    only if it shows one of those characters. The manifest tells src/config/fonts.ts what exists."""
     SUBSETS.mkdir(parents=True, exist_ok=True)
+    manifest = {}
     for lang, own in OWN.items():
-        text = site_text(lang)
+        manifest[lang] = []
+        core_text, guide_text = copy_text(lang), guides_text(lang)
         for script, (pattern, source) in SCRIPTS.items():
             if script == own:
                 continue
-            chars = sorted(set(pattern.findall(text)))
-            target = SUBSETS / f'foreign-{lang}-{script}.woff2'
-            if not chars:
-                target.unlink(missing_ok=True)
-                continue
-            # Both cases, in case a word is set in capitals.
-            chars = sorted(set(chars) | {c.upper() for c in chars} | {c.lower() for c in chars})
-            cut(source, target, ''.join(chars))
-            print(f'{target.relative_to(ROOT)}: {"".join(chars)} ({target.stat().st_size} bytes)')
+            core = both_cases(pattern.findall(core_text))
+            extra = sorted(set(both_cases(pattern.findall(guide_text))) - set(core))
+            for suffix, chars in (('', core), ('-guides', extra)):
+                target = SUBSETS / f'foreign-{lang}-{script}{suffix}.woff2'
+                if not chars:
+                    target.unlink(missing_ok=True)
+                    continue
+                cut(source, target, ''.join(chars))
+                manifest[lang].append({'src': f'./{target.relative_to(ROOT).as_posix()}', 'script': script, 'unicodeRange': unicode_range(chars)})
+                print(f'{target.relative_to(ROOT)}: {"".join(chars)} ({target.stat().st_size} bytes)')
+    FOREIGN_MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
 
 def main():

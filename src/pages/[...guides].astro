@@ -1,8 +1,11 @@
 ---
-import PageIntro from '../components/PageIntro.astro';
+// Guides hub (design/export/Guides.dc.html, the chalk reading surface): every guide in this language, the first
+// one across the full width on wide screens.
+import Icon from '../components/Icon.astro';
 import Base from '../layouts/Base.astro';
 import { copyFor } from '../lib/copy';
-import { staticPathsFor, type Lang } from '../lib/routes';
+import { guidesIn, readingMinutes } from '../lib/guides';
+import { routePath, staticPathsFor, type GuideRouteId, type Lang } from '../lib/routes';
 
 export function getStaticPaths() {
   return staticPathsFor('guides', 'guides');
@@ -14,8 +17,186 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = copyFor(lang).pages.guides;
+const items = (await guidesIn(lang)).map((g, i, all) => ({
+  href: routePath(g.data.routeId as GuideRouteId, lang),
+  kicker: g.data.kicker,
+  title: g.data.title,
+  text: g.data.description,
+  n: String(i + 1).padStart(2, '0'),
+  read: t.readTime.replace('{n}', String(readingMinutes(g.data))),
+  lead: i === 0,
+  wide: i === 0 && all.length > 1,
+}));
 ---
 
-<Base lang={lang} routeId="guides" surface="chalk" bp={1000} title={t.meta.title} description={t.meta.description}>
-  <PageIntro h1={t.h1} lead={t.lead} />
+<Base lang={lang} routeId="guides" surface="chalk" title={t.meta.title} description={t.meta.description}>
+  <div class="hub wrap">
+    <div class="hero">
+      <h1 class="hero__h1 display fit"><span class="fit__t">{t.h1}</span></h1>
+      <p class="hero__lead">{t.lead}</p>
+    </div>
+    {
+      items.length > 0 && (
+        <ul class="cards" role="list">
+          {items.map((it) => (
+            <li class:list={['card', { 'card--wide': it.wide }]}>
+              <a class="card__link" href={it.href}>
+                <span class="card__top">
+                  <span class="card__kicker">{it.kicker}</span>
+                  <span class="card__n" aria-hidden="true">
+                    {it.n}
+                  </span>
+                </span>
+                <h2 class:list={['card__title', 'display', { 'card__title--lead': it.lead }]}>{it.title}</h2>
+                <span class="card__text">{it.text}</span>
+                <span class="card__foot">
+                  <span>{it.read}</span>
+                  <span class="card__arrow" aria-hidden="true">
+                    <Icon name="arrow-right" />
+                  </span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
 </Base>
+
+<style>
+  .hub {
+    padding-block: 32px 72px;
+  }
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px 64px;
+    align-items: end;
+    padding-bottom: 28px;
+    border-bottom: 3px solid var(--fg);
+  }
+  .hero__h1 {
+    --fs: calc(clamp(64px, 11vw, 176px) * var(--k));
+    --ls: -0.03em;
+    line-height: 0.84;
+    /* The longest word, in em (.fit in base.css). */
+    --fit: 4.15;
+  }
+  :global(:root[lang='ru']) .hero__h1 {
+    --fit: 3.4;
+  }
+  :global(:root[lang='hy']) .hero__h1 {
+    --fit: 6.5;
+  }
+  .hero__lead {
+    max-width: 30ch;
+    font: 500 clamp(17px, 1.4vw, 20px) / 1.5 var(--fu);
+    color: var(--c-chalk-text);
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .card {
+    border-bottom: 1px solid var(--rule);
+  }
+  .card__link {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    height: 100%;
+    padding: 28px 0;
+    color: var(--fg);
+    text-decoration: none;
+    transition: background-color 0.2s;
+  }
+  @media (hover: hover) {
+    .card__link:hover {
+      color: var(--fg);
+      background: var(--c-chalk-hover);
+    }
+  }
+  .card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font: 700 11px/1 var(--fu);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .card__kicker {
+    color: var(--accent);
+  }
+  .card__n {
+    color: var(--fg-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .card__title {
+    font-size: calc(clamp(26px, 2.4vw, 36px) * var(--k));
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    text-transform: none;
+    text-wrap: balance;
+  }
+  .card__title--lead {
+    font-size: calc(clamp(32px, 4vw, 60px) * var(--k));
+  }
+  .card__text {
+    max-width: 52ch;
+    font: 400 16px/1.55 var(--fu);
+    color: var(--c-chalk-text);
+    text-wrap: pretty;
+  }
+  .card__foot {
+    margin-top: auto;
+    padding-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font: 600 13px/1 var(--fu);
+    color: var(--fg-muted);
+  }
+  .card__arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1.5px solid var(--fg);
+    font-size: 18px;
+    color: var(--fg);
+    transition: transform 0.2s var(--ease-out);
+  }
+  @media (hover: hover) {
+    .card__link:hover .card__arrow {
+      transform: translateX(4px);
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .hub {
+      padding-block: 56px 120px;
+    }
+    .hero {
+      grid-template-columns: minmax(0, 1fr) 380px;
+      padding-bottom: 40px;
+    }
+    .cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border-left: 1px solid var(--rule);
+    }
+    .card {
+      border-right: 1px solid var(--rule);
+    }
+    .card--wide {
+      grid-column: 1 / -1;
+    }
+    .card__link {
+      padding: 40px 40px 36px;
+    }
+  }
+</style>

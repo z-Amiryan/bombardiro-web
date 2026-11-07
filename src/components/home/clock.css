@@ -99,7 +99,7 @@
   position: relative;
   height: 6px;
   border-radius: 3px;
-  background: rgba(237, 243, 230, 0.12);
+  background: rgb(var(--c-ink-hi-ch) / 0.12);
 }
 .bar__fill {
   position: absolute;

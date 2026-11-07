@@ -53,6 +53,34 @@ export function app(lang: Lang): Json {
   };
 }
 
+export interface ArticleInput {
+  lang: Lang;
+  path: string;
+  title: string;
+  description: string;
+  datePublished: string;
+  dateModified: string;
+}
+
+/** A guide, written and published by the Organization (SPEC §6). */
+export function article(a: ArticleInput): Json {
+  const url = absoluteUrl(a.path);
+  return {
+    '@type': 'Article',
+    '@id': `${url}#article`,
+    headline: a.title,
+    description: a.description,
+    inLanguage: a.lang,
+    url,
+    mainEntityOfPage: url,
+    image: absoluteUrl(`/og/${a.lang}.jpg`),
+    datePublished: a.datePublished,
+    dateModified: a.dateModified,
+    author: { '@id': ORG_ID },
+    publisher: { '@id': ORG_ID },
+  };
+}
+
 export interface Crumb {
   name: string;
   path: string;
