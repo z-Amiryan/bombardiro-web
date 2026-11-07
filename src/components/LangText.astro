@@ -1,0 +1,14 @@
+---
+// Text with any other-script words wrapped in <span lang> (src/lib/foreign.ts).
+import { foreignRuns } from '../lib/foreign';
+import type { Lang } from '../lib/routes';
+
+interface Props {
+  text: string;
+  lang: Lang;
+}
+
+const { text, lang } = Astro.props;
+---
+
+{foreignRuns(text, lang).map((s) => (s.lang ? <span lang={s.lang}>{s.text}</span> : s.text))}

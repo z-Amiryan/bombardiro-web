@@ -1,8 +1,14 @@
 ---
-import PageIntro from '../components/PageIntro.astro';
+// Words (design/export/Words.dc.html, the lime 1b surface): the free word list, 24 Easy and 12 Hard words per
+// category from the game's own packs (handoff/SPEC.md §5). Tap a word to score it, as in the app. Printed, each
+// category becomes one A4 sheet with the words in a dashed cut grid and no navigation.
+import BadgeLine from '../components/BadgeLine.astro';
+import Icon from '../components/Icon.astro';
+import Wordmark from '../components/Wordmark.astro';
 import Base from '../layouts/Base.astro';
 import { copyFor } from '../lib/copy';
-import { staticPathsFor, type Lang } from '../lib/routes';
+import { routePath, staticPathsFor, type Lang } from '../lib/routes';
+import { categorySize, LEVELS, word, wordsPageSelection } from '../lib/words';
 
 export function getStaticPaths() {
   return staticPathsFor('words', 'words');
@@ -13,9 +19,713 @@ interface Props {
 }
 
 const { lang } = Astro.props;
-const t = copyFor(lang).pages.words;
+const c = copyFor(lang);
+const t = c.pages.words;
+const goals = c.pages.home.wall.goals;
+const levelLabel = { easy: t.easyLabel, hard: t.hardLabel };
+
+const cats = wordsPageSelection().map((cat, i) => ({
+  ...cat,
+  ...t.categories[cat.id],
+  n: String(i + 1).padStart(2, '0'),
+  size: categorySize(lang, cat.id),
+  levels: LEVELS.map((level) => ({
+    level,
+    label: levelLabel[level],
+    words: cat.indices[level].map((index) => ({ key: `${cat.id}-${level}-${index}`, text: word(lang, cat.id, level, index) })),
+  })),
+}));
+const total = String(cats.length).padStart(2, '0');
 ---
 
 <Base lang={lang} routeId="words" surface="lime" bp={1100} title={t.meta.title} description={t.meta.description}>
-  <PageIntro h1={t.h1} lead={t.lead} />
+  <div class="words" data-words>
+    <section class="hero wrap" aria-labelledby="words-title">
+      <h1 id="words-title" class="hero__h1 display fit"><span class="fit__t">{t.h1}</span></h1>
+      <div>
+        <p class="hero__lead">{t.lead}</p>
+        <button type="button" class="print-btn" data-print hidden>
+          <span class="print-btn__icon" aria-hidden="true"></span>
+          {t.print}
+        </button>
+      </div>
+    </section>
+
+    <nav class="chips" aria-label={c.nav.words}>
+      <div class="chips__in wrap">
+        {
+          cats.map((cat) => (
+            <a class="chip" href={`#${cat.id}`}>
+              {cat.name}
+              <span class="chip__n">{cat.size}</span>
+            </a>
+          ))
+        }
+      </div>
+    </nav>
+
+    {
+      cats.map((cat, i) => (
+        <section id={cat.id} class:list={['cat', { 'cat--last': i === cats.length - 1 }]} aria-labelledby={`h-${cat.id}`}>
+          <div class="cat__in wrap">
+            <header class="sheet-head" aria-hidden="true">
+              <div>
+                <p class="sheet-head__kicker">{`${c.brand.descriptor} · ${cat.n} / ${total}`}</p>
+                <p class="sheet-head__name display">{cat.name}</p>
+              </div>
+              <Wordmark class="sheet-head__mark" />
+            </header>
+            <div class="cat__head">
+              <p class="cat__n" aria-hidden="true">{`${cat.n} / ${total}`}</p>
+              <h2 id={`h-${cat.id}`} class="cat__title display fit">
+                <span class="fit__t">{cat.name}</span>
+              </h2>
+              <p class="cat__intro">{cat.intro}</p>
+              <div class="tip">
+                <p class="tip__label">{t.tipLabel}</p>
+                <p class="tip__text">{cat.tip}</p>
+              </div>
+            </div>
+            <div class="levels">
+              {cat.levels.map((lv) => (
+                <div class="level">
+                  <h3 class:list={['level__label', `level__label--${lv.level}`]}>{lv.label}</h3>
+                  <ul class="level__words" role="list">
+                    {lv.words.map((w) => (
+                      <li>
+                        <button type="button" class="w display" aria-pressed="false" data-key={w.key}>
+                          {w.text}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <footer class="sheet-foot" aria-hidden="true">
+              <span>bombardiro.app</span>
+              <span>{c.footer.independent}</span>
+            </footer>
+          </div>
+        </section>
+      ))
+    }
+
+    <section class="use wrap" aria-labelledby="use-title">
+      <div>
+        <h2 id="use-title" class="use__title display">{t.howToUse.title}</h2>
+        <ol class="use__steps" role="list">
+          {
+            t.howToUse.steps.map((step, i) => (
+              <li>
+                <span class="use__n display" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span>{step}</span>
+              </li>
+            ))
+          }
+        </ol>
+        <a class="more" href={routePath('howToPlay', lang)}>
+          {c.nav.howToPlay}
+          <Icon name="arrow-right" />
+        </a>
+      </div>
+      <div class="note">
+        <h2 class="note__title display">{t.appNote.title}</h2>
+        <p class="note__text">{t.appNote.text}</p>
+        <BadgeLine lang={lang} placement="words" class="note__badge" />
+      </div>
+    </section>
+
+    <div class="pill" data-pill hidden>
+      <p class="pill__count" aria-live="polite">
+        <span class="pill__n display" data-count>00</span>
+        <span class="pill__label" data-count-label>{goals.other}</span>
+      </p>
+      <button type="button" class="pill__reset" data-reset>
+        <span class="sr-only">{t.reset}</span>
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M3 8a5 5 0 1 0 1.6-3.7M3 2.5v3.3h3.3"></path></svg>
+      </button>
+    </div>
+    <script is:inline type="application/json" data-plurals set:html={JSON.stringify(goals)} />
+  </div>
 </Base>
+
+<script>
+  // Tap a word to score it, a goal pill with a reset, and the print button. Without JavaScript the list reads
+  // and prints the same; only scoring and the button need the script.
+  const root = document.querySelector<HTMLElement>('[data-words]');
+  if (root) {
+    const pill = root.querySelector<HTMLElement>('[data-pill]');
+    const count = root.querySelector<HTMLElement>('[data-count]');
+    const label = root.querySelector<HTMLElement>('[data-count-label]');
+    const plurals = JSON.parse(root.querySelector('[data-plurals]')?.textContent ?? '{}') as Record<string, string>;
+    const rules = new Intl.PluralRules(document.documentElement.lang);
+    const scored = new Set<string>();
+
+    const render = () => {
+      const n = scored.size;
+      if (count) count.textContent = String(n).padStart(2, '0');
+      if (label) label.textContent = plurals[rules.select(n)] ?? plurals.other ?? '';
+      pill?.toggleAttribute('data-on', n > 0);
+    };
+
+    root.addEventListener('click', (event) => {
+      const button = (event.target as Element).closest<HTMLButtonElement>('button[data-key]');
+      if (!button) return;
+      const key = button.dataset.key ?? '';
+      const on = !scored.has(key);
+      if (on) scored.add(key);
+      else scored.delete(key);
+      button.setAttribute('aria-pressed', String(on));
+      render();
+    });
+
+    root.querySelector('[data-reset]')?.addEventListener('click', () => {
+      scored.clear();
+      for (const b of root.querySelectorAll('button[data-key][aria-pressed="true"]')) b.setAttribute('aria-pressed', 'false');
+      render();
+    });
+
+    const print = root.querySelector<HTMLButtonElement>('[data-print]');
+    if (print) {
+      print.hidden = false;
+      print.addEventListener('click', () => window.print());
+    }
+    if (pill) pill.hidden = false;
+  }
+</script>
+
+<style>
+  :global(body) {
+    background: linear-gradient(175deg, var(--c-lime-hi) 0%, var(--c-lime) 28%, var(--c-lime-end) 100%);
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px 80px;
+    align-items: end;
+    padding-block: 32px 36px;
+  }
+  .hero__h1 {
+    --fs: calc(clamp(44px, 7vw, 112px) * var(--k));
+    --ls: -0.02em;
+    line-height: 0.9;
+    text-wrap: balance;
+    /* The longest word, in em (.fit in base.css). */
+    --fit: 5.85;
+  }
+  :global(:root[lang='ru']) .hero__h1 {
+    --fit: 6.65;
+  }
+  :global(:root[lang='hy']) .hero__h1 {
+    --fit: 7.55;
+  }
+  .hero__lead {
+    font: 500 clamp(16px, 1.3vw, 18px) / 1.55 var(--fu);
+    text-wrap: pretty;
+  }
+  .print-btn {
+    margin-top: 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 52px;
+    padding: 0 24px;
+    border: 0;
+    border-radius: var(--r-pill);
+    background: var(--c-ink);
+    color: var(--c-lime);
+    font: 700 16px/1 var(--fu);
+    cursor: pointer;
+    transition: transform 0.16s var(--ease-out);
+  }
+  .print-btn[hidden] {
+    display: none;
+  }
+  .print-btn__icon {
+    width: 14px;
+    height: 16px;
+    border: 2px solid currentColor;
+    border-radius: 2px;
+  }
+  @media (hover: hover) {
+    .print-btn:hover {
+      transform: translateY(-2px);
+    }
+  }
+  .print-btn:active {
+    transform: scale(0.97);
+  }
+
+  .chips {
+    position: sticky;
+    top: var(--header-h);
+    z-index: 20;
+    border-block: 1.5px solid var(--c-ink);
+    background: rgb(var(--c-lime-ch) / 0.92);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+  .chips__in {
+    display: flex;
+    gap: 8px;
+    padding-block: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .chip {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 16px;
+    border-radius: var(--r-pill);
+    border: 1.5px solid var(--c-ink);
+    font: 700 14px/1 var(--fu);
+    white-space: nowrap;
+    text-decoration: none;
+    color: var(--c-ink);
+    transition:
+      background-color 0.16s,
+      color 0.16s;
+  }
+  .chip__n {
+    font: 600 11px/1 var(--fu);
+    opacity: 0.7;
+    font-variant-numeric: tabular-nums;
+  }
+  @media (hover: hover) {
+    .chip:hover {
+      background: var(--c-ink);
+      color: var(--c-lime);
+    }
+  }
+
+  .cat {
+    border-bottom: 1.5px solid var(--c-ink);
+    scroll-margin-top: calc(var(--header-h) + 66px);
+  }
+  .cat__in {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px 64px;
+    align-items: start;
+    padding-block: 44px 52px;
+  }
+  .sheet-head,
+  .sheet-foot {
+    display: none;
+  }
+  .cat__n {
+    font: 700 12px/1 var(--fu);
+    letter-spacing: 0.14em;
+    font-variant-numeric: tabular-nums;
+  }
+  .cat__title {
+    margin: 12px 0;
+    --fs: calc(clamp(34px, 3.6vw, 52px) * var(--k));
+    --ls: -0.012em;
+    line-height: 0.95;
+    text-wrap: balance;
+    /* The longest word, in em (.fit in base.css). */
+    --fit: 5.75;
+  }
+  :global(:root[lang='ru']) .cat__title {
+    --fit: 6.05;
+  }
+  :global(:root[lang='hy']) .cat__title {
+    --fit: 11.15;
+  }
+  .cat__intro {
+    max-width: 34ch;
+    font: 500 16px/1.5 var(--fu);
+    color: var(--c-ink-lime-body);
+  }
+  .tip {
+    margin-top: 20px;
+    max-width: 34ch;
+    padding: 14px 16px;
+    border-radius: var(--r-md);
+    background: var(--c-ink);
+    color: var(--c-ink-hi);
+  }
+  .tip__label {
+    font: 700 11px/1 var(--fu);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-lime);
+  }
+  .tip__text {
+    margin-top: 8px;
+    font: 400 15px/1.5 var(--fu);
+  }
+
+  .levels {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px 40px;
+  }
+  .level__label {
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font: 800 13px/1 var(--fu);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .level__label::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid var(--c-ink);
+    background: var(--c-lime);
+  }
+  .level__label--hard::before {
+    background: var(--c-ink);
+  }
+  .level__words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .w {
+    min-height: 44px;
+    padding: 0 14px;
+    border-radius: var(--r-sm);
+    border: 1.5px solid var(--c-ink);
+    background: rgb(var(--c-paper-ch) / 0.28);
+    color: var(--c-ink);
+    font-weight: 800;
+    font-size: calc(17px * var(--k));
+    line-height: 1.1;
+    letter-spacing: -0.005em;
+    cursor: pointer;
+    transition:
+      background-color 0.18s var(--ease-out),
+      color 0.18s var(--ease-out);
+  }
+  @media (hover: hover) {
+    .w:hover {
+      background: rgb(var(--c-paper-ch) / 0.6);
+    }
+  }
+  .w[aria-pressed='true'] {
+    background: var(--c-ink);
+    color: var(--c-lime);
+  }
+
+  .use {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 48px 80px;
+    padding-block: 64px 80px;
+  }
+  .use__title {
+    margin-bottom: 24px;
+    font-size: calc(clamp(32px, 3.6vw, 52px) * var(--k));
+    line-height: 0.95;
+    letter-spacing: -0.012em;
+  }
+  .use__steps li {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 12px;
+    padding: 18px 0;
+    border-top: 1.5px solid var(--c-ink);
+    font: 500 17px/1.5 var(--fu);
+    text-wrap: pretty;
+  }
+  .use__n {
+    font-size: 30px;
+    line-height: 1;
+  }
+  .more {
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    font: 700 15px/1 var(--fu);
+    color: var(--c-ink);
+    text-decoration: underline;
+    text-underline-offset: 5px;
+    text-decoration-thickness: 2px;
+  }
+  .note {
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 26px 22px;
+    border-radius: var(--r-lg);
+    background: var(--c-ink);
+    color: var(--c-ink-hi);
+    --badge-note: var(--c-ink-muted);
+  }
+  .note__title {
+    font-size: calc(clamp(30px, 3vw, 44px) * var(--k));
+    line-height: 0.95;
+    color: var(--c-lime);
+  }
+  .note__text {
+    font: 400 17px/1.55 var(--fu);
+    color: var(--c-ink-body);
+    text-wrap: pretty;
+  }
+  .note :global(.badge-line) {
+    margin: 0 -12px -12px;
+  }
+  .note :global(:focus-visible) {
+    outline-color: var(--c-lime);
+  }
+
+  .pill {
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 6px 6px 6px 18px;
+    border-radius: var(--r-pill);
+    background: var(--c-ink);
+    color: var(--c-ink-hi);
+    box-shadow: 0 12px 30px rgb(var(--c-ink-ch) / 0.35);
+    opacity: 0;
+    transform: translate(-50%, 16px);
+    pointer-events: none;
+    visibility: hidden;
+    transition:
+      opacity 0.2s,
+      transform 0.3s var(--ease-out),
+      visibility 0s 0.3s;
+  }
+  .pill[hidden] {
+    display: none;
+  }
+  .pill[data-on] {
+    opacity: 1;
+    transform: translate(-50%, 0);
+    pointer-events: auto;
+    visibility: visible;
+    transition:
+      opacity 0.2s,
+      transform 0.3s var(--ease-out);
+  }
+  .pill__count {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .pill__n {
+    font-size: 22px;
+    color: var(--c-lime);
+    font-variant-numeric: tabular-nums;
+  }
+  .pill__label {
+    font: 700 11px/1 var(--fu);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .pill__reset {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgb(var(--c-ink-hi-ch) / 0.3);
+    background: transparent;
+    color: var(--c-ink-hi);
+    cursor: pointer;
+  }
+  .pill__reset svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .pill :global(:focus-visible) {
+    outline-color: var(--c-lime);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pill,
+    .pill[data-on] {
+      transform: translate(-50%, 0);
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .hero {
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      padding-block: 64px 56px;
+    }
+    .chips__in {
+      padding-block: 12px;
+    }
+    .cat__in {
+      grid-template-columns: 360px minmax(0, 1fr);
+      padding-block: 72px;
+    }
+    .cat__head {
+      position: sticky;
+      top: calc(var(--header-h) + 86px);
+    }
+    .levels {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .use {
+      grid-template-columns: minmax(0, 1fr) 520px;
+      padding-block: 112px 120px;
+    }
+    .note {
+      padding: 36px;
+    }
+  }
+
+  /* The print sheet: one category per A4 page, the words in a dashed cut grid, no navigation. */
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+  @media print {
+    :global(body) {
+      background: var(--c-paper);
+      color: var(--c-ink);
+    }
+    :global(.hdr),
+    :global(.ftr),
+    :global(.skip),
+    .hero,
+    .chips,
+    .use,
+    .pill,
+    .cat__n,
+    .cat__title,
+    .cat__intro {
+      display: none !important;
+    }
+    .cat {
+      border: 0;
+      break-after: page;
+    }
+    .cat--last {
+      break-after: auto;
+    }
+    .cat__in {
+      display: block;
+      max-width: none;
+      padding: 0;
+    }
+    .sheet-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      padding-bottom: 12px;
+      border-bottom: 3px solid var(--c-ink);
+    }
+    .sheet-head__kicker {
+      font: 700 10px/1 var(--fu);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .sheet-head__name {
+      margin-top: 8px;
+      font-size: calc(34px * var(--k));
+      line-height: 1;
+      letter-spacing: -0.01em;
+    }
+    .sheet-head :global(.sheet-head__mark) {
+      --wm-a: var(--c-ink);
+      --wm-b: var(--c-ink);
+      font-size: 20px;
+    }
+    .tip {
+      margin: 10px 0 0;
+      max-width: none;
+      padding: 0;
+      background: none;
+      color: var(--c-ink);
+      font: 400 11pt/1.45 var(--fu);
+    }
+    .tip__label,
+    .tip__text {
+      display: inline;
+      margin: 0;
+      font: inherit;
+      letter-spacing: normal;
+      text-transform: none;
+      color: inherit;
+    }
+    .tip__label {
+      font-weight: 700;
+    }
+    .tip__label::after {
+      content: ': ';
+    }
+    .levels {
+      display: block;
+    }
+    .level {
+      margin-top: 18px;
+      break-inside: avoid;
+    }
+    .level__label {
+      margin-bottom: 8px;
+      gap: 8px;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+    }
+    .level__label::before {
+      width: 9px;
+      height: 9px;
+      border-color: var(--c-ink);
+      background: var(--c-paper);
+    }
+    .level__label--hard::before {
+      background: var(--c-ink);
+    }
+    .level__words {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0;
+      border-top: 1px dashed var(--c-ink);
+      border-left: 1px dashed var(--c-ink);
+    }
+    .level__words li {
+      display: flex;
+      border-right: 1px dashed var(--c-ink);
+      border-bottom: 1px dashed var(--c-ink);
+    }
+    .w {
+      flex: 1;
+      min-height: 46px;
+      padding: 6px 8px;
+      border: 0;
+      border-radius: 0;
+      background: none !important;
+      color: var(--c-ink) !important;
+      font-size: calc(12pt * var(--k));
+      text-align: center;
+    }
+    .sheet-foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 18px;
+      padding-top: 8px;
+      border-top: 1px solid var(--c-ink);
+      font: 400 8.5pt/1.4 var(--fu);
+    }
+  }
+</style>

@@ -1,5 +1,8 @@
 ---
-import PageIntro from '../components/PageIntro.astro';
+// Support (design/export/Support.dc.html): the contact card, common questions and what to include in a report.
+import CopyButton from '../components/CopyButton.astro';
+import Faq from '../components/Faq.astro';
+import { SUPPORT_EMAIL } from '../config/site';
 import Base from '../layouts/Base.astro';
 import { copyFor } from '../lib/copy';
 import { staticPathsFor, type Lang } from '../lib/routes';
@@ -14,8 +17,180 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = copyFor(lang).pages.support;
+const [user, domain] = SUPPORT_EMAIL.split('@');
 ---
 
-<Base lang={lang} routeId="support" surface="night" bp={1000} title={t.meta.title} description={t.meta.description}>
-  <PageIntro h1={t.h1} lead={t.lead} />
+<Base lang={lang} routeId="support" surface="night" title={t.meta.title} description={t.meta.description}>
+  <div class="support wrap">
+    <div class="side">
+      <h1 class="h1 display fit"><span class="fit__t">{t.h1}</span></h1>
+      <p class="lead">{t.lead}</p>
+      <section class="contact" aria-labelledby="contact-title">
+        <h2 id="contact-title" class="contact__title">{t.contact.title}</h2>
+        <a class="contact__email display" href={`mailto:${SUPPORT_EMAIL}`}><span>{user}@<wbr />{domain}</span></a>
+        <CopyButton value={SUPPORT_EMAIL} label={t.contact.copy} done={t.contact.copied} class="contact__copy" />
+        <p class="contact__response">{t.contact.response}</p>
+        <p class="contact__app">{t.contact.inApp}</p>
+      </section>
+    </div>
+
+    <div class="main">
+      <section aria-labelledby="faq-title">
+        <h2 id="faq-title" class="h2 display">{t.faq.title}</h2>
+        <Faq name="support-faq" items={t.faq.items} />
+      </section>
+
+      <section class="report" aria-labelledby="report-title">
+        <h2 id="report-title" class="report__title display">{t.report.title}</h2>
+        <p class="report__lead">{t.report.lead}</p>
+        <ul class="report__list" role="list">
+          {
+            t.report.items.map((item) => (
+              <li>
+                <span class="report__box" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </div>
+  </div>
 </Base>
+
+<style>
+  .support {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 48px 96px;
+    align-items: start;
+    padding-block: 36px 80px;
+  }
+  .h1 {
+    --fs: calc(clamp(56px, 7.4vw, 112px) * var(--k));
+    --ls: -0.025em;
+    line-height: 0.88;
+    /* The longest word, in em (.fit in base.css). */
+    --fit: 5.25;
+  }
+  :global(:root[lang='ru']) .h1 {
+    --fit: 6.15;
+  }
+  :global(:root[lang='hy']) .h1 {
+    --fit: 8.6;
+  }
+  .lead {
+    margin-top: 20px;
+    max-width: 30ch;
+    font: 500 clamp(17px, 1.4vw, 20px) / 1.5 var(--fu);
+    color: var(--fg-body);
+  }
+
+  .contact {
+    margin-top: 36px;
+    padding: 26px;
+    border-radius: var(--r-lg);
+    background: var(--c-lime);
+    color: var(--c-ink);
+    --focus: var(--c-ink);
+    --copy-hover-bg: var(--c-ink);
+    --copy-hover-fg: var(--c-lime);
+  }
+  .contact__title {
+    font: 700 12px/1 var(--fu);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .contact__email {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: clamp(20px, 2vw, 28px);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    color: var(--c-ink);
+    text-decoration: underline;
+    text-underline-offset: 5px;
+    text-decoration-thickness: 2px;
+  }
+  @media (hover: hover) {
+    .contact__email:hover {
+      color: var(--c-ink);
+      text-decoration-thickness: 4px;
+    }
+  }
+  .contact :global(.contact__copy) {
+    margin-top: 10px;
+    color: var(--c-ink);
+  }
+  .contact__response {
+    margin-top: 16px;
+    font: 500 14px/1.5 var(--fu);
+  }
+  .contact__app {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1.5px solid var(--c-ink);
+    font: 400 14px/1.5 var(--fu);
+    color: var(--c-ink-lime-body);
+    text-wrap: pretty;
+  }
+
+  .h2 {
+    margin-bottom: 20px;
+    font-size: calc(clamp(30px, 3.2vw, 48px) * var(--k));
+    line-height: 0.95;
+  }
+
+  .report {
+    margin-top: 64px;
+    padding: 28px;
+    border-radius: var(--r-lg);
+    border: 1px dashed rgb(var(--c-ink-hi-ch) / 0.3);
+  }
+  .report__title {
+    font-size: calc(clamp(24px, 2.2vw, 32px) * var(--k));
+    line-height: 1;
+  }
+  .report__lead {
+    margin: 12px 0 18px;
+    font: 400 16px/1.5 var(--fu);
+    color: var(--fg-body);
+  }
+  /* Two columns once each item has room for its longest word, one before that. */
+  .report__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    gap: 10px;
+  }
+  .report__list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 52px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: var(--c-night-raise);
+    font: 500 15px/1.35 var(--fu);
+  }
+  .report__box {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1.5px solid var(--accent);
+  }
+
+  @media (min-width: 1000px) {
+    .support {
+      grid-template-columns: 440px minmax(0, 1fr);
+      padding-block: 64px 120px;
+    }
+    .side {
+      position: sticky;
+      top: 120px;
+    }
+  }
+</style>

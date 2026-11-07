@@ -1,8 +1,17 @@
 ---
-import PageIntro from '../components/PageIntro.astro';
+// About (design/export/About.dc.html): what the game is, where the name comes from, who makes it, and the press
+// corner with the press kit (src/pages/press/bombardiro-press-kit.zip.ts) and a boilerplate to copy.
+import outlines from '../assets/generated/outlines.json' with { type: 'json' };
+import BadgeLine from '../components/BadgeLine.astro';
+import CopyButton from '../components/CopyButton.astro';
+import Icon from '../components/Icon.astro';
+import LangText from '../components/LangText.astro';
+import Wordmark from '../components/Wordmark.astro';
+import { SUPPORT_EMAIL } from '../config/site';
 import Base from '../layouts/Base.astro';
 import { copyFor } from '../lib/copy';
 import { staticPathsFor, type Lang } from '../lib/routes';
+import { PRESS_KIT_PATH } from '../lib/press-kit';
 
 export function getStaticPaths() {
   return staticPathsFor('about', 'about');
@@ -14,8 +23,291 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = copyFor(lang).pages.about;
+const blocks = [t.what, t.maker, t.independent];
+const word = outlines.bombardir;
 ---
 
-<Base lang={lang} routeId="about" surface="night" bp={1000} title={t.meta.title} description={t.meta.description}>
-  <PageIntro h1={t.h1} lead={t.lead} />
+<Base lang={lang} routeId="about" surface="night" title={t.meta.title} description={t.meta.description}>
+  <section class="hero wrap" aria-labelledby="about-title">
+    <h1 id="about-title" class="hero__h1 display fit"><span class="fit__t">{t.h1}</span></h1>
+    <p class="hero__lead">{t.lead}</p>
+  </section>
+
+  <section class="name" aria-labelledby="name-title">
+    <span class="name__circle" aria-hidden="true"></span>
+    <div class="name__in wrap">
+      <h2 id="name-title" class="name__title">{t.name.title}</h2>
+      <svg class="name__word" viewBox={word.viewBox} aria-hidden="true" focusable="false">
+        {word.parts.map((part) => <path d={part.d} />)}
+      </svg>
+      <p class="name__mark" aria-hidden="true">
+        <Icon name="arrow-right" />
+        <Wordmark />
+      </p>
+      <p class="name__text"><LangText text={t.name.text} lang={lang} /></p>
+    </div>
+  </section>
+
+  <section class="blocks wrap" aria-label={t.h1}>
+    {
+      blocks.map((b) => (
+        <div class="block">
+          <h2 class="block__title display">{b.title}</h2>
+          <p class="block__text"><LangText text={b.text} lang={lang} /></p>
+        </div>
+      ))
+    }
+  </section>
+
+  <section id="press" class="press wrap" aria-labelledby="press-title">
+    <div class="press__card">
+      <div>
+        <h2 id="press-title" class="press__title display">{t.press.title}</h2>
+        <div class="press__links">
+          <a class="press__kit" href={PRESS_KIT_PATH} download>
+            <Icon name="arrow-down" />
+            {t.press.kit}
+          </a>
+          <p class="press__label">{t.press.contact}</p>
+          <a class="press__email" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
+        </div>
+      </div>
+      <div class="press__side">
+        <div class="boiler">
+          <p class="boiler__text">{t.press.boilerplate}</p>
+          <CopyButton value={t.press.boilerplate} label={t.press.copy} done={t.press.copied} class="boiler__copy" />
+        </div>
+        <BadgeLine lang={lang} placement="about" class="press__badge" />
+      </div>
+    </div>
+  </section>
 </Base>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px 96px;
+    align-items: end;
+    padding-block: 36px 48px;
+  }
+  .hero__h1 {
+    --fs: calc(clamp(48px, 6.6vw, 100px) * var(--k));
+    --ls: -0.022em;
+    line-height: 0.9;
+    text-wrap: balance;
+    /* The longest word, in em (.fit in base.css). */
+    --fit: 7.55;
+  }
+  :global(:root[lang='ru']) .hero__h1 {
+    --fit: 6.6;
+  }
+  :global(:root[lang='hy']) .hero__h1 {
+    --fit: 8.05;
+  }
+  .hero__lead {
+    font: 500 clamp(18px, 1.5vw, 22px) / 1.45 var(--fu);
+    color: var(--fg-body);
+    text-wrap: pretty;
+  }
+
+  .name {
+    position: relative;
+    overflow: hidden;
+    border-block: 1px solid rgb(var(--c-ink-hi-ch) / 0.08);
+    background: var(--c-night-deep);
+  }
+  .name__circle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 720px;
+    height: 720px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 1px solid rgb(var(--c-ink-hi-ch) / 0.07);
+  }
+  .name__in {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding-block: 72px;
+    text-align: center;
+  }
+  .name__title {
+    font: 700 12px/1 var(--fu);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  /* «бомбардир» in outline, as the design draws it: Noto Sans 900 italic, letter for letter (outlines.json). */
+  .name__word {
+    width: min(100%, calc(clamp(56px, 11vw, 168px) * 5.7963));
+    height: auto;
+    overflow: visible;
+  }
+  .name__word path {
+    fill: none;
+    stroke: var(--fg);
+    stroke-width: 1.5px;
+    vector-effect: non-scaling-stroke;
+  }
+  .name__mark {
+    display: flex;
+    align-items: center;
+    gap: 0.25em;
+    font-size: clamp(28px, 4vw, 56px);
+    line-height: 1;
+  }
+  .name__mark :global(.icon) {
+    stroke-width: 2.25;
+  }
+  .name__text {
+    margin-top: 8px;
+    max-width: 44ch;
+    font: 400 clamp(17px, 1.4vw, 20px) / 1.55 var(--fu);
+    color: var(--fg-body);
+    text-wrap: pretty;
+  }
+
+  .blocks {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0 48px;
+    padding-block: 56px 16px;
+  }
+  .block {
+    padding: 28px 0 36px;
+    border-top: 1px solid rgb(var(--c-ink-hi-ch) / 0.16);
+  }
+  .block__title {
+    margin-bottom: 14px;
+    font-size: calc(clamp(24px, 2.2vw, 32px) * var(--k));
+    line-height: 1;
+  }
+  .block__text {
+    font: 400 16px/1.6 var(--fu);
+    color: var(--fg-body);
+    text-wrap: pretty;
+  }
+
+  .press {
+    padding-block: 24px 72px;
+  }
+  .press__card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px 64px;
+    padding: 28px 22px;
+    border-radius: var(--r-xl);
+    background: var(--c-lime);
+    color: var(--c-ink);
+    --focus: var(--c-ink);
+    --badge-note: var(--c-ink-lime-soft);
+    --copy-hover-bg: var(--c-ink);
+    --copy-hover-fg: var(--c-lime);
+  }
+  .press__title {
+    font-size: calc(clamp(36px, 4.4vw, 64px) * var(--k));
+    line-height: 0.92;
+  }
+  .press__links {
+    margin-top: 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .press__kit {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 12px 22px;
+    border-radius: var(--r-pill);
+    background: var(--c-ink);
+    color: var(--c-lime);
+    font: 700 15px/1.2 var(--fu);
+    text-decoration: none;
+    transition: transform 0.16s var(--ease-out);
+  }
+  @media (hover: hover) {
+    .press__kit:hover {
+      color: var(--c-lime);
+      transform: translateY(-2px);
+    }
+  }
+  .press__kit:focus-visible {
+    outline-color: var(--c-ink);
+  }
+  .press__label {
+    margin-top: 14px;
+    font: 700 11px/1 var(--fu);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .press__email {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    font: 700 17px/1.2 var(--fu);
+    color: var(--c-ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    overflow-wrap: anywhere;
+  }
+  @media (hover: hover) {
+    .press__email:hover {
+      color: var(--c-ink);
+      text-decoration-thickness: 2px;
+    }
+  }
+  .press__side {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .boiler {
+    padding: 22px 24px;
+    border-radius: var(--r-card);
+    background: var(--c-paper);
+    border: 1.5px solid var(--c-ink);
+  }
+  .boiler__text {
+    font: 500 17px/1.6 var(--fu);
+    text-wrap: pretty;
+  }
+  .boiler :global(.boiler__copy) {
+    margin-top: 16px;
+    color: var(--c-ink);
+  }
+  .press :global(.press__badge) {
+    margin: -6px -12px;
+  }
+  .press :global(.badge-line__note) {
+    font-weight: 600;
+  }
+
+  @media (min-width: 1000px) {
+    .hero {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      padding-block: 72px 88px;
+    }
+    .name__in {
+      padding-block: 120px;
+    }
+    .blocks {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      padding-block: 96px 40px;
+    }
+    .press {
+      padding-block: 40px 120px;
+    }
+    .press__card {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+      padding: 48px;
+    }
+  }
+</style>

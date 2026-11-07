@@ -59,3 +59,33 @@ the design's idea.
 | Pause control | `aria-pressed` with a changing label | A plain button whose label changes between Pause and Play | A toggle with `aria-pressed` must keep one label. |
 | Whistle toggle | `aria-pressed` | `aria-pressed`, with the visible "Whistle: off/on" as its accessible name | Label-in-name (WCAG 2.5.3). |
 | Screenshot alt text | Two teams on the teams screen; "the winning team lifts the trophy" on the final screen | Three teams; "the winning team and the final score" | The captures show three teams and a champions screen, not a trophy lift. |
+
+## How to play
+
+| Where | Design | Build | Why |
+| --- | --- | --- | --- |
+| Video | A hatched placeholder with a lime play button and a "muted, no autoplay" note | The real 25-second recording (`scripts/build-video.mjs`: H.264, 660 px wide, 0.9 MB), its first frame (the app's own splash) as the poster, and the design's lime play button | SPEC §8. The poster is a real screen, as every image must be. |
+| Video loading | `<video controls preload="none">` with its source | The source is attached when the play button is pressed; the browser's controls appear then. Without JavaScript, a `<noscript>` copy has the plain `<video controls preload="none">` | WebKit fetches a `<source>` on load whatever `preload` says, and SPEC §14 says nothing loads before play. Without JavaScript, WebKit still fetches it; that's the price of a video that plays with scripts off. |
+
+## Words
+
+| Where | Design | Build | Why |
+| --- | --- | --- | --- |
+| Words per category | The first 32 Easy and 32 Hard | The first 24 Easy and 12 Hard in pack order, skipping any word already on the page and any word the site never says (FIFA, UEFA), chosen by index so every language shows the same words (`wordsPageSelection` in `src/lib/words.ts`) | SPEC §5 sets the counts and the rule; `.claude/rules/copy.md` bans the names. |
+| Print | "Print this list" opens an on-screen preview of the sheets, with its own Print button | The button opens the browser's print dialog, which has its own preview. The print stylesheet turns the same page into the design's sheets: one category per A4 page, the header with the wordmark, the tip, the dashed four-column cut grid and the footer | One copy of the words in the HTML (no hidden duplicate list), and the page also prints from the browser menu, with JavaScript off. |
+| Link to How to play | None | A text link under "How to play with this list" | `handoff/keyword-map.md`: Words must link to How to play. |
+| Reset in the goal pill | "↺" in the interface font | A drawn icon with "Reset the score" as its accessible name | No site font has "↺", and the button needs a name. |
+| Big headings (h1, category titles) | Fixed sizes | The design's sizes, capped so the longest word fits its column (`.fit`) | Armenian «ՄԱՐՏԱՎԱՐՈՒԹՅՈՒՆ» is 11 em wide and ran past its 360 px column. |
+
+## Support, About, Privacy and the Guides hub
+
+| Where | Design | Build | Why |
+| --- | --- | --- | --- |
+| Support email | Archivo 900 italic in every language, free to break anywhere | The page language's display face (Archivo, Noto Sans, Noto Sans Armenian), breaking only after the @ | SPEC §8: each language loads only its own fonts. A break inside "gmail.com" read as a typo. |
+| Support's report checklist | Two columns from 1100 px | Two columns once each item has 240 px, one before that | At 1000–1300 px the two columns squeezed the Russian and Armenian items past their boxes. |
+| H1s on Support, About, Privacy and the Guides hub | Fixed sizes | The design's sizes, capped so the longest word fits (`.fit`) | ПОДДЕРЖКА, BOMBARDIRO, «Конфиденциальность» and ԱՋԱԿՑՈՒԹՅՈՒՆ broke in the middle of the word in their columns. |
+| "→" before BOMBARDIRO on About | The interface font's arrow | The drawn arrow icon | No site font has "→" (as in the header). |
+| Press kit | `press-kit.zip`, a placeholder | `/press/bombardiro-press-kit.zip`, built at build time from `assets/`: the app icon, the wordmark as outlined SVG in the Night and Chalk colours, and six iPhone screenshots each in English and Russian | SPEC §8. Building it keeps one copy of each file in the repository. |
+| Privacy date | "2 November 2026" through the browser's locale | `LAST_UPDATED` formatted per language at build time: "2 November 2026", «2 ноября 2026 г.», «2 նոյեմբերի, 2026 թ.» | SPEC §5. |
+| Guides hub reading time | "5 min read", «5 минут», «4 րոպե» | `pages.guides.readTime`: "{n} min read", «{n} мин чтения», «{n} րոպե ընթերցանություն», from the guide's word count at 200 words a minute | The abbreviation needs no Russian plural forms. |
+| Copy and Copied, the video's play label | Written in the prototype's code | In `content/copy/` in all three languages | No hard-coded text. |

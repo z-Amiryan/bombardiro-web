@@ -1,0 +1,36 @@
+---
+// The App Store badge with "Free on iPhone and iPad" beside it, as the core pages place it. The wrapper's
+// 12 px padding is the badge's clear space (a quarter of its 48 px height, legal.md). The note takes the
+// colour of `--badge-note`, so each surface can set it.
+import { copyFor } from '../lib/copy';
+import type { Lang } from '../lib/routes';
+import type { StorePlacement } from '../config/site';
+import AppStoreBadge from './AppStoreBadge.astro';
+
+interface Props {
+  lang: Lang;
+  placement: StorePlacement;
+  class?: string;
+}
+
+const { lang, placement, class: className } = Astro.props;
+---
+
+<div class:list={['badge-line', className]}>
+  <AppStoreBadge lang={lang} placement={placement} />
+  <p class="badge-line__note">{copyFor(lang).cta.availability}</p>
+</div>
+
+<style>
+  .badge-line {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+  }
+  .badge-line__note {
+    max-width: 16ch;
+    font: 500 13px/1.35 var(--fu);
+    color: var(--badge-note, var(--fg-muted));
+  }
+</style>

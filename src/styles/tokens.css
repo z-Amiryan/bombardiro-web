@@ -33,12 +33,14 @@
   --c-ink: #0a0f0a;
   --c-ink-lime-soft: #33441a;
   --c-ink-lime-body: #22300f;
+  --c-ink-ch: 10 15 10;
 
   /* Chalk (the app's Chalk grass): Guides, Guide, Privacy */
   --c-chalk: #eef2e9;
   --c-chalk-deep: #dee5d5;
   --c-chalk-hover: #e3eadb;
   --c-paper: #ffffff;
+  --c-paper-ch: 255 255 255;
   --c-chalk-ink: #12180f;
   --c-chalk-body: #1e261b;
   --c-chalk-text: #2e372b;
