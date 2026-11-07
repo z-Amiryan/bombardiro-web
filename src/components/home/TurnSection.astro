@@ -154,7 +154,7 @@ const beats = turn.steps.map((step, i) => ({
   .beat__rule {
     flex: 1;
     height: 1px;
-    background: repeating-linear-gradient(90deg, rgba(237, 243, 230, 0.28) 0 5px, transparent 5px 10px);
+    background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--c-ink-hi) 28%, transparent) 0 5px, transparent 5px 10px);
   }
 
   .beat__n {
@@ -218,10 +218,12 @@ const beats = turn.steps.map((step, i) => ({
       position: relative;
     }
 
+    /* Centred in the space below the sticky header, and shorter than the design's 660 px on short laptop
+       screens, so the whole screenshot stays in view. */
     .turn__pin-in {
       position: sticky;
-      top: calc(50vh - 330px);
-      height: 660px;
+      top: calc(var(--header-h) + max(16px, (100vh - var(--header-h) - 660px) / 2));
+      height: min(660px, calc(100vh - var(--header-h) - 32px));
       display: flex;
       justify-content: center;
     }
@@ -234,14 +236,14 @@ const beats = turn.steps.map((step, i) => ({
       height: 900px;
       margin-left: -260px;
       pointer-events: none;
-      background: linear-gradient(180deg, rgba(237, 243, 230, 0.09) 0%, rgba(237, 243, 230, 0.02) 60%, rgba(237, 243, 230, 0) 85%);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--c-ink-hi) 9%, transparent) 0%, color-mix(in srgb, var(--c-ink-hi) 2%, transparent) 60%, transparent 85%);
       clip-path: polygon(40% 0, 60% 0, 100% 100%, 0 100%);
     }
 
     .turn__screen {
       position: absolute;
       top: 0;
-      width: 304px;
+      width: auto;
       opacity: 0;
       transform: translateY(14px) scale(0.985);
       transition:
@@ -259,7 +261,8 @@ const beats = turn.steps.map((step, i) => ({
     }
 
     .turn__screen :global(.turn__shot) {
-      width: 304px;
+      width: auto;
+      height: min(659px, calc(100vh - var(--header-h) - 32px));
       border-radius: var(--r-shot-lg);
     }
   }

@@ -52,7 +52,7 @@ const final = t.pages.home.final;
     height: 1100px;
     margin-left: -450px;
     pointer-events: none;
-    background: linear-gradient(180deg, rgba(237, 243, 230, 0.1) 0%, rgba(237, 243, 230, 0.03) 55%, rgba(237, 243, 230, 0) 85%);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--c-ink-hi) 10%, transparent) 0%, color-mix(in srgb, var(--c-ink-hi) 3%, transparent) 55%, transparent 85%);
     clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
   }
 
@@ -116,8 +116,8 @@ const final = t.pages.home.final;
     inset: 0;
     border-radius: 16px;
     transform: skewX(-8deg);
-    background: linear-gradient(100deg, #c8fa55 0%, #8cc81e 100%);
-    box-shadow: 0 12px 32px rgba(191, 247, 71, 0.22);
+    background: linear-gradient(100deg, var(--c-play-a) 0%, var(--c-play-b) 100%);
+    box-shadow: 0 12px 32px color-mix(in srgb, var(--c-lime) 22%, transparent);
   }
 
   .skew__bg::after {
@@ -125,8 +125,8 @@ const final = t.pages.home.final;
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: linear-gradient(100deg, #d4ff66 0%, #99d42a 100%);
-    box-shadow: 0 16px 36px rgba(191, 247, 71, 0.3);
+    background: linear-gradient(100deg, var(--c-play-hi-a) 0%, var(--c-play-hi-b) 100%);
+    box-shadow: 0 16px 36px color-mix(in srgb, var(--c-lime) 30%, transparent);
     opacity: 0;
     transition: opacity 0.16s var(--ease-out);
   }

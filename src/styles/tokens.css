@@ -3,6 +3,7 @@
 :root {
   /* Night (1a): Home, How to play, Support, About, 404 */
   --c-night: #101418;
+  --c-night-hero: #1c242a;
   --c-night-deep: #0c1013;
   --c-night-raise: #192025;
   --c-night-glow: #1b2329;
@@ -13,6 +14,11 @@
   --c-ink-muted: #9aa59a;
   --c-ink-dim: #7e897f;
   --c-lime: #bff747;
+  /* The app's PLAY button: its lime gradient, and the brighter one on hover. */
+  --c-play-a: #c8fa55;
+  --c-play-b: #8cc81e;
+  --c-play-hi-a: #d4ff66;
+  --c-play-hi-b: #99d42a;
   --c-alarm: #ff7a6e;
 
   /* Lime (1b): Words, Home words band */
@@ -128,6 +134,7 @@
 
 /* Surfaces */
 :root[data-surface='night'] {
+  --shot-line: color-mix(in srgb, var(--c-ink-hi) 10%, transparent);
   color-scheme: dark;
   --bg: var(--c-night);
   --fg: var(--c-ink-hi);
@@ -169,6 +176,7 @@
 }
 
 :root[data-surface='lime'] {
+  --shot-line: color-mix(in srgb, var(--c-ink) 14%, transparent);
   color-scheme: light;
   --bg: var(--c-lime);
   --fg: var(--c-ink);
@@ -210,6 +218,7 @@
 }
 
 :root[data-surface='chalk'] {
+  --shot-line: color-mix(in srgb, var(--c-chalk-ink) 14%, transparent);
   color-scheme: light;
   --bg: var(--c-chalk);
   --fg: var(--c-chalk-ink);

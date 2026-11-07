@@ -68,8 +68,8 @@ const id = `feature-${n}`;
     aspect-ratio: 1;
     transform: translate(-50%, -50%);
     border-radius: 50%;
-    border: 1px solid rgba(237, 243, 230, 0.08);
-    background: radial-gradient(circle, rgba(191, 247, 71, 0.06) 0%, rgba(191, 247, 71, 0) 62%);
+    border: 1px solid color-mix(in srgb, var(--c-ink-hi) 8%, transparent);
+    background: radial-gradient(circle, color-mix(in srgb, var(--c-lime) 6%, transparent) 0%, transparent 62%);
   }
 
   .feature__media :global(.feature__shot) {

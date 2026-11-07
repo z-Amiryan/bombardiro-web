@@ -96,7 +96,7 @@
         "title": "Crown the champions",
         "text": "Grab your friends, pick your categories and start the match."
       },
-      "wall": {"goals": {"one": "goal", "few": "goals", "many": "goals", "other": "goals"}, "pause": "Pause", "play": "Play"},
+      "wall": { "hint": "Tap a word, score a goal", "goals": {"one": "goal", "few": "goals", "many": "goals", "other": "goals"}, "pause": "Pause", "play": "Play"},
       "whistle": {"off": "Whistle: off", "on": "Whistle: on"},
       "faq": {
         "title": "Quick answers",

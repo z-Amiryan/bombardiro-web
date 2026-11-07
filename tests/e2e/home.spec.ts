@@ -108,6 +108,46 @@ test.describe('Home word wall', () => {
   });
 });
 
+test.describe('Home on a short laptop screen', () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test('the pinned screen sits below the sticky header and fits the screen', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'Phones have no pinned screen');
+    await page.goto('/');
+    await page
+      .locator('#beat-2')
+      .evaluate((el: HTMLElement) =>
+        window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - innerHeight / 2, behavior: 'instant' }),
+      );
+    const shot = page.locator('[data-pinned] .turn__screen[data-state="on"] img');
+    await expect(shot).toBeVisible();
+    const header = await page.locator('.hdr').evaluate((el) => el.getBoundingClientRect().bottom);
+    const box = await shot.evaluate((el) => el.getBoundingClientRect().toJSON());
+    expect(box.top).toBeGreaterThanOrEqual(header);
+    expect(box.bottom).toBeLessThanOrEqual(800);
+  });
+});
+
+test.describe('Home word wall with a keyboard', () => {
+  test('a focused word stands still and in view inside its row', async ({ page, browserName }) => {
+    test.skip(browserName === 'webkit', 'WebKit only tabs to links with "Press Tab to highlight each item" on');
+    await page.goto('/');
+    const words = page.locator('.band .word[role="button"]');
+    await words.nth(5).focus();
+    for (let i = 0; i < 6; i++) await page.keyboard.press('Tab');
+    const placement = await page.evaluate(() => {
+      const el = document.activeElement as HTMLElement;
+      const row = el.closest('.row') as HTMLElement;
+      const a = el.getBoundingClientRect();
+      const r = row.getBoundingClientRect();
+      return { frozen: row.hasAttribute('data-focus'), inside: a.left >= r.left - 1 && a.right <= r.right + 1, role: el.getAttribute('role') };
+    });
+    expect(placement).toEqual({ frozen: true, inside: true, role: 'button' });
+    await page.keyboard.press('Enter');
+    await expect(page.locator('[data-count]')).toHaveText('01');
+  });
+});
+
 test.describe('Home with reduced motion', () => {
   test.use({ reducedMotion: 'reduce', viewport: { width: 1440, height: 900 } });
 

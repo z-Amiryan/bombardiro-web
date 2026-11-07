@@ -1,8 +1,8 @@
 // QR codes as inline SVG, made at build time (no client JavaScript, no third party).
 import qrcode from 'qrcode-generator';
 
-/** One SVG path drawing the dark modules of a QR code for `text`, with a quiet zone of `margin` modules. */
-export function qrPath(text: string, margin = 2): { size: number; d: string } {
+/** One SVG path drawing the dark modules of a QR code for `text`, with a quiet zone of `margin` modules (4, the standard). */
+export function qrPath(text: string, margin = 4): { size: number; d: string } {
   const qr = qrcode(0, 'M');
   qr.addData(text);
   qr.make();

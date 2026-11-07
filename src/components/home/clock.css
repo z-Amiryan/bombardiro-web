@@ -99,7 +99,7 @@
   position: relative;
   height: 6px;
   border-radius: 3px;
-  background: rgba(237, 243, 230, 0.12);
+  background: color-mix(in srgb, var(--c-ink-hi) 12%, transparent);
 }
 .bar__fill {
   position: absolute;

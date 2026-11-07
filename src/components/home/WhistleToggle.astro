@@ -12,10 +12,10 @@ interface Props {
 const w = copyFor(Astro.props.lang).pages.home.whistle;
 ---
 
-<button type="button" class="whistle" aria-pressed="false" data-whistle data-src={whistleUrl}>
+<!-- Like the Pause control: a plain button whose label states the sound, no aria-pressed (one state, said once). -->
+<button type="button" class="whistle" data-whistle data-src={whistleUrl} data-label-on={w.on} data-label-off={w.off}>
   <span class="whistle__dot" aria-hidden="true"></span>
-  <span class="whistle__off">{w.off}</span>
-  <span class="whistle__on">{w.on}</span>
+  <span data-whistle-label>{w.off}</span>
 </button>
 
 <style>
@@ -57,16 +57,7 @@ const w = copyFor(Astro.props.lang).pages.home.whistle;
     background: currentColor;
   }
 
-  .whistle__on,
-  .whistle[aria-pressed='true'] .whistle__off {
-    display: none;
-  }
-
-  .whistle[aria-pressed='true'] {
+  .whistle[data-on] {
     color: var(--accent);
-  }
-
-  .whistle[aria-pressed='true'] .whistle__on {
-    display: inline;
   }
 </style>
