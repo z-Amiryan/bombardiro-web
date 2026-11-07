@@ -34,12 +34,14 @@ const word = outlines.bombardir;
   </section>
 
   <section class="name" aria-labelledby="name-title">
-    <span class="name__circle" aria-hidden="true"></span>
     <div class="name__in wrap">
       <h2 id="name-title" class="name__title">{t.name.title}</h2>
-      <svg class="name__word" viewBox={word.viewBox} aria-hidden="true" focusable="false">
-        {word.parts.map((part) => <path d={part.d} />)}
-      </svg>
+      <span class="name__word-box" aria-hidden="true">
+        <span class="name__circle"></span>
+        <svg class="name__word" viewBox={word.viewBox} width={Math.round(word.widthEm * 100)} height={Math.round(word.heightEm * 100)} focusable="false">
+          {word.parts.map((part) => <path d={part.d} />)}
+        </svg>
+      </span>
       <p class="name__mark" aria-hidden="true">
         <Icon name="arrow-right" />
         <Wordmark />
@@ -114,11 +116,19 @@ const word = outlines.bombardir;
   .name {
     position: relative;
     overflow: hidden;
+    isolation: isolate;
     border-block: 1px solid rgb(var(--c-ink-hi-ch) / 0.08);
     background: var(--c-night-deep);
   }
+  /* Centred on the outlined word, whose height is fixed by its viewBox, so web fonts arriving can't move it. */
+  .name__word-box {
+    position: relative;
+    display: block;
+    width: min(100%, calc(clamp(56px, 11vw, 168px) * 5.7963));
+  }
   .name__circle {
     position: absolute;
+    z-index: -1;
     left: 50%;
     top: 50%;
     width: 720px;
@@ -144,7 +154,8 @@ const word = outlines.bombardir;
   }
   /* «бомбардир» in outline, as the design draws it: Noto Sans 900 italic, letter for letter (outlines.json). */
   .name__word {
-    width: min(100%, calc(clamp(56px, 11vw, 168px) * 5.7963));
+    display: block;
+    width: 100%;
     height: auto;
     overflow: visible;
   }
