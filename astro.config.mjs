@@ -38,6 +38,24 @@ export default defineConfig({
       ),
     },
   })),
+  // Content-Security-Policy (SPEC §11): Astro hashes every script and style it renders and writes the policy
+  // as a <meta> in each page, so nothing inline runs without its hash and nothing needs 'unsafe-inline'. The
+  // directives a <meta> can't carry (frame-ancestors) and the other security headers are in vercel.json.
+  security: {
+    csp: {
+      algorithm: 'SHA-256',
+      directives: [
+        "default-src 'self'",
+        "img-src 'self' data:",
+        "font-src 'self'",
+        "media-src 'self'",
+        "connect-src 'self'",
+        "object-src 'none'",
+        "base-uri 'self'",
+        "form-action 'none'",
+      ],
+    },
+  },
   // The sitemap integration leaves out the 404 page by itself.
   integrations: [sitemap()],
 });

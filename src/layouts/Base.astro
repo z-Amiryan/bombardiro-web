@@ -3,6 +3,8 @@
 // Global styles first, so component styles come after them in the bundle.
 import '../styles/tokens.css';
 import '../styles/base.css';
+import Analytics from '@vercel/analytics/astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
 import Fonts from '../components/Fonts.astro';
 import SeoHead from '../components/SeoHead.astro';
 import SiteFooter from '../components/SiteFooter.astro';
@@ -76,5 +78,8 @@ const nodes = [
       <slot />
     </main>
     <SiteFooter lang={lang} routeId={routeId} />
+    <!-- Vercel Web Analytics and Speed Insights (SPEC §12): first-party, no cookies, no custom events. -->
+    <Analytics />
+    <SpeedInsights />
   </body>
 </html>
