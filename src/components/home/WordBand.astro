@@ -243,8 +243,16 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
     outline-offset: -3px;
   }
 
+  /* Inset further, so a dark edge shows outside the lime ring and it reads as a ring. */
   .word[data-scored]:focus-visible {
     outline-color: var(--c-lime);
+    outline-offset: -6px;
+  }
+
+  /* Without JavaScript the row itself takes focus; its ring goes inside, clear of the screen's edges and the
+     row's rules. */
+  .row:focus-visible {
+    outline-offset: -3px;
   }
 
   .band__mid {
