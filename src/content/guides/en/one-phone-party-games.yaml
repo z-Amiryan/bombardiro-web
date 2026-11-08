@@ -1,7 +1,7 @@
 routeId: guideOnePhone
 lang: en
 title: "One-phone party games: 7 games to pass around the room"
-description: "Party games that only need one phone: what each one is, how many people you need and how it works with no wifi. Pass it around and play."
+description: "Party games that only need one phone: what each one is, how many people you need and how it works with no wifi. All of them are pass-and-play."
 kicker: Party games
 datePublished: "2026-11-07"
 dateModified: "2026-11-07"
@@ -10,7 +10,7 @@ sections:
   - id: alias
     h: Describe the word (Alias)
     p:
-      - "Teams take turns. One player describes words without saying them while their team guesses, and every word guessed before the timer runs out is a point. It's the classic pass-around game, and it scales from four people to a whole room. Read the full [Alias rules](guideAliasRules), or print our [football word list](words) if you want ready-made cards."
+      - "Teams take turns. One player describes words without saying them while their team guesses, and every word guessed before the timer runs out is a point. It's the classic pass-and-play game, and it scales from four people to a whole room. Read the full [Alias rules](guideAliasRules), or print our [football word list](words) if you want ready-made cards."
     facts:
       - [Players, "4 or more, in teams of 2+"]
       - [The phone, Timer and word list]
