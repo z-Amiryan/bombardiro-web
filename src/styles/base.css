@@ -12,6 +12,21 @@
   line-gap-override: 0%;
 }
 
+/* The same fallback for Russian display type (900 italic): a real bold italic, sized to Noto Sans 900 italic
+   (98.8 % of Arial Bold Italic on the site's Russian headings), with the same line metrics as above. Without it
+   the browser faked bold italic from regular Arial, about 10 % narrower, and headings rewrapped on arrival. */
+@font-face {
+  font-family: 'Noto Sans fallback';
+  src: local('Arial Bold Italic'), local('Arial-BoldItalicMT'), local('Liberation Sans Bold Italic'),
+    local('LiberationSans-BoldItalic'), local('Arimo Bold Italic'), local('Arimo-BoldItalic');
+  font-weight: 600 900;
+  font-style: italic;
+  size-adjust: 98.8%;
+  ascent-override: 108.2%;
+  descent-override: 29.7%;
+  line-gap-override: 0%;
+}
+
 /* The English faces' fallbacks: Astro's metric-matched numbers for Arial, also on Arial's metric twins
    (Liberation Sans, Arimo) where Arial isn't installed, as on Linux and ChromeOS. Astro's own fallback lists
    only Arial, so elsewhere text fell through to the system sans and reflowed when the font arrived. */
