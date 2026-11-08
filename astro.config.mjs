@@ -28,9 +28,12 @@ export default defineConfig({
     // Russian text, and the Latin words in Armenian text (Noto Sans Armenian's Latin is Noto Sans's), don't
     // reflow when the font arrives late (quality audits, milestones 2 and 4). Arial has no Armenian, so
     // Armenian letters fall through to the system's Armenian face as before.
+    // Archivo and Space Grotesk use "<name> fallback" faces in base.css with Astro's own metric numbers: Astro's
+    // generated face lists only local Arial, so without Arial (Linux, ChromeOS) text fell back unsized and
+    // reflowed. Ours also accept Arial's metric twins, Liberation Sans and Arimo.
     ...(family.name.startsWith('Noto')
       ? { fallbacks: ['Noto Sans fallback', 'Arial', 'sans-serif'], optimizedFallbacks: false }
-      : { fallbacks: ['sans-serif'] }),
+      : { fallbacks: [`${family.name} fallback`, 'Arial', 'sans-serif'], optimizedFallbacks: false }),
     display: 'swap',
     options: {
       variants: /** @type {[any, ...any[]]} */ (
