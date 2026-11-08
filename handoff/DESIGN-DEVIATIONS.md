@@ -57,8 +57,12 @@ the design's idea.
 | Word wall | Words from the prototype's own list | The same words taken by index from the real Easy packs, so every language shows the game's own spelling | "Use the app's terms exactly." |
 | Word wall without JavaScript | (not specified) | Still rows that scroll sideways, and no counter bar | Without JavaScript there's no Pause control, so nothing may move (WCAG 2.2.2), and scoring needs a script. |
 | Pause control | `aria-pressed` with a changing label | A plain button whose label changes between Pause and Play | A toggle with `aria-pressed` must keep one label. |
+| Pause control with reduced motion | Visible, labelled "Play" | Hidden, its space kept so the hint stays centred | Nothing drifts under reduced motion, so the control would do nothing. |
+| Word wall with keyboard focus | Rows drift whenever they're on screen | A row stops and scrolls natively while keyboard focus (`:focus-visible`) is in it, and starts its loop again when focus leaves; taps and clicks don't stop it | WCAG 2.4.11: the focused word must stay in view. |
+| Tap hint (`pages.home.wall.hint`) | RU «Нажми слово — гол», HY «Սեղմիր բառը և գրանցիր միավոր» | RU «Нажми на слово — гол», HY «Սեղմիր բառը՝ գոլ խփիր», the same as How to play step 4 | Russian takes «нажми на»; Armenian uses the app's "goal" (գոլ), as the copy audit asked. |
 | Whistle toggle | `aria-pressed` | A plain button whose visible label, "Whistle: off" or "Whistle: on", is its name; no `aria-pressed` | Same pattern as the Pause control: the state is said once, and the name is the visible label (WCAG 2.5.3). |
 | Screenshot alt text | Two teams on the teams screen; "the winning team lifts the trophy" on the final screen | Three teams; "the winning team and the final score" | The captures show three teams and a champions screen, not a trophy lift. |
+| Pinned turn screen, 1100 px and up | `top: calc(50vh - 330px)`, 304 × 660 px | Centred in the space below the sticky header, at least 16 px from it; on screens shorter than about 776 px it shrinks to the viewport height minus the header and 32 px (at 1440 × 900 it sits at 162 px, not 120 px) | At 1280 × 800 the design's screen sat under the 84 px header. |
 | Turn section without JavaScript, 1100 px and up | (not specified) | Each beat shows its screen inline, under its text; the pinned column stays empty | The pinned screen follows the beats with a script; without one, every screen still shows next to its beat. |
 
 ## How to play
