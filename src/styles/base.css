@@ -26,6 +26,18 @@
   descent-override: 29.7%;
   line-gap-override: 0%;
 }
+/* Lighter Russian italic (none today) keeps the plain metrics, so it doesn't pick up the bold-italic face. */
+@font-face {
+  font-family: 'Noto Sans fallback';
+  src: local('Arial Italic'), local('Arial-ItalicMT'), local('Liberation Sans Italic'), local('LiberationSans-Italic'),
+    local('Arimo Italic'), local('Arimo-Italic');
+  font-weight: 100 599;
+  font-style: italic;
+  size-adjust: 105.5%;
+  ascent-override: 101.3%;
+  descent-override: 27.8%;
+  line-gap-override: 0%;
+}
 
 /* The English faces' fallbacks: Astro's metric-matched numbers for Arial, also on Arial's metric twins
    (Liberation Sans, Arimo) where Arial isn't installed, as on Linux and ChromeOS. Astro's own fallback lists
