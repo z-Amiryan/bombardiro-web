@@ -65,7 +65,7 @@ sections:
       cols: ["", Classic Alias, Bombardiro]
       rows:
         - [Missed words, Often cost a point, Simply left unmarked]
-        - [Winning, First to the finish, "First to 51, 101, 151 or 201 points"]
+        - [Winning, First to the finish, "A target of 51, 101, 151 or 201 points"]
         - [Turns, The game can end mid-round, The round is played out so everyone gets equal turns]
         - [Words, Every topic, "Football only, Easy or Hard"]
     app: true
