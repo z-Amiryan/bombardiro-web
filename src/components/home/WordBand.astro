@@ -1,8 +1,9 @@
 ---
 // "Every word is football": the lime band (design 1b) with rows of real Easy words from the game's packs.
 // The rows drift; a visible Pause control stops them (WCAG 2.2.2), as does scrolling them out of view.
-// Tap a word to score it, as in the app. With reduced motion or JavaScript off, the rows stand still and
-// scroll sideways by hand.
+// Tap a word to score it, as in the app. The words are spans until scripts/word-wall.ts makes the visible copy
+// toggle buttons, so nothing announces a button that can't work. With reduced motion or JavaScript off, the
+// rows stand still and scroll sideways by hand; a row also stands still while keyboard focus is in it.
 import { WALL_ROWS, type WallRow } from '../../config/home';
 import { copyFor } from '../../lib/copy';
 import { routePath, type Lang } from '../../lib/routes';
@@ -17,7 +18,7 @@ const { lang } = Astro.props;
 const t = copyFor(lang);
 const band = t.pages.home.words;
 const wall = t.pages.home.wall;
-const tapHint = t.pages.howToPlay.steps[3]?.title ?? '';
+const tapHint = wall.hint;
 // The counter starts at 00, which takes the language's plural for zero ("goals", «голов»).
 const zeroLabel = wall.goals[new Intl.PluralRules(lang).select(0) as keyof typeof wall.goals] ?? wall.goals.other;
 
@@ -33,15 +34,15 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
 <section class="band" aria-labelledby="words-title" data-wall>
   {
     above.map((r) => (
-      <div class="row" data-dir={r.dir} data-seconds={r.seconds}>
+      <div class="row" data-dir={r.dir} data-seconds={r.seconds} tabindex="0">
         <div class="row__track">
           {[0, 1].map((copy) => (
             <ul class="row__set" role="list" aria-hidden={copy ? 'true' : undefined}>
               {r.words.map((w) => (
                 <li>
-                  <button type="button" class="word display" aria-pressed="false" data-key={w.key} tabindex={copy ? -1 : undefined}>
+                  <span class="word display" data-key={w.key}>
                     {w.text}
-                  </button>
+                  </span>
                   <span class="row__dot" aria-hidden="true" />
                 </li>
               ))}
@@ -65,15 +66,15 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
 
   {
     below.map((r) => (
-      <div class="row" data-dir={r.dir} data-seconds={r.seconds}>
+      <div class="row" data-dir={r.dir} data-seconds={r.seconds} tabindex="0">
         <div class="row__track">
           {[0, 1].map((copy) => (
             <ul class="row__set" role="list" aria-hidden={copy ? 'true' : undefined}>
               {r.words.map((w) => (
                 <li>
-                  <button type="button" class="word display" aria-pressed="false" data-key={w.key} tabindex={copy ? -1 : undefined}>
+                  <span class="word display" data-key={w.key}>
                     {w.text}
-                  </button>
+                  </span>
                   <span class="row__dot" aria-hidden="true" />
                 </li>
               ))}
@@ -114,6 +115,8 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
   .row {
     height: var(--row-h);
     overflow: hidden;
+    /* Room for the focus ring when a word is scrolled to the row's edge. */
+    scroll-padding-inline: 12px;
     display: flex;
     align-items: center;
     border-top: 1.5px solid var(--c-ink);
@@ -143,6 +146,13 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
   }
   .row[data-seconds='70'] {
     --seconds: 70s;
+  }
+
+  /* Keyboard focus in a row: it stops drifting, and the script scrolls the focused word into view (WCAG
+     2.4.11). The row stays overflow: hidden, which scrolls by script and focus but, unlike auto, doesn't add a
+     tab stop of its own in Firefox. */
+  .row[data-focus] .row__track {
+    animation: none;
   }
 
   .band[data-paused] .row__track,
@@ -189,9 +199,13 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
      in by opacity. */
   .word {
     position: relative;
+    display: inline-flex;
+    align-items: center;
+    /* 0.3em at the sides (the design: 0.2em) leaves room inside the word for its focus ring, clear of italic
+       overhangs such as Х and Н, at phone size; the desktop size has room already. */
     min-height: 44px;
     margin: 0 0.08em;
-    padding: 0.1em 0.2em 0.06em;
+    padding: 0.1em 0.3em 0.06em;
     border: 0;
     border-radius: 0.14em;
     background: transparent;
@@ -206,6 +220,13 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
     isolation: isolate;
   }
 
+  /* Armenian capitals such as Հ reach below the baseline: lift them 0.06em in the same box, so at phone size
+     they clear the inset focus ring as Latin and Cyrillic do. */
+  :global(:root[lang='hy']) .word {
+    padding-top: 0.04em;
+    padding-bottom: 0.12em;
+  }
+
   .word::before {
     content: '';
     position: absolute;
@@ -217,13 +238,31 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
     transition: opacity 0.18s var(--ease-out);
   }
 
-  .word[aria-pressed='true'] {
+  .word[data-scored] {
     color: var(--c-lime);
     -webkit-text-stroke: 0 transparent;
   }
 
-  .word[aria-pressed='true']::before {
+  .word[data-scored]::before {
     opacity: 1;
+  }
+
+  /* The ring sits inside the word, so the row's edges can't clip it; lime on a scored (ink) word. */
+  .word:focus-visible {
+    outline-offset: -3px;
+  }
+
+  /* Thinner and inset further, so a dark edge shows outside the lime ring and it reads as a ring, still clear of
+     the letters. */
+  .word[data-scored]:focus-visible {
+    outline: 2px solid var(--c-lime);
+    outline-offset: -5px;
+  }
+
+  /* Without JavaScript the row itself takes focus; its ring goes inside, clear of the screen's edges and the
+     row's rules. */
+  .row:focus-visible {
+    outline-offset: -3px;
   }
 
   .band__mid {
@@ -357,6 +396,15 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
       margin-top: 80px;
     }
 
+    .word {
+      padding-inline: 0.2em;
+    }
+
+    :global(:root[lang='hy']) .word {
+      padding-top: 0.1em;
+      padding-bottom: 0.06em;
+    }
+
     .band__mid {
       grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
       padding: 44px 64px 48px;
@@ -379,8 +427,9 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
     .row__set[aria-hidden='true'] {
       display: none;
     }
+    /* Nothing drifts, so there's nothing to pause; the button keeps its space so the hint stays centred. */
     .band__pause {
-      display: none;
+      visibility: hidden;
     }
     .word::before {
       transition: none;

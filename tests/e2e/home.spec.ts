@@ -76,11 +76,14 @@ test.describe('Home word wall', () => {
     const word = page.locator('.band .word[data-key="players-0"]');
     await word.first().click();
     await expect(word.nth(0)).toHaveAttribute('aria-pressed', 'true');
-    await expect(word.nth(1)).toHaveAttribute('aria-pressed', 'true');
+    await expect(word.nth(1)).toHaveAttribute('data-scored', '');
+    // A click focuses the word, but only keyboard focus stops its row.
+    await expect(page.locator('.band .row', { has: page.locator('.word[data-key="players-0"]') })).not.toHaveAttribute('data-focus', '');
     await expect(page.locator('[data-count]')).toHaveText('01');
     await expect(page.locator('[data-count-label]')).toHaveText(copyFor('en').pages.home.wall.goals.one);
     await word.first().click();
     await expect(word.nth(0)).toHaveAttribute('aria-pressed', 'false');
+    await expect(word.nth(1)).not.toHaveAttribute('data-scored', '');
     await expect(page.locator('[data-count]')).toHaveText('00');
   });
 
@@ -105,6 +108,65 @@ test.describe('Home word wall', () => {
     expect(state).toBe('paused');
     await pause.click();
     await expect(pause).toHaveText(wall.pause);
+  });
+});
+
+for (const size of [
+  { width: 1280, height: 800 },
+  { width: 1100, height: 700 },
+]) {
+  test.describe(`Home on a short laptop screen, ${size.width}×${size.height}`, () => {
+    test.use({ viewport: size });
+
+    for (const beat of [2, 4]) {
+      test(`beat ${beat}'s pinned screen sits below the sticky header and fits the screen`, async ({ page, isMobile }) => {
+        test.skip(isMobile, 'Phones have no pinned screen');
+        await page.goto('/');
+        await page
+          .locator(`#beat-${beat}`)
+          .evaluate((el: HTMLElement) =>
+            // The beat's middle at the screen's middle: the beat is current there.
+            window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - innerHeight / 2 + el.offsetHeight / 2, behavior: 'instant' }),
+          );
+        const shot = page.locator(`[data-pinned] .turn__screen[data-beat="${beat}"][data-state="on"] img`);
+        await expect(shot).toBeVisible();
+        const header = await page.locator('.hdr').evaluate((el) => el.getBoundingClientRect().bottom);
+        const box = await shot.evaluate((el) => el.getBoundingClientRect().toJSON());
+        expect(box.top).toBeGreaterThanOrEqual(header);
+        expect(box.bottom).toBeLessThanOrEqual(size.height);
+      });
+    }
+  });
+}
+
+test.describe('Home word wall without JavaScript', () => {
+  test.use({ javaScriptEnabled: false });
+
+  test('each row is a keyboard-reachable sideways scroller', async ({ page }) => {
+    await page.goto('/');
+    const rows = page.locator('.band .row');
+    await expect(rows).toHaveCount(4);
+    for (const row of await rows.all()) await expect(row).toHaveAttribute('tabindex', '0');
+    await expect(page.locator('.band .word[tabindex], .band .word[role]')).toHaveCount(0);
+  });
+});
+
+test.describe('Home word wall with a keyboard', () => {
+  test('a focused word stands still and in view inside its row', async ({ page }) => {
+    await page.goto('/');
+    const words = page.locator('.band .word[role="button"]');
+    await words.nth(5).focus();
+    for (let i = 0; i < 6; i++) await page.keyboard.press('Tab');
+    const placement = await page.evaluate(() => {
+      const el = document.activeElement as HTMLElement;
+      const row = el.closest('.row') as HTMLElement;
+      const a = el.getBoundingClientRect();
+      const r = row.getBoundingClientRect();
+      return { frozen: row.hasAttribute('data-focus'), inside: a.left >= r.left - 1 && a.right <= r.right + 1, role: el.getAttribute('role') };
+    });
+    expect(placement).toEqual({ frozen: true, inside: true, role: 'button' });
+    await page.keyboard.press('Enter');
+    await expect(page.locator('[data-count]')).toHaveText('01');
   });
 });
 

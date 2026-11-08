@@ -99,7 +99,8 @@ for (const p of pages) {
           if (em > longest) [longest, word] = [em, w];
         }
         probe.remove();
-        if (longest > fit + 0.005) out.push(`${name}: "${word}" is ${longest.toFixed(3)}em wide; --fit is ${fit}`);
+        // A small margin: at the drawn size, rounding can make the word a hair wider than at 100 px.
+        if (longest > fit - 0.01) out.push(`${name}: "${word}" is ${longest.toFixed(3)}em wide; --fit is ${fit}`);
       }
       return out;
     });

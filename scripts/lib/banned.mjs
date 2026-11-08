@@ -29,7 +29,8 @@ export const DENIALS = [/\bisn['’]t affiliated with,? (?:or )?endorsed by\b/gi
 
 /** The first banned phrase in `text` once the allowed denials are taken out, or null. */
 export function findBanned(text) {
-  const rest = DENIALS.reduce((t, re) => t.replace(re, ' '), text);
+  // Invisible characters (the Armenian word joiner, U+2060) can't hide a banned word.
+  const rest = DENIALS.reduce((t, re) => t.replace(re, ' '), text.replace(/\p{Default_Ignorable_Code_Point}/gu, ''));
   for (const re of BANNED) {
     const m = re.exec(rest);
     if (m) return m[0];

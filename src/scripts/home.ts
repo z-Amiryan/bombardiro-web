@@ -94,12 +94,34 @@ if (home && beats.length === 4) {
   // The whistle: off until pressed; blows when the last beat reaches the middle of the screen (00:00).
   const whistle = document.querySelector<HTMLButtonElement>('[data-whistle]');
   let audio: HTMLAudioElement | null = null;
+  // True while the muted unlock play below is still the one running.
+  let unlocking = false;
+  const label = whistle?.querySelector<HTMLElement>('[data-whistle-label]');
   whistle?.addEventListener('click', () => {
-    const on = whistle.getAttribute('aria-pressed') !== 'true';
-    whistle.setAttribute('aria-pressed', String(on));
+    const on = !whistle.hasAttribute('data-on');
+    whistle.toggleAttribute('data-on', on);
+    if (label) label.textContent = (on ? whistle.dataset.labelOn : whistle.dataset.labelOff) ?? '';
     if (on && !audio && whistle.dataset.src) {
       audio = new Audio(whistle.dataset.src);
       audio.preload = 'auto';
+      // Safari lets an element play with sound later only if it first played inside a tap: start it muted
+      // here, then rewind and unmute.
+      const el = audio;
+      el.muted = true;
+      unlocking = true;
+      el.play()
+        .then(() => {
+          // If the clock ran out meanwhile, the real whistle already took over: leave it playing.
+          if (!unlocking) return;
+          unlocking = false;
+          el.pause();
+          el.currentTime = 0;
+          el.muted = false;
+        })
+        .catch(() => {
+          unlocking = false;
+          el.muted = false;
+        });
     }
   });
   const last = beats[3];
@@ -107,8 +129,14 @@ if (home && beats.length === 4) {
     new IntersectionObserver(
       ([entry]) => {
         // Entering from below means the clock just ran out.
-        if (entry?.isIntersecting && entry.boundingClientRect.top > 0 && whistle?.getAttribute('aria-pressed') === 'true') {
-          audio?.play().catch(() => undefined);
+        if (entry?.isIntersecting && entry.boundingClientRect.top > 0 && whistle?.hasAttribute('data-on')) {
+          if (!audio) return;
+          if (unlocking) {
+            unlocking = false;
+            audio.currentTime = 0;
+            audio.muted = false;
+          }
+          audio.play().catch(() => undefined);
         }
       },
       { rootMargin: '0px 0px -50% 0px' },

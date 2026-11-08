@@ -216,12 +216,18 @@ const beats = turn.steps.map((step, i) => ({
     .turn__pin {
       display: block;
       position: relative;
+      /* The beats end about 7vh short of the screen's foot, so the pin runs a little past them and the last
+         screen stays clear of the header on short screens. */
+      margin-bottom: calc(-7vh - 16px);
     }
 
+    /* Centred in the space below the sticky header, and shorter than the design's 660 px on short laptop
+       screens, so the whole screenshot stays in view. */
     .turn__pin-in {
       position: sticky;
-      top: calc(50vh - 330px);
-      height: 660px;
+      --pin-h: min(660px, calc(100vh - var(--header-h) - 32px));
+      top: calc(var(--header-h) + max(16px, (100vh - var(--header-h) - 660px) / 2));
+      height: var(--pin-h);
       display: flex;
       justify-content: center;
     }
@@ -241,7 +247,7 @@ const beats = turn.steps.map((step, i) => ({
     .turn__screen {
       position: absolute;
       top: 0;
-      width: 304px;
+      width: auto;
       opacity: 0;
       transform: translateY(14px) scale(0.985);
       transition:
@@ -259,7 +265,8 @@ const beats = turn.steps.map((step, i) => ({
     }
 
     .turn__screen :global(.turn__shot) {
-      width: 304px;
+      width: auto;
+      height: calc(var(--pin-h) - 1px);
       border-radius: var(--r-shot-lg);
     }
   }

@@ -9,18 +9,60 @@ for (const wall of document.querySelectorAll<HTMLElement>('[data-wall]')) {
   const rules = new Intl.PluralRules(document.documentElement.lang);
   const scored = new Set<string>();
 
-  wall.addEventListener('click', (event) => {
-    const button = (event.target as Element).closest<HTMLButtonElement>('button[data-key]');
-    if (!button) return;
-    const key = button.dataset.key ?? '';
+  // Without the script, each row is a sideways scroller reached by Tab; with it, the words are the tab stops.
+  // -1 rather than none: Firefox otherwise makes the still, scrollable rows of reduced motion tab stops too.
+  for (const r of wall.querySelectorAll<HTMLElement>('.row')) r.tabIndex = -1;
+
+  // The words in the visible copy of each row become toggle buttons; the drifting duplicate stays hidden and
+  // only mirrors the scored look (data-scored).
+  for (const w of wall.querySelectorAll<HTMLElement>('.word[data-key]')) {
+    if (w.closest('[aria-hidden="true"]')) continue;
+    w.setAttribute('role', 'button');
+    w.setAttribute('aria-pressed', 'false');
+    w.tabIndex = 0;
+  }
+
+  const toggle = (word: HTMLElement) => {
+    const key = word.dataset.key ?? '';
     const on = !scored.has(key);
     if (on) scored.add(key);
     else scored.delete(key);
-    for (const b of wall.querySelectorAll<HTMLButtonElement>(`button[data-key="${CSS.escape(key)}"]`)) {
-      b.setAttribute('aria-pressed', String(on));
+    for (const w of wall.querySelectorAll<HTMLElement>(`.word[data-key="${CSS.escape(key)}"]`)) {
+      w.toggleAttribute('data-scored', on);
+      if (w.hasAttribute('role')) w.setAttribute('aria-pressed', String(on));
     }
     if (count) count.textContent = String(scored.size).padStart(2, '0');
     if (label) label.textContent = plurals[rules.select(scored.size)] ?? plurals.other ?? '';
+  };
+
+  wall.addEventListener('click', (event) => {
+    const word = (event.target as Element).closest<HTMLElement>('.word[data-key]');
+    if (word) toggle(word);
+  });
+
+  wall.addEventListener('keydown', (event) => {
+    const word = (event.target as Element).closest<HTMLElement>('.word[role="button"]');
+    if (!word || (event.key !== 'Enter' && event.key !== ' ')) return;
+    event.preventDefault();
+    toggle(word);
+  });
+
+  // A row stands still while keyboard focus is in it, and scrolls natively to the focused word. A tap or click
+  // also focuses the word, but isn't :focus-visible, so the row keeps drifting under the pointer.
+  wall.addEventListener('focusin', (e) => {
+    const word = e.target as HTMLElement;
+    const row = word.closest('.row');
+    if (!row || !word.matches(':focus-visible')) return;
+    row.setAttribute('data-focus', '');
+    // The row only becomes scrollable now, after the browser's own focus scrolling, so bring the word in.
+    word.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
+  });
+  wall.addEventListener('focusout', (e) => {
+    const row = (e.target as Element).closest<HTMLElement>('.row');
+    if (!row || row.contains(e.relatedTarget as Node | null)) return;
+    row.removeAttribute('data-focus');
+    // Back to the loop's start, where the drift picks up again.
+    row.scrollLeft = 0;
   });
 
   pause?.addEventListener('click', () => {
