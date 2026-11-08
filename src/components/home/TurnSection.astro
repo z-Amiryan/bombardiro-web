@@ -216,6 +216,9 @@ const beats = turn.steps.map((step, i) => ({
     .turn__pin {
       display: block;
       position: relative;
+      /* The beats end about 7vh short of the screen's foot, so the pin runs a little past them and the last
+         screen stays clear of the header on short screens. */
+      margin-bottom: calc(-7vh - 16px);
     }
 
     /* Centred in the space below the sticky header, and shorter than the design's 660 px on short laptop

@@ -94,6 +94,8 @@ if (home && beats.length === 4) {
   // The whistle: off until pressed; blows when the last beat reaches the middle of the screen (00:00).
   const whistle = document.querySelector<HTMLButtonElement>('[data-whistle]');
   let audio: HTMLAudioElement | null = null;
+  // True while the muted unlock play below is still the one running.
+  let unlocking = false;
   const label = whistle?.querySelector<HTMLElement>('[data-whistle-label]');
   whistle?.addEventListener('click', () => {
     const on = !whistle.hasAttribute('data-on');
@@ -104,16 +106,22 @@ if (home && beats.length === 4) {
       audio.preload = 'auto';
       // Safari lets an element play with sound later only if it first played inside a tap: start it muted
       // here, then rewind and unmute.
-      const unlocking = audio;
-      unlocking.muted = true;
-      unlocking
-        .play()
+      const el = audio;
+      el.muted = true;
+      unlocking = true;
+      el.play()
         .then(() => {
-          unlocking.pause();
-          unlocking.currentTime = 0;
-          unlocking.muted = false;
+          // If the clock ran out meanwhile, the real whistle already took over: leave it playing.
+          if (!unlocking) return;
+          unlocking = false;
+          el.pause();
+          el.currentTime = 0;
+          el.muted = false;
         })
-        .catch(() => undefined);
+        .catch(() => {
+          unlocking = false;
+          el.muted = false;
+        });
     }
   });
   const last = beats[3];
@@ -122,7 +130,13 @@ if (home && beats.length === 4) {
       ([entry]) => {
         // Entering from below means the clock just ran out.
         if (entry?.isIntersecting && entry.boundingClientRect.top > 0 && whistle?.hasAttribute('data-on')) {
-          audio?.play().catch(() => undefined);
+          if (!audio) return;
+          if (unlocking) {
+            unlocking = false;
+            audio.currentTime = 0;
+            audio.muted = false;
+          }
+          audio.play().catch(() => undefined);
         }
       },
       { rootMargin: '0px 0px -50% 0px' },

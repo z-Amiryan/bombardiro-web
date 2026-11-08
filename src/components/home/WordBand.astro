@@ -34,7 +34,7 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
 <section class="band" aria-labelledby="words-title" data-wall>
   {
     above.map((r) => (
-      <div class="row" data-dir={r.dir} data-seconds={r.seconds}>
+      <div class="row" data-dir={r.dir} data-seconds={r.seconds} tabindex="0">
         <div class="row__track">
           {[0, 1].map((copy) => (
             <ul class="row__set" role="list" aria-hidden={copy ? 'true' : undefined}>
@@ -66,7 +66,7 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
 
   {
     below.map((r) => (
-      <div class="row" data-dir={r.dir} data-seconds={r.seconds}>
+      <div class="row" data-dir={r.dir} data-seconds={r.seconds} tabindex="0">
         <div class="row__track">
           {[0, 1].map((copy) => (
             <ul class="row__set" role="list" aria-hidden={copy ? 'true' : undefined}>
@@ -115,6 +115,8 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
   .row {
     height: var(--row-h);
     overflow: hidden;
+    /* Room for the focus ring when a word is scrolled to the row's edge. */
+    scroll-padding-inline: 12px;
     display: flex;
     align-items: center;
     border-top: 1.5px solid var(--c-ink);
@@ -146,13 +148,9 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
     --seconds: 70s;
   }
 
-  /* Keyboard focus in a row: it stops drifting and scrolls natively, so the focused word is always in view
-     (WCAG 2.4.11). */
-  .row[data-focus] {
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
+  /* Keyboard focus in a row: it stops drifting, and the script scrolls the focused word into view (WCAG
+     2.4.11). The row stays overflow: hidden, which scrolls by script and focus but, unlike auto, doesn't add a
+     tab stop of its own in Firefox. */
   .row[data-focus] .row__track {
     animation: none;
   }
@@ -238,6 +236,15 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
 
   .word[data-scored]::before {
     opacity: 1;
+  }
+
+  /* The ring sits inside the word, so the row's edges can't clip it; lime on a scored (ink) word. */
+  .word:focus-visible {
+    outline-offset: -3px;
+  }
+
+  .word[data-scored]:focus-visible {
+    outline-color: var(--c-lime);
   }
 
   .band__mid {

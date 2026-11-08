@@ -9,6 +9,9 @@ for (const wall of document.querySelectorAll<HTMLElement>('[data-wall]')) {
   const rules = new Intl.PluralRules(document.documentElement.lang);
   const scored = new Set<string>();
 
+  // Without the script, each row is a sideways scroller reached by Tab; with it, the words are the tab stops.
+  for (const r of wall.querySelectorAll('.row')) r.removeAttribute('tabindex');
+
   // The words in the visible copy of each row become toggle buttons; the drifting duplicate stays hidden and
   // only mirrors the scored look (data-scored).
   for (const w of wall.querySelectorAll<HTMLElement>('.word[data-key]')) {
