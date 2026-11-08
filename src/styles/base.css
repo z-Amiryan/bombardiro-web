@@ -29,9 +29,11 @@
   src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('LiberationSans'), local('Arimo');
   font-weight: 100 900;
   font-style: italic;
-  size-adjust: 102.7365%;
-  ascent-override: 85.4614%;
-  descent-override: 20.4406%;
+  /* Archivo 900 italic sets 108.5 % of Arial's width on the site's headings (Astro's 102.7 % is for its
+     average text); ascent and descent are rescaled to keep Astro's line metrics. */
+  size-adjust: 108.5%;
+  ascent-override: 80.922%;
+  descent-override: 19.355%;
   line-gap-override: 0%;
 }
 *,
