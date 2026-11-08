@@ -9,9 +9,11 @@ interface Props {
 }
 
 const { value, label, done, class: className } = Astro.props;
+// Word joiners (U+2060) only steer line breaks on the page; keep them out of what lands on the clipboard.
+const plain = value.replace(/⁠/g, '');
 ---
 
-<button type="button" class:list={['copy', className]} data-copy={value} data-label={label} data-done={done} hidden>
+<button type="button" class:list={['copy', className]} data-copy={plain}data-label={label} data-done={done} hidden>
   <span data-copy-text aria-live="polite">{label}</span>
 </button>
 
