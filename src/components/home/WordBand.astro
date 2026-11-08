@@ -201,9 +201,11 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
     position: relative;
     display: inline-flex;
     align-items: center;
-    min-height: 44px;
+    /* 48 px and 0.3em at the sides (the design: 44 px, 0.2em) leave room inside the word for its focus ring,
+       clear of the letters, at phone size; the desktop size has room already. */
+    min-height: 48px;
     margin: 0 0.08em;
-    padding: 0.1em 0.2em 0.06em;
+    padding: 0.1em 0.3em 0.06em;
     border: 0;
     border-radius: 0.14em;
     background: transparent;
@@ -384,6 +386,11 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
       --row-h: 84px;
       --stroke: 1.6px;
       margin-top: 80px;
+    }
+
+    .word {
+      min-height: 44px;
+      padding-inline: 0.2em;
     }
 
     .band__mid {

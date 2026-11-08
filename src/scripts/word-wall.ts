@@ -10,7 +10,8 @@ for (const wall of document.querySelectorAll<HTMLElement>('[data-wall]')) {
   const scored = new Set<string>();
 
   // Without the script, each row is a sideways scroller reached by Tab; with it, the words are the tab stops.
-  for (const r of wall.querySelectorAll('.row')) r.removeAttribute('tabindex');
+  // -1 rather than none: Firefox otherwise makes the still, scrollable rows of reduced motion tab stops too.
+  for (const r of wall.querySelectorAll<HTMLElement>('.row')) r.tabIndex = -1;
 
   // The words in the visible copy of each row become toggle buttons; the drifting duplicate stays hidden and
   // only mirrors the scored look (data-scored).
