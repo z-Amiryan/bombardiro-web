@@ -220,6 +220,13 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
     isolation: isolate;
   }
 
+  /* Armenian capitals such as Հ reach below the baseline: lift them 0.06em in the same box, so at phone size
+     they clear the inset focus ring as Latin and Cyrillic do. */
+  :global(:root[lang='hy']) .word {
+    padding-top: 0.04em;
+    padding-bottom: 0.12em;
+  }
+
   .word::before {
     content: '';
     position: absolute;
@@ -391,6 +398,11 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
 
     .word {
       padding-inline: 0.2em;
+    }
+
+    :global(:root[lang='hy']) .word {
+      padding-top: 0.1em;
+      padding-bottom: 0.06em;
     }
 
     .band__mid {
