@@ -76,11 +76,14 @@ test.describe('Home word wall', () => {
     const word = page.locator('.band .word[data-key="players-0"]');
     await word.first().click();
     await expect(word.nth(0)).toHaveAttribute('aria-pressed', 'true');
-    await expect(word.nth(1)).toHaveAttribute('aria-pressed', 'true');
+    await expect(word.nth(1)).toHaveAttribute('data-scored', '');
+    // A click focuses the word, but only keyboard focus stops its row.
+    await expect(page.locator('.band .row', { has: page.locator('.word[data-key="players-0"]') })).not.toHaveAttribute('data-focus', '');
     await expect(page.locator('[data-count]')).toHaveText('01');
     await expect(page.locator('[data-count-label]')).toHaveText(copyFor('en').pages.home.wall.goals.one);
     await word.first().click();
     await expect(word.nth(0)).toHaveAttribute('aria-pressed', 'false');
+    await expect(word.nth(1)).not.toHaveAttribute('data-scored', '');
     await expect(page.locator('[data-count]')).toHaveText('00');
   });
 

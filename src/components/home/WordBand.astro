@@ -231,12 +231,12 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
     transition: opacity 0.18s var(--ease-out);
   }
 
-  .word[aria-pressed='true'] {
+  .word[data-scored] {
     color: var(--c-lime);
     -webkit-text-stroke: 0 transparent;
   }
 
-  .word[aria-pressed='true']::before {
+  .word[data-scored]::before {
     opacity: 1;
   }
 

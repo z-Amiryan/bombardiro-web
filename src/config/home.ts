@@ -24,8 +24,7 @@ export interface WallRow {
   category: CategoryId;
   /** Indices into the category's Easy list. */
   indices: readonly number[];
-  /** Seconds per loop of the drift. */
-  /** One of the speeds WordBand.astro has a rule for. */
+  /** Seconds per loop of the drift: one of the speeds WordBand.astro has a rule for. */
   seconds: 52 | 58 | 64 | 70;
 }
 

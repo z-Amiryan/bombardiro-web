@@ -222,8 +222,9 @@ const beats = turn.steps.map((step, i) => ({
        screens, so the whole screenshot stays in view. */
     .turn__pin-in {
       position: sticky;
+      --pin-h: min(660px, calc(100vh - var(--header-h) - 32px));
       top: calc(var(--header-h) + max(16px, (100vh - var(--header-h) - 660px) / 2));
-      height: min(660px, calc(100vh - var(--header-h) - 32px));
+      height: var(--pin-h);
       display: flex;
       justify-content: center;
     }
@@ -262,7 +263,7 @@ const beats = turn.steps.map((step, i) => ({
 
     .turn__screen :global(.turn__shot) {
       width: auto;
-      height: min(659px, calc(100vh - var(--header-h) - 32px));
+      height: calc(var(--pin-h) - 1px);
       border-radius: var(--r-shot-lg);
     }
   }
