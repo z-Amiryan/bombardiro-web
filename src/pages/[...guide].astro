@@ -350,6 +350,15 @@ const [updatedBefore = '', updatedAfter = ''] = a.updated.split('{date}');
     color: var(--fg-muted);
   }
 
+  /* At phone widths the brand name takes its own line: the three items only just fit on one there, so the
+     fallback font wrapped them differently and the line jumped when the web font arrived. From 640 px both fonts
+     wrap it alike. */
+  @media (max-width: 639.98px) {
+    .meta > span:last-child {
+      flex-basis: 100%;
+    }
+  }
+
   .body {
     display: grid;
     grid-template-columns: minmax(0, 1fr);

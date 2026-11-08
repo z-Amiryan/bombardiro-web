@@ -1,13 +1,66 @@
 /* Reset, base type, focus, skip link, layout helpers and page transitions. */
 
 /* Local Arial sized to Noto Sans (measured: body text 4.7–6.8 % wider), the fallback while Noto Sans loads on
-   Russian pages. local() downloads nothing. */
+   Russian pages and for the Latin and Cyrillic words on Armenian ones. Liberation Sans and Arimo have Arial's
+   metrics and stand in for it where it isn't installed (Linux, ChromeOS). local() downloads nothing. */
 @font-face {
   font-family: 'Noto Sans fallback';
-  src: local('Arial'), local('ArialMT');
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('LiberationSans'), local('Arimo');
   size-adjust: 105.5%;
   ascent-override: 101.3%;
   descent-override: 27.8%;
+  line-gap-override: 0%;
+}
+
+/* The same fallback for Russian display type (900 italic): a real bold italic, sized to Noto Sans 900 italic
+   (98.8 % of Arial Bold Italic on the site's Russian headings), with the same line metrics as above. Without it
+   the browser faked bold italic from regular Arial, about 10 % narrower, and headings rewrapped on arrival. */
+@font-face {
+  font-family: 'Noto Sans fallback';
+  src: local('Arial Bold Italic'), local('Arial-BoldItalicMT'), local('Liberation Sans Bold Italic'),
+    local('LiberationSans-BoldItalic'), local('Arimo Bold Italic'), local('Arimo-BoldItalic');
+  font-weight: 600 900;
+  font-style: italic;
+  size-adjust: 98.8%;
+  ascent-override: 108.2%;
+  descent-override: 29.7%;
+  line-gap-override: 0%;
+}
+/* Lighter Russian italic (none today) keeps the plain metrics, so it doesn't pick up the bold-italic face. */
+@font-face {
+  font-family: 'Noto Sans fallback';
+  src: local('Arial Italic'), local('Arial-ItalicMT'), local('Liberation Sans Italic'), local('LiberationSans-Italic'),
+    local('Arimo Italic'), local('Arimo-Italic');
+  font-weight: 100 599;
+  font-style: italic;
+  size-adjust: 105.5%;
+  ascent-override: 101.3%;
+  descent-override: 27.8%;
+  line-gap-override: 0%;
+}
+
+/* The English faces' fallbacks: Astro's metric-matched numbers for Arial, also on Arial's metric twins
+   (Liberation Sans, Arimo) where Arial isn't installed, as on Linux and ChromeOS. Astro's own fallback lists
+   only Arial, so elsewhere text fell through to the system sans and reflowed when the font arrived. */
+@font-face {
+  font-family: 'Space Grotesk fallback';
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('LiberationSans'), local('Arimo');
+  font-weight: 100 900;
+  size-adjust: 109.4659%;
+  ascent-override: 89.891%;
+  descent-override: 26.675%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Archivo fallback';
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('LiberationSans'), local('Arimo');
+  font-weight: 100 900;
+  font-style: italic;
+  /* Archivo 900 italic sets 108.5 % of Arial's width on the site's headings (Astro's 102.7 % is for its
+     average text); ascent and descent are rescaled to keep Astro's line metrics. */
+  size-adjust: 108.5%;
+  ascent-override: 80.922%;
+  descent-override: 19.355%;
   line-gap-override: 0%;
 }
 *,
