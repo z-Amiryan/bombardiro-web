@@ -48,12 +48,13 @@ const foreign = (lang: keyof typeof FOREIGN_SUBSETS): FontVariant[] =>
 
 export const FONT_FAMILIES = [
   {
-    // English display: Archivo 900 italic. Also the wordmark, which is outlined as SVG for other languages.
+    // English display: Archivo 900 italic, as static instances with overlapping contours merged
+    // (scripts/build-font-assets.py): 15.6 KB instead of 38. The wordmark is outlined as SVG from the variable file.
     name: 'Archivo',
     cssVariable: '--font-archivo',
     variants: [
-      { src: pkg('archivo', 'archivo-latin-wght-italic.woff2'), style: 'italic', unicodeRange: RANGES.latin },
-      { src: pkg('archivo', 'archivo-latin-ext-wght-italic.woff2'), style: 'italic', unicodeRange: RANGES.latinExt },
+      { src: './src/assets/fonts/display-en-italic.woff2', style: 'italic', unicodeRange: RANGES.latin },
+      { src: './src/assets/fonts/display-en-italic-ext.woff2', style: 'italic', unicodeRange: RANGES.latinExt },
     ],
   },
   {
@@ -118,8 +119,7 @@ export interface LanguageFonts {
 }
 
 export const LANG_FONTS = {
-  // Archivo italic Latin (38 KB) is the display face, so it's the one preload. Adding Space Grotesk would
-  // take the pair 4 bytes past 60 KB.
+  // Archivo italic Latin (static 900, 15.6 KB) is the display face, so it's the one preload.
   en: {
     families: ['--font-archivo', '--font-space-grotesk'],
     display: { family: '--font-archivo', style: 'italic' },

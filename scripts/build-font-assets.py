@@ -206,7 +206,16 @@ HY_WALL = SUBSETS / 'wall-hy.woff2'
 HY_WALL_CHARS = ''.join(chr(c) for c in range(0x0531, 0x0557))
 
 
+# English display type, Archivo 900 italic, the same way: clean outlines and 15.6 KB instead of 38 for the file
+# English pages preload.
+EN_DISPLAY = [('archivo-latin-wght-italic.woff2', 'display-en-italic.woff2'),
+              ('archivo-latin-ext-wght-italic.woff2', 'display-en-italic-ext.woff2')]
+
+
 def build_display():
+    for name, out in EN_DISPLAY:
+        static_instance(FONTS / 'archivo' / 'files' / name, SUBSETS / out)
+        print(f'src/assets/fonts/{out}: static {DISPLAY_WEIGHT} ({(SUBSETS / out).stat().st_size} bytes)')
     static_instance(FONTS / 'noto-sans' / 'files' / 'noto-sans-cyrillic-wght-italic.woff2', RU_DISPLAY_CYRILLIC)
     print(f'{RU_DISPLAY_CYRILLIC.relative_to(ROOT)}: static {DISPLAY_WEIGHT} ({RU_DISPLAY_CYRILLIC.stat().st_size} bytes)')
     cut(FONTS / 'noto-sans-armenian' / 'files' / 'noto-sans-armenian-armenian-wght-normal.woff2', HY_WALL, HY_WALL_CHARS)
@@ -275,13 +284,16 @@ def merge_ru_display():
     parts = [RU_DISPLAY_CYRILLIC, SUBSETS / 'latin-ru-italic.woff2']
     plain = []
     for part in parts:
-        font = TTFont(str(part))
+        font = TTFont(str(part), recalcTimestamp=False)
         font.flavor = None
         data = io.BytesIO()
         font.save(data)
         data.seek(0)
         plain.append(data)
     merged = Merger().merge(plain)
+    # The merger stamps the current time; keep the source's, so the same inputs make the same bytes.
+    source_head = TTFont(str(parts[0]))['head']
+    merged['head'].created, merged['head'].modified = source_head.created, source_head.modified
     merged.recalcTimestamp = False
     merged.flavor = 'woff2'
     merged.save(str(RU_DISPLAY))
