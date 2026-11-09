@@ -11,3 +11,11 @@ for (const p of PAGES) {
     expect(text.length).toBeGreaterThan(20);
   });
 }
+
+test('word lists are plain text with JavaScript off, not buttons that do nothing', async ({ page }) => {
+  for (const path of ['/', '/words/']) {
+    await page.goto(path);
+    await expect(page.locator('main [data-key][role="button"], main button[data-key]')).toHaveCount(0);
+    expect(await page.locator('main [data-key]').count()).toBeGreaterThan(20);
+  }
+});

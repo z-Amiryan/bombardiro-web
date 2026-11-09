@@ -187,26 +187,27 @@ const [updatedBefore = '', updatedAfter = ''] = a.updated.split('{date}');
               )}
               {s.terms && g.termHeads && (
                 <div class="table-wrap" tabindex="0" role="region" aria-labelledby={`${s.id}-title`}>
-                  <table class="terms">
-                    <thead>
-                      <tr>
-                        <th scope="col">{g.termHeads[0]}</th>
-                        <th scope="col" lang="en">
+                  {/* Explicit roles keep the table's semantics when phones lay the rows out as cards. */}
+                  <table class="terms" role="table">
+                    <thead role="rowgroup">
+                      <tr role="row">
+                        <th scope="col" role="columnheader">{g.termHeads[0]}</th>
+                        <th scope="col" role="columnheader" lang="en">
                           {g.termHeads[1]}
                         </th>
-                        <th scope="col" lang="hy">
+                        <th scope="col" role="columnheader" lang="hy">
                           {g.termHeads[2]}
                         </th>
-                        <th scope="col">{g.termHeads[3]}</th>
+                        <th scope="col" role="columnheader">{g.termHeads[3]}</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody role="rowgroup">
                       {s.terms.map((t) => (
-                        <tr id={t.id}>
-                          <th scope="row">{t.ru}</th>
-                          <td lang="en">{t.en}</td>
-                          <td lang="hy">{t.hy}</td>
-                          <td>{t.def}</td>
+                        <tr id={t.id} role="row">
+                          <th scope="row" role="rowheader">{t.ru}</th>
+                          <td role="cell" lang="en" data-label={g.termHeads?.[1]}>{t.en}</td>
+                          <td role="cell" lang="hy" data-label={g.termHeads?.[2]}>{t.hy}</td>
+                          <td role="cell">{t.def}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -626,6 +627,61 @@ const [updatedBefore = '', updatedAfter = ''] = a.updated.split('{date}');
   }
   .terms tr {
     scroll-margin-top: calc(var(--header-h) + 24px);
+  }
+
+  /* Phones: each term is a card (term; English and Armenian side by side; the meaning), so nothing hides off to
+     the side and rows aren't stretched by a narrow meaning column. */
+  @media (max-width: 639.98px) {
+    .table-wrap:has(.terms) {
+      overflow: visible;
+      border: 0;
+      border-radius: 0;
+      background: none;
+    }
+    .terms,
+    .terms tbody {
+      display: block;
+      min-width: 0;
+    }
+    .terms thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .terms tr {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 8px 16px;
+      margin-top: 10px;
+      padding: 14px 16px;
+      border: 1.5px solid var(--fg);
+      border-radius: 14px;
+      background: var(--c-paper);
+    }
+    .terms tbody th,
+    .terms tbody td {
+      padding: 0;
+      border: 0;
+    }
+    .terms tbody th {
+      grid-column: 1 / -1;
+      font-size: 16px;
+    }
+    .terms tbody td:last-child {
+      grid-column: 1 / -1;
+    }
+    .terms td[data-label]::before {
+      content: attr(data-label);
+      display: block;
+      margin-bottom: 2px;
+      font: 700 10px/1.2 var(--fu);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+    }
   }
 
   .app {

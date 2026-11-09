@@ -72,8 +72,11 @@ export const FONT_FAMILIES = [
     cssVariable: '--font-noto-sans',
     variants: [
       { src: pkg('noto-sans', 'noto-sans-cyrillic-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.cyrillic },
-      { src: pkg('noto-sans', 'noto-sans-cyrillic-wght-italic.woff2'), style: 'italic', unicodeRange: RANGES.cyrillic },
-      // Latin trimmed to what Russian pages use (scripts/build-font-assets.py): 18 and 21 KB instead of 35 and 39.
+      // Display (900 italic): a static instance with overlapping contours merged, so outlined words draw clean
+      // (scripts/build-font-assets.py). 8.5 KB instead of 24.
+      { src: './src/assets/fonts/cyrillic-ru-italic.woff2', style: 'italic', unicodeRange: RANGES.cyrillic },
+      // Latin trimmed to what Russian pages use (scripts/build-font-assets.py): 18 KB upright instead of 35, and
+      // the italic as a static 900 instance like the Cyrillic above, 7 KB instead of 39.
       { src: './src/assets/fonts/latin-ru-normal.woff2', style: 'normal', unicodeRange: RANGES.latin },
       { src: './src/assets/fonts/latin-ru-italic.woff2', style: 'italic', unicodeRange: RANGES.latin },
       { src: pkg('noto-sans', 'noto-sans-cyrillic-ext-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.cyrillicExt },
@@ -94,6 +97,13 @@ export const FONT_FAMILIES = [
       { src: pkg('noto-sans-armenian', 'noto-sans-armenian-latin-ext-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.latinExt },
       ...foreign('hy'),
     ],
+  },
+  {
+    // Armenian Home's word wall: the capitals at 900 with overlapping contours merged, so its outlined words draw
+    // clean (scripts/build-font-assets.py, 4 KB). Only .band .word uses it, so no other page downloads it.
+    name: 'Bombardiro Wall Armenian',
+    cssVariable: '--font-wall-hy',
+    variants: [{ src: './src/assets/fonts/wall-hy.woff2', style: 'normal', unicodeRange: 'U+0531-0556' }],
   },
 ] as const satisfies readonly FontFamilyConfig[];
 
@@ -117,7 +127,7 @@ export const LANG_FONTS = {
     body: { family: '--font-space-grotesk', style: 'normal' },
     preload: [['--font-archivo', 0]],
   },
-  // Cyrillic italic (display, 24 KB) and upright (body, 20 KB).
+  // Cyrillic italic (display, 8.5 KB) and upright (body, 20 KB).
   ru: {
     families: ['--font-noto-sans'],
     display: { family: '--font-noto-sans', style: 'italic' },
@@ -130,7 +140,7 @@ export const LANG_FONTS = {
   // One family for display and body: the Armenian subset (26 KB) and its trimmed Latin subset (19 KB) for digits,
   // punctuation and brand names.
   hy: {
-    families: ['--font-noto-armenian'],
+    families: ['--font-noto-armenian', '--font-wall-hy'],
     display: { family: '--font-noto-armenian', style: 'normal' },
     body: { family: '--font-noto-armenian', style: 'normal' },
     preload: [

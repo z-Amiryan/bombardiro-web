@@ -27,6 +27,7 @@ from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.transformPen import TransformPen
 from fontTools import subset
 from fontTools.ttLib import TTFont
+from fontTools.varLib import instancer
 
 ROOT = Path(__file__).resolve().parent.parent
 FONTS = ROOT / 'node_modules' / '@fontsource-variable'
@@ -164,6 +165,24 @@ LATIN = {
 }
 
 
+# Russian display type is Noto Sans 900 italic. Its variable files draw letters from overlapping contours, which
+# the word wall's outlined words (text-stroke) show as stray marks inside Х, Ф and Л. A static 900 instance with
+# the overlaps merged draws clean outlines and is a third of the size. Russian italic is only display type
+# (900, and 800 on the Words page, which now draws at 900).
+DISPLAY_WEIGHT = 900
+STATIC_DISPLAY = {'latin-ru-italic.woff2'}
+RU_DISPLAY_CYRILLIC = SUBSETS / 'cyrillic-ru-italic.woff2'
+
+
+def static_instance(source: Path, target: Path):
+    font = TTFont(str(source))
+    static = instancer.instantiateVariableFont(font, {'wght': DISPLAY_WEIGHT}, overlap=instancer.OverlapMode.REMOVE)
+    # Keep the source's timestamp, so the same inputs make the same bytes.
+    static.recalcTimestamp = False
+    static.flavor = 'woff2'
+    static.save(str(target))
+
+
 def build_latin():
     ascii_printable = ''.join(chr(c) for c in range(0x20, 0x7F))
     for lang, files in LATIN.items():
@@ -172,7 +191,23 @@ def build_latin():
         for pkg, name, out in files:
             target = SUBSETS / out
             cut(FONTS / pkg / 'files' / name, target, chars)
+            if out in STATIC_DISPLAY:
+                static_instance(target, target)
             print(f'{target.relative_to(ROOT)}: {len(chars)} characters ({target.stat().st_size} bytes)')
+
+
+# Armenian shares one variable file between body and display, so it can't be swapped for a static one. The Home
+# word wall, the only outlined Armenian text, gets its own face instead: the capitals at 900 with overlaps merged.
+HY_WALL = SUBSETS / 'wall-hy.woff2'
+HY_WALL_CHARS = ''.join(chr(c) for c in range(0x0531, 0x0557))
+
+
+def build_display():
+    static_instance(FONTS / 'noto-sans' / 'files' / 'noto-sans-cyrillic-wght-italic.woff2', RU_DISPLAY_CYRILLIC)
+    print(f'{RU_DISPLAY_CYRILLIC.relative_to(ROOT)}: static {DISPLAY_WEIGHT} ({RU_DISPLAY_CYRILLIC.stat().st_size} bytes)')
+    cut(FONTS / 'noto-sans-armenian' / 'files' / 'noto-sans-armenian-armenian-wght-normal.woff2', HY_WALL, HY_WALL_CHARS)
+    static_instance(HY_WALL, HY_WALL)
+    print(f'{HY_WALL.relative_to(ROOT)}: {len(HY_WALL_CHARS)} capitals, static {DISPLAY_WEIGHT} ({HY_WALL.stat().st_size} bytes)')
 
 
 def both_cases(chars) -> list:
@@ -211,7 +246,9 @@ def build_subsets():
 
 def main():
     archivo = FONTS / 'archivo' / 'files' / 'archivo-latin-wght-italic.woff2'
-    noto_italic_cyr = FONTS / 'noto-sans' / 'files' / 'noto-sans-cyrillic-wght-italic.woff2'
+    build_display()
+    # The outlined «бомбардир» on About comes from the same clean static file.
+    noto_italic_cyr = RU_DISPLAY_CYRILLIC
     data = {
         # Header, menu sheet, print sheet and guide card: letter-spacing -.015em.
         'wordmark': outline(archivo, ['BOMBAR', 'DIRO'], -0.015, 900),
