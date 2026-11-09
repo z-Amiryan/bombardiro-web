@@ -12,7 +12,7 @@
 ## Owner, before the domain goes live
 
 - [ ] Proofread all pages on the Vercel preview, in English, Russian and Armenian.
-- [ ] Confirm the spelling Գոռ Ղազարյան on the About and Privacy pages.
+- [x] Confirm the spelling Գոռ Ղազարյան on the About and Privacy pages (confirmed by the owner).
 - [ ] Set `APP_STORE_URL` in `src/config/site.ts`, and `APP_STORE_PT` if you have the provider token.
 - [ ] Set `LAST_UPDATED` in `src/config/site.ts` to today.
 - [ ] Add `bombardiro.app` and `www.bombardiro.app` in Vercel, with `www` redirecting to the apex.
