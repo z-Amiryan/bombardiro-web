@@ -1,6 +1,16 @@
 // The lime word wall: tap a word to score it (both copies of a drifting row stay in step), a goal counter
 // announced politely, a Pause control (WCAG 2.2.2), and rows paused while off screen.
 
+// A goal gets a short pop on the word and the counter: transform only, and none with reduced motion.
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const pop = (el: Element | null, peak: number, ms: number) => {
+  if (!el || reducedMotion.matches) return;
+  el.animate([{ transform: 'scale(1)' }, { transform: `scale(${peak})` }, { transform: 'scale(1)' }], {
+    duration: ms,
+    easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+  });
+};
+
 for (const wall of document.querySelectorAll<HTMLElement>('[data-wall]')) {
   const count = wall.querySelector<HTMLElement>('[data-count]');
   const label = wall.querySelector<HTMLElement>('[data-count-label]');
@@ -33,6 +43,10 @@ for (const wall of document.querySelectorAll<HTMLElement>('[data-wall]')) {
     }
     if (count) count.textContent = String(scored.size).padStart(2, '0');
     if (label) label.textContent = plurals[rules.select(scored.size)] ?? plurals.other ?? '';
+    if (on) {
+      pop(word, 1.08, 220);
+      pop(count, 1.22, 300);
+    }
   };
 
   wall.addEventListener('click', (event) => {

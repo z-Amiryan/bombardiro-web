@@ -27,6 +27,7 @@ from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.transformPen import TransformPen
 from fontTools import subset
 from fontTools.ttLib import TTFont
+from fontTools.merge import Merger
 from fontTools.varLib import instancer
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -172,6 +173,9 @@ LATIN = {
 DISPLAY_WEIGHT = 900
 STATIC_DISPLAY = {'latin-ru-italic.woff2'}
 RU_DISPLAY_CYRILLIC = SUBSETS / 'cyrillic-ru-italic.woff2'
+# The Cyrillic and the trimmed Latin static italics, merged into the one file Russian pages preload, so a heading's
+# punctuation and Latin don't arrive after its Cyrillic and rewrap it.
+RU_DISPLAY = SUBSETS / 'display-ru-italic.woff2'
 
 
 def static_instance(source: Path, target: Path):
@@ -264,6 +268,26 @@ def main():
         print(f'{key}: viewBox {value["viewBox"]}, {size} bytes of path data')
     build_subsets()
     build_latin()
+    merge_ru_display()
+
+
+def merge_ru_display():
+    parts = [RU_DISPLAY_CYRILLIC, SUBSETS / 'latin-ru-italic.woff2']
+    plain = []
+    for part in parts:
+        font = TTFont(str(part))
+        font.flavor = None
+        data = io.BytesIO()
+        font.save(data)
+        data.seek(0)
+        plain.append(data)
+    merged = Merger().merge(plain)
+    merged.recalcTimestamp = False
+    merged.flavor = 'woff2'
+    merged.save(str(RU_DISPLAY))
+    for part in parts:
+        part.unlink()
+    print(f'{RU_DISPLAY.relative_to(ROOT)}: Cyrillic and Latin, static {DISPLAY_WEIGHT} ({RU_DISPLAY.stat().st_size} bytes)')
 
 
 if __name__ == '__main__':

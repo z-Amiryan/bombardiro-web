@@ -72,13 +72,12 @@ export const FONT_FAMILIES = [
     cssVariable: '--font-noto-sans',
     variants: [
       { src: pkg('noto-sans', 'noto-sans-cyrillic-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.cyrillic },
-      // Display (900 italic): a static instance with overlapping contours merged, so outlined words draw clean
-      // (scripts/build-font-assets.py). 8.5 KB instead of 24.
-      { src: './src/assets/fonts/cyrillic-ru-italic.woff2', style: 'italic', unicodeRange: RANGES.cyrillic },
-      // Latin trimmed to what Russian pages use (scripts/build-font-assets.py): 18 KB upright instead of 35, and
-      // the italic as a static 900 instance like the Cyrillic above, 7 KB instead of 39.
+      // Display (900 italic): one static file with the Cyrillic and the trimmed Latin, overlapping contours merged,
+      // so outlined words draw clean and a heading's punctuation arrives with its letters
+      // (scripts/build-font-assets.py). 13.6 KB instead of 24 + 39.
+      { src: './src/assets/fonts/display-ru-italic.woff2', style: 'italic', unicodeRange: `${RANGES.cyrillic}, ${RANGES.latin}` },
+      // Latin trimmed to what Russian pages use (scripts/build-font-assets.py): 18 KB instead of 35.
       { src: './src/assets/fonts/latin-ru-normal.woff2', style: 'normal', unicodeRange: RANGES.latin },
-      { src: './src/assets/fonts/latin-ru-italic.woff2', style: 'italic', unicodeRange: RANGES.latin },
       { src: pkg('noto-sans', 'noto-sans-cyrillic-ext-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.cyrillicExt },
       { src: pkg('noto-sans', 'noto-sans-cyrillic-ext-wght-italic.woff2'), style: 'italic', unicodeRange: RANGES.cyrillicExt },
       { src: pkg('noto-sans', 'noto-sans-latin-ext-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.latinExt },
@@ -127,7 +126,7 @@ export const LANG_FONTS = {
     body: { family: '--font-space-grotesk', style: 'normal' },
     preload: [['--font-archivo', 0]],
   },
-  // Cyrillic italic (display, 8.5 KB) and upright (body, 20 KB).
+  // The display italic (Cyrillic and Latin, 13.6 KB) and the upright Cyrillic (body, 20 KB).
   ru: {
     families: ['--font-noto-sans'],
     display: { family: '--font-noto-sans', style: 'italic' },
