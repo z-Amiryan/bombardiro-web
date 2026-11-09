@@ -13,6 +13,7 @@ Every statement about the app must be true of the app as it ships.
 - Only the latest turn can be corrected.
 - Works offline. No account. English, Russian and Armenian. Dark and light themes.
 - New and corrected words arrive without an app update.
+- The words are translated by people, not machines (confirmed by the owner).
 - Free. iPhone and iPad.
 
 ## Never say
