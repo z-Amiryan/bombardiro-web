@@ -227,6 +227,11 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
     padding-bottom: 0.12em;
   }
 
+  /* Armenian outlined words use the clean static capitals (src/config/fonts.ts), then the display stack. */
+  :global(:root[lang='hy']) .word {
+    font-family: var(--font-wall-hy), var(--fd);
+  }
+
   .word::before {
     content: '';
     position: absolute;
@@ -347,6 +352,8 @@ const below = WALL_ROWS.below.map((r, i) => row(r, i + above.length));
   }
 
   .band__n {
+    /* Inline-block, so the goal pop (scripts/word-wall.ts) can scale it. */
+    display: inline-block;
     font-size: 30px;
     line-height: 1;
     font-variant-numeric: tabular-nums;

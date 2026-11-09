@@ -6,7 +6,9 @@
      a: beat 1 entering the viewport → its bottom at mid-screen   (01:00 → 00:40)
      b: beat 2 top at mid-screen     → its bottom at mid-screen   (00:40 → the late stamp, 00:07)
      c: beat 3 top at mid-screen     → its bottom at mid-screen   (00:07 → 00:00)
-   so each beat's own time stamp is on the clock as that beat reaches the middle of the screen. Elsewhere
+   so each beat's own time stamp is on the clock as that beat reaches the middle of the screen. Each reading
+   holds its stamp for the first 70% of its range, so while a beat is current the clock agrees with the beat's
+   stamp and its screen, then runs down to the next stamp as the next beat arrives. Elsewhere
    src/scripts/home.ts sets --t from the scroll position with the same anchors. With JavaScript off or reduced
    motion, nothing counts: the clock reads 01:00 and every beat shows its own stamp. */
 
@@ -57,7 +59,8 @@
 }
 
 @keyframes clock-a {
-  from {
+  0%,
+  70% {
     --clock-a: 0;
   }
   to {
@@ -65,7 +68,8 @@
   }
 }
 @keyframes clock-b {
-  from {
+  0%,
+  70% {
     --clock-b: 0;
   }
   to {
@@ -73,7 +77,8 @@
   }
 }
 @keyframes clock-c {
-  from {
+  0%,
+  70% {
     --clock-c: 0;
   }
   to {

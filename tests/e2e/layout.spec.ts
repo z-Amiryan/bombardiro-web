@@ -15,10 +15,18 @@ function overflows(page: Page): Promise<string[]> {
     if (root.scrollWidth > root.clientWidth) out.push(`the page is ${root.scrollWidth}px wide`);
     const skip = '[hidden], .sr-only, template, svg, [aria-hidden="true"], [popover]:not(:popover-open)';
     const seen = new Set<Element>();
+    // Visually hidden for screen readers (a 1 px box that clips its overflow), however it's styled.
+    const visuallyHidden = (el: Element) => {
+      for (let a: Element | null = el; a; a = a.parentElement) {
+        const r = a.getBoundingClientRect();
+        if (r.width <= 1 && r.height <= 1 && getComputedStyle(a).overflow !== 'visible') return true;
+      }
+      return false;
+    };
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     for (let node = walker.nextNode(); node; node = walker.nextNode()) {
       const el = node.parentElement;
-      if (!el || seen.has(el) || !node.textContent?.trim() || el.closest(skip)) continue;
+      if (!el || seen.has(el) || !node.textContent?.trim() || el.closest(skip) || visuallyHidden(el)) continue;
       // The box the text lays out in: the nearest ancestor that isn't inline.
       let box: Element = el;
       while (box.parentElement && getComputedStyle(box).display.startsWith('inline')) box = box.parentElement;

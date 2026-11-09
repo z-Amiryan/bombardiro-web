@@ -64,6 +64,17 @@ test.describe('Words', () => {
     await expect(pill).toBeHidden();
   });
 
+  test('a word scores from the keyboard too', async ({ page }) => {
+    await page.goto('/words/');
+    const word = page.locator('#players .w').first();
+    await expect(word).toHaveAttribute('role', 'button');
+    await word.focus();
+    await page.keyboard.press('Enter');
+    await expect(word).toHaveAttribute('aria-pressed', 'true');
+    await page.keyboard.press(' ');
+    await expect(word).toHaveAttribute('aria-pressed', 'false');
+  });
+
   test('prints one sheet per category, with the words in four columns and no navigation', async ({ page }) => {
     await page.goto('/words/');
     await page.emulateMedia({ media: 'print' });

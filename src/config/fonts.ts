@@ -48,12 +48,13 @@ const foreign = (lang: keyof typeof FOREIGN_SUBSETS): FontVariant[] =>
 
 export const FONT_FAMILIES = [
   {
-    // English display: Archivo 900 italic. Also the wordmark, which is outlined as SVG for other languages.
+    // English display: Archivo 900 italic, as static instances with overlapping contours merged
+    // (scripts/build-font-assets.py): 15.6 KB instead of 38. The wordmark is outlined as SVG from the variable file.
     name: 'Archivo',
     cssVariable: '--font-archivo',
     variants: [
-      { src: pkg('archivo', 'archivo-latin-wght-italic.woff2'), style: 'italic', unicodeRange: RANGES.latin },
-      { src: pkg('archivo', 'archivo-latin-ext-wght-italic.woff2'), style: 'italic', unicodeRange: RANGES.latinExt },
+      { src: './src/assets/fonts/display-en-italic.woff2', style: 'italic', unicodeRange: RANGES.latin },
+      { src: './src/assets/fonts/display-en-italic-ext.woff2', style: 'italic', unicodeRange: RANGES.latinExt },
     ],
   },
   {
@@ -72,10 +73,12 @@ export const FONT_FAMILIES = [
     cssVariable: '--font-noto-sans',
     variants: [
       { src: pkg('noto-sans', 'noto-sans-cyrillic-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.cyrillic },
-      { src: pkg('noto-sans', 'noto-sans-cyrillic-wght-italic.woff2'), style: 'italic', unicodeRange: RANGES.cyrillic },
-      // Latin trimmed to what Russian pages use (scripts/build-font-assets.py): 18 and 21 KB instead of 35 and 39.
+      // Display (900 italic): one static file with the Cyrillic and the trimmed Latin, overlapping contours merged,
+      // so outlined words draw clean and a heading's punctuation arrives with its letters
+      // (scripts/build-font-assets.py). 13.6 KB instead of 24 + 39.
+      { src: './src/assets/fonts/display-ru-italic.woff2', style: 'italic', unicodeRange: `${RANGES.cyrillic}, ${RANGES.latin}` },
+      // Latin trimmed to what Russian pages use (scripts/build-font-assets.py): 18 KB instead of 35.
       { src: './src/assets/fonts/latin-ru-normal.woff2', style: 'normal', unicodeRange: RANGES.latin },
-      { src: './src/assets/fonts/latin-ru-italic.woff2', style: 'italic', unicodeRange: RANGES.latin },
       { src: pkg('noto-sans', 'noto-sans-cyrillic-ext-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.cyrillicExt },
       { src: pkg('noto-sans', 'noto-sans-cyrillic-ext-wght-italic.woff2'), style: 'italic', unicodeRange: RANGES.cyrillicExt },
       { src: pkg('noto-sans', 'noto-sans-latin-ext-wght-normal.woff2'), style: 'normal', unicodeRange: RANGES.latinExt },
@@ -95,6 +98,13 @@ export const FONT_FAMILIES = [
       ...foreign('hy'),
     ],
   },
+  {
+    // Armenian Home's word wall: the capitals at 900 with overlapping contours merged, so its outlined words draw
+    // clean (scripts/build-font-assets.py, 4 KB). Only .band .word uses it, so no other page downloads it.
+    name: 'Bombardiro Wall Armenian',
+    cssVariable: '--font-wall-hy',
+    variants: [{ src: './src/assets/fonts/wall-hy.woff2', style: 'normal', unicodeRange: 'U+0531-0556' }],
+  },
 ] as const satisfies readonly FontFamilyConfig[];
 
 export type FontCssVariable = (typeof FONT_FAMILIES)[number]['cssVariable'];
@@ -109,15 +119,14 @@ export interface LanguageFonts {
 }
 
 export const LANG_FONTS = {
-  // Archivo italic Latin (38 KB) is the display face, so it's the one preload. Adding Space Grotesk would
-  // take the pair 4 bytes past 60 KB.
+  // Archivo italic Latin (static 900, 15.6 KB) is the display face, so it's the one preload.
   en: {
     families: ['--font-archivo', '--font-space-grotesk'],
     display: { family: '--font-archivo', style: 'italic' },
     body: { family: '--font-space-grotesk', style: 'normal' },
     preload: [['--font-archivo', 0]],
   },
-  // Cyrillic italic (display, 24 KB) and upright (body, 20 KB).
+  // The display italic (Cyrillic and Latin, 13.6 KB) and the upright Cyrillic (body, 20 KB).
   ru: {
     families: ['--font-noto-sans'],
     display: { family: '--font-noto-sans', style: 'italic' },
@@ -130,7 +139,7 @@ export const LANG_FONTS = {
   // One family for display and body: the Armenian subset (26 KB) and its trimmed Latin subset (19 KB) for digits,
   // punctuation and brand names.
   hy: {
-    families: ['--font-noto-armenian'],
+    families: ['--font-noto-armenian', '--font-wall-hy'],
     display: { family: '--font-noto-armenian', style: 'normal' },
     body: { family: '--font-noto-armenian', style: 'normal' },
     preload: [

@@ -6,6 +6,7 @@ import BadgeLine from '../components/BadgeLine.astro';
 import Icon from '../components/Icon.astro';
 import Wordmark from '../components/Wordmark.astro';
 import Base from '../layouts/Base.astro';
+import { SITE_URL } from '../config/site';
 import { copyFor } from '../lib/copy';
 import { routePath, staticPathsFor, type Lang } from '../lib/routes';
 import { categorySize, LEVELS, word, wordsPageSelection } from '../lib/words';
@@ -19,6 +20,7 @@ interface Props {
 }
 
 const { lang } = Astro.props;
+const siteHost = new URL(SITE_URL).host;
 const c = copyFor(lang);
 const t = c.pages.words;
 const goals = c.pages.home.wall.goals;
@@ -93,9 +95,9 @@ const total = String(cats.length).padStart(2, '0');
                   <ul class="level__words" role="list">
                     {lv.words.map((w) => (
                       <li>
-                        <button type="button" class="w display" aria-pressed="false" data-key={w.key}>
+                        <span class="w display" data-key={w.key}>
                           {w.text}
-                        </button>
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -103,7 +105,7 @@ const total = String(cats.length).padStart(2, '0');
               ))}
             </div>
             <footer class="sheet-foot" aria-hidden="true">
-              <span>bombardiro.app</span>
+              <span>{siteHost}</span>
               <span>{c.footer.independent}</span>
             </footer>
           </div>
@@ -160,7 +162,8 @@ const total = String(cats.length).padStart(2, '0');
 
 <script>
   // Tap a word to score it, a goal pill with a reset, and the print button. Without JavaScript the list reads
-  // and prints the same; only scoring and the button need the script.
+  // and prints the same; only scoring and the button need the script. The words are spans until here, where they
+  // become toggle buttons, so nothing announces a button that can't work.
   const root = document.querySelector<HTMLElement>('[data-words]');
   if (root) {
     const pill = root.querySelector<HTMLElement>('[data-pill]');
@@ -169,6 +172,12 @@ const total = String(cats.length).padStart(2, '0');
     const plurals = JSON.parse(root.querySelector('[data-plurals]')?.textContent ?? '{}') as Record<string, string>;
     const rules = new Intl.PluralRules(document.documentElement.lang);
     const scored = new Set<string>();
+    const words = root.querySelectorAll<HTMLElement>('.w[data-key]');
+    for (const w of words) {
+      w.setAttribute('role', 'button');
+      w.setAttribute('aria-pressed', 'false');
+      w.tabIndex = 0;
+    }
 
     const render = () => {
       const n = scored.size;
@@ -177,20 +186,30 @@ const total = String(cats.length).padStart(2, '0');
       pill?.toggleAttribute('data-on', n > 0);
     };
 
-    root.addEventListener('click', (event) => {
-      const button = (event.target as Element).closest<HTMLButtonElement>('button[data-key]');
-      if (!button) return;
-      const key = button.dataset.key ?? '';
+    const toggle = (word: HTMLElement) => {
+      const key = word.dataset.key ?? '';
       const on = !scored.has(key);
       if (on) scored.add(key);
       else scored.delete(key);
-      button.setAttribute('aria-pressed', String(on));
+      word.setAttribute('aria-pressed', String(on));
       render();
+    };
+
+    root.addEventListener('click', (event) => {
+      const word = (event.target as Element).closest<HTMLElement>('.w[data-key]');
+      if (word) toggle(word);
+    });
+
+    root.addEventListener('keydown', (event) => {
+      const word = (event.target as Element).closest<HTMLElement>('.w[role="button"]');
+      if (!word || (event.key !== 'Enter' && event.key !== ' ')) return;
+      event.preventDefault();
+      toggle(word);
     });
 
     root.querySelector('[data-reset]')?.addEventListener('click', () => {
       scored.clear();
-      for (const b of root.querySelectorAll('button[data-key][aria-pressed="true"]')) b.setAttribute('aria-pressed', 'false');
+      for (const w of words) w.setAttribute('aria-pressed', 'false');
       render();
     });
 
@@ -401,6 +420,8 @@ const total = String(cats.length).padStart(2, '0');
     gap: 8px;
   }
   .w {
+    display: inline-flex;
+    align-items: center;
     min-height: 44px;
     padding: 0 14px;
     border-radius: var(--r-sm);
@@ -419,6 +440,11 @@ const total = String(cats.length).padStart(2, '0');
   @media (hover: hover) {
     .w:hover {
       background: rgb(var(--c-paper-ch) / 0.6);
+    }
+  }
+  @media (scripting: none) {
+    .w {
+      cursor: default;
     }
   }
   .w[aria-pressed='true'] {
@@ -728,6 +754,7 @@ const total = String(cats.length).padStart(2, '0');
       color: var(--c-ink) !important;
       font-size: calc(12pt * var(--k));
       text-align: center;
+      justify-content: center;
     }
     .sheet-foot {
       display: flex;

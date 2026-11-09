@@ -31,9 +31,12 @@ export default defineConfig({
     // Archivo and Space Grotesk use "<name> fallback" faces in base.css with Astro's own metric numbers: Astro's
     // generated face lists only local Arial, so without Arial (Linux, ChromeOS) text fell back unsized and
     // reflowed. Ours also accept Arial's metric twins, Liberation Sans and Arimo.
+    // The Armenian word-wall face has no fallbacks of its own: it sits in front of the Armenian display stack.
     ...(family.name.startsWith('Noto')
       ? { fallbacks: ['Noto Sans fallback', 'Arial', 'sans-serif'], optimizedFallbacks: false }
-      : { fallbacks: [`${family.name} fallback`, 'Arial', 'sans-serif'], optimizedFallbacks: false }),
+      : family.name.startsWith('Bombardiro')
+        ? { fallbacks: [], optimizedFallbacks: false }
+        : { fallbacks: [`${family.name} fallback`, 'Arial', 'sans-serif'], optimizedFallbacks: false }),
     display: 'swap',
     options: {
       variants: /** @type {[any, ...any[]]} */ (

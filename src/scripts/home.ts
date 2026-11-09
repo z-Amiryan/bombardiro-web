@@ -69,7 +69,10 @@ if (home && beats.length === 4) {
         [b3.top - vh / 2, b3.bottom - vh / 2],
       ];
     };
-    const progress = (y: number, [start, end]: [number, number]) => Math.min(1, Math.max(0, (y - start) / (end - start)));
+    // Holds the stamp for the first 70% of each range, as the CSS keyframes do.
+    const HOLD = 0.7;
+    const progress = (y: number, [start, end]: [number, number]) =>
+      Math.min(1, Math.max(0, ((y - start) / (end - start) - HOLD) / (1 - HOLD)));
     let last = '';
     let frame = 0;
     const update = () => {

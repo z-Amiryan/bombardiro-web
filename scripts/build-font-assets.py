@@ -27,6 +27,8 @@ from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.transformPen import TransformPen
 from fontTools import subset
 from fontTools.ttLib import TTFont
+from fontTools.merge import Merger
+from fontTools.varLib import instancer
 
 ROOT = Path(__file__).resolve().parent.parent
 FONTS = ROOT / 'node_modules' / '@fontsource-variable'
@@ -164,6 +166,27 @@ LATIN = {
 }
 
 
+# Russian display type is Noto Sans 900 italic. Its variable files draw letters from overlapping contours, which
+# the word wall's outlined words (text-stroke) show as stray marks inside Х, Ф and Л. A static 900 instance with
+# the overlaps merged draws clean outlines and is a third of the size. Russian italic is only display type
+# (900, and 800 on the Words page, which now draws at 900).
+DISPLAY_WEIGHT = 900
+STATIC_DISPLAY = {'latin-ru-italic.woff2'}
+RU_DISPLAY_CYRILLIC = SUBSETS / 'cyrillic-ru-italic.woff2'
+# The Cyrillic and the trimmed Latin static italics, merged into the one file Russian pages preload, so a heading's
+# punctuation and Latin don't arrive after its Cyrillic and rewrap it.
+RU_DISPLAY = SUBSETS / 'display-ru-italic.woff2'
+
+
+def static_instance(source: Path, target: Path):
+    font = TTFont(str(source))
+    static = instancer.instantiateVariableFont(font, {'wght': DISPLAY_WEIGHT}, overlap=instancer.OverlapMode.REMOVE)
+    # Keep the source's timestamp, so the same inputs make the same bytes.
+    static.recalcTimestamp = False
+    static.flavor = 'woff2'
+    static.save(str(target))
+
+
 def build_latin():
     ascii_printable = ''.join(chr(c) for c in range(0x20, 0x7F))
     for lang, files in LATIN.items():
@@ -172,7 +195,32 @@ def build_latin():
         for pkg, name, out in files:
             target = SUBSETS / out
             cut(FONTS / pkg / 'files' / name, target, chars)
+            if out in STATIC_DISPLAY:
+                static_instance(target, target)
             print(f'{target.relative_to(ROOT)}: {len(chars)} characters ({target.stat().st_size} bytes)')
+
+
+# Armenian shares one variable file between body and display, so it can't be swapped for a static one. The Home
+# word wall, the only outlined Armenian text, gets its own face instead: the capitals at 900 with overlaps merged.
+HY_WALL = SUBSETS / 'wall-hy.woff2'
+HY_WALL_CHARS = ''.join(chr(c) for c in range(0x0531, 0x0557))
+
+
+# English display type, Archivo 900 italic, the same way: clean outlines and 15.6 KB instead of 38 for the file
+# English pages preload.
+EN_DISPLAY = [('archivo-latin-wght-italic.woff2', 'display-en-italic.woff2'),
+              ('archivo-latin-ext-wght-italic.woff2', 'display-en-italic-ext.woff2')]
+
+
+def build_display():
+    for name, out in EN_DISPLAY:
+        static_instance(FONTS / 'archivo' / 'files' / name, SUBSETS / out)
+        print(f'src/assets/fonts/{out}: static {DISPLAY_WEIGHT} ({(SUBSETS / out).stat().st_size} bytes)')
+    static_instance(FONTS / 'noto-sans' / 'files' / 'noto-sans-cyrillic-wght-italic.woff2', RU_DISPLAY_CYRILLIC)
+    print(f'{RU_DISPLAY_CYRILLIC.relative_to(ROOT)}: static {DISPLAY_WEIGHT} ({RU_DISPLAY_CYRILLIC.stat().st_size} bytes)')
+    cut(FONTS / 'noto-sans-armenian' / 'files' / 'noto-sans-armenian-armenian-wght-normal.woff2', HY_WALL, HY_WALL_CHARS)
+    static_instance(HY_WALL, HY_WALL)
+    print(f'{HY_WALL.relative_to(ROOT)}: {len(HY_WALL_CHARS)} capitals, static {DISPLAY_WEIGHT} ({HY_WALL.stat().st_size} bytes)')
 
 
 def both_cases(chars) -> list:
@@ -211,7 +259,9 @@ def build_subsets():
 
 def main():
     archivo = FONTS / 'archivo' / 'files' / 'archivo-latin-wght-italic.woff2'
-    noto_italic_cyr = FONTS / 'noto-sans' / 'files' / 'noto-sans-cyrillic-wght-italic.woff2'
+    build_display()
+    # The outlined «бомбардир» on About comes from the same clean static file.
+    noto_italic_cyr = RU_DISPLAY_CYRILLIC
     data = {
         # Header, menu sheet, print sheet and guide card: letter-spacing -.015em.
         'wordmark': outline(archivo, ['BOMBAR', 'DIRO'], -0.015, 900),
@@ -227,6 +277,29 @@ def main():
         print(f'{key}: viewBox {value["viewBox"]}, {size} bytes of path data')
     build_subsets()
     build_latin()
+    merge_ru_display()
+
+
+def merge_ru_display():
+    parts = [RU_DISPLAY_CYRILLIC, SUBSETS / 'latin-ru-italic.woff2']
+    plain = []
+    for part in parts:
+        font = TTFont(str(part), recalcTimestamp=False)
+        font.flavor = None
+        data = io.BytesIO()
+        font.save(data)
+        data.seek(0)
+        plain.append(data)
+    merged = Merger().merge(plain)
+    # The merger stamps the current time; keep the source's, so the same inputs make the same bytes.
+    source_head = TTFont(str(parts[0]))['head']
+    merged['head'].created, merged['head'].modified = source_head.created, source_head.modified
+    merged.recalcTimestamp = False
+    merged.flavor = 'woff2'
+    merged.save(str(RU_DISPLAY))
+    for part in parts:
+        part.unlink()
+    print(f'{RU_DISPLAY.relative_to(ROOT)}: Cyrillic and Latin, static {DISPLAY_WEIGHT} ({RU_DISPLAY.stat().st_size} bytes)')
 
 
 if __name__ == '__main__':
